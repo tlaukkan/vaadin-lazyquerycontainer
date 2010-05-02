@@ -23,7 +23,6 @@ import java.util.List;
 import org.vaadin.addons.lazyquerycontainer.Query;
 import org.vaadin.addons.lazyquerycontainer.QueryDefinition;
 
-
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.ObjectProperty;
@@ -37,10 +36,14 @@ public class MockQuery implements Query {
 
 	private QueryDefinition definition;
 	private List<Item> items;
+	private int batchQueryMinTime;
+	private int batchQueryMaxTime;
 	
-	public MockQuery(QueryDefinition definition, int size,int refreshCount,Object[] sortPropertyIds, boolean[] ascendingStates) {
+	public MockQuery(QueryDefinition definition, int size,Object[] sortPropertyIds, boolean[] ascendingStates,int batchQueryMinTime, int batchQueryMaxTime) {
 		this.definition=definition;
 		this.items=new ArrayList<Item>();
+		this.batchQueryMinTime=batchQueryMinTime;
+		this.batchQueryMaxTime=batchQueryMaxTime;
 		
 		for(int i=0;i<size;i++) {
 			PropertysetItem item=new PropertysetItem();
@@ -53,8 +56,6 @@ public class MockQuery implements Query {
 					value=i;
 				} else if("ReverseIndex".equals(propertyId)) {
 					value=size-i;
-				} else  if("RefreshCount".equals(propertyId)) {
-					value=refreshCount;
 				} else {
 					value=this.definition.getPropertyDefaultValue(propertyId);
 				}
@@ -83,6 +84,11 @@ public class MockQuery implements Query {
 		
 		for(int i=0;i<count;i++) {
 			resultItems.add(items.get(startIndex+i));
+		}
+		
+		try {
+			Thread.sleep(batchQueryMinTime+(int)(Math.random()*batchQueryMaxTime));
+		} catch (InterruptedException e) {
 		}
 		
 		return resultItems;

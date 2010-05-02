@@ -40,10 +40,23 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
 	private List<ItemSetChangeListener> itemSetChangeListeners=new ArrayList<ItemSetChangeListener>();
 	private List<PropertySetChangeListener> propertySetChangeListeners=new ArrayList<PropertySetChangeListener>();
 	
+	/**
+	 * Constructs LazyQueryContainer with LazyQueryView and given queryFactory.
+	 * @param queryFactory The query factory to be used.
+	 */
+	public LazyQueryContainer(QueryFactory queryFactory) {
+		this.view=new LazyQueryView(queryFactory);
+	}
+	
+	/**
+	 * Constructs LazyQueryContainer with the given QueryView. This constructor 
+	 * role is to enable use of custom view implementations.
+	 * @param view
+	 */
 	public LazyQueryContainer(QueryView view) {
 		this.view=view;
 	}
-
+	
 	@Override
 	public void sort(Object[] sortPropertyIds, boolean[] ascendingStates) {
 		view.sort(sortPropertyIds, ascendingStates);

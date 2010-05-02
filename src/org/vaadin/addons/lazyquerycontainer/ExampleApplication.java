@@ -59,22 +59,30 @@ public class ExampleApplication extends Application implements ClickListener {
 		
 		table=new Table("Example Table");
 				
-		mockQueryFactory=new MockQueryFactory(100);
-		container=new LazyQueryContainer(new LazyQueryView(mockQueryFactory));
+		mockQueryFactory=new MockQueryFactory(100,25,50);
+		LazyQueryView view=new LazyQueryView(mockQueryFactory);
+		view.setBatchSize(5);
+		container=new LazyQueryContainer(view);
 		
 		container.addContainerProperty("Index", Integer.class, 0, true, true);
 		container.addContainerProperty("ReverseIndex", Integer.class, 0, true, true);
-		container.addContainerProperty("RefreshCount", Integer.class, 0, true, true);
+		container.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_QUERY_INDEX, Integer.class, 0, false, true);
+		container.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_INDEX, Integer.class, 0, false, true);
+		container.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_QUERY_TIME, Integer.class, 0, false, true);
 		
 		table.setContainerDataSource(container);
 	
 		visibleColumnIds.add("Index");
 		visibleColumnIds.add("ReverseIndex");
-		visibleColumnIds.add("RefreshCount");
+		visibleColumnIds.add(LazyQueryView.DEBUG_PROPERTY_ID_QUERY_INDEX);
+		visibleColumnIds.add(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_INDEX);
+		visibleColumnIds.add(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_QUERY_TIME);
 
 		visibleColumnLabels.add("Index");
 		visibleColumnLabels.add("Reverse Index");
-		visibleColumnLabels.add("Refresh Count");
+		visibleColumnLabels.add("Query");
+		visibleColumnLabels.add("Batch");
+		visibleColumnLabels.add("Time [ms]");
 
 		table.setVisibleColumns(visibleColumnIds.toArray());
 		table.setColumnHeaders(visibleColumnLabels.toArray(new String[0]));
@@ -87,7 +95,6 @@ public class ExampleApplication extends Application implements ClickListener {
 	@Override
 	public void buttonClick(ClickEvent event) {
 		if(event.getButton()==refreshButton) {
-			mockQueryFactory.increaseRefreshCount();
 			container.refresh();
 		}
 		if(event.getButton()==addPropertyButton) {

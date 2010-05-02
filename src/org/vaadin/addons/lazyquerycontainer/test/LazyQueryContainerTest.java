@@ -51,7 +51,7 @@ public class LazyQueryContainerTest extends TestCase implements ItemSetChangeLis
 		definition.addProperty("Index", Integer.class, 0, true, true);
 		definition.addProperty("Reverse Index", Integer.class, 0, true, false);		
 		
-		MockQueryFactory factory=new MockQueryFactory(viewSize);
+		MockQueryFactory factory=new MockQueryFactory(viewSize,0,0);
 		QueryView view=new LazyQueryView(definition,factory);
 		container=new LazyQueryContainer(view);
 		container.addListener((ItemSetChangeListener)this);

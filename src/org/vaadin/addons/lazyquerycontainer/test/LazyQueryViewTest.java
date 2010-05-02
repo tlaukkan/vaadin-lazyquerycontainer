@@ -40,7 +40,7 @@ public class LazyQueryViewTest extends TestCase {
 		DefaultQueryDefinition definition=new DefaultQueryDefinition();
 		definition.addProperty("Index", Integer.class, 0, true, true);
 		definition.addProperty("Reverse Index", Integer.class, 0, true, false);
-		MockQueryFactory factory=new MockQueryFactory(viewSize);
+		MockQueryFactory factory=new MockQueryFactory(viewSize,0,0);
 		factory.setQueryDefinition(definition);
 		view=new LazyQueryView(definition,factory);
 		

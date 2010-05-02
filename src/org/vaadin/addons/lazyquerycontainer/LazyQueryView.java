@@ -24,13 +24,26 @@ import com.vaadin.data.Item;
 
 /**
  * Lazy loading implementation of QueryView. This implementation supports
- * lazy loading, batch loading, caching and sorting.
+ * lazy loading, batch loading, caching and sorting. LazyQueryView supports
+ * debug properties which will be filled with debug information when they
+ * exist in query definition. The debug property IDs are defined as string 
+ * constants with the following naming convention: DEBUG_PROPERTY_XXXX.
+ * 
+ * LazyQueryView implements mainly batch loading, caching and debug
+ * functionalities. When data is sorted old query is discarded and new 
+ * constructed with QueryFactory and new sort state.
+ * 
  * @author Tommi S.E. Laukkanen 
  */
 public class LazyQueryView implements QueryView {
 
+	public static final String DEBUG_PROPERTY_ID_QUERY_INDEX="DEBUG_PROPERTY_ID_QUERY_COUT";
+	public static final String DEBUG_PROPERTY_ID_BATCH_INDEX="DEBUG_PROPERTY_ID_BATCH_INDEX";
+	public static final String DEBUG_PROPERTY_ID_BATCH_QUERY_TIME="DEBUG_PROPERTY_ID_ACCESS_COUNT";
+	
 	private int batchSize=50;
 	private int maxCacheSize=1000;
+	private int queryCount=0;
 	
 	private QueryDefinition definition;
 	private QueryFactory factory;
@@ -42,10 +55,20 @@ public class LazyQueryView implements QueryView {
 	private LinkedList<Integer> itemCacheOrder=new LinkedList<Integer>();
 	private Map<Integer,Item> itemCache=new HashMap<Integer,Item>();
 	
+	/**
+	 * Constructs LazyQueryView with DefaultQueryDefinition and the given QueryFactory.
+	 * @param factory The QueryFactory to be used.
+	 */
 	public LazyQueryView(QueryFactory factory) {
 		initialize(new DefaultQueryDefinition(),factory);
 	}
 	
+	/**
+	 * Constructs LazyQueryView with given QueryDefinition and QueryFactory. The role
+	 * of this constructor is to enable use of custom QueryDefinition implementations.
+	 * @param definition
+	 * @param factory
+	 */
 	public LazyQueryView(QueryDefinition definition, QueryFactory factory) {
 		initialize(definition,factory);
 	}
@@ -82,12 +105,19 @@ public class LazyQueryView implements QueryView {
 		return getQuery().size();
 	}
 
+	public int getBatchSize() {
+		return batchSize;
+	}
+
+	public void setBatchSize(int batchSize) {
+		this.batchSize = batchSize;
+	}
+
 	@Override
 	public Item getItem(int index) {
 		if(!itemCache.containsKey(index)) {
 			queryItem(index);
 		}
-		
 		return itemCache.get(index);
 	}
 
@@ -95,11 +125,23 @@ public class LazyQueryView implements QueryView {
 		int startIndex=index-index%batchSize;
 		int count=Math.min(batchSize, size()-startIndex);
 		
+		long queryStartTime=System.currentTimeMillis();
 		List<Item> items=getQuery().getItems(startIndex, count);
+		long queryEndTime=System.currentTimeMillis();
 		
 		for(int i=0;i<count;i++) {
 			int itemIndex=startIndex+i;
-			itemCache.put(itemIndex, items.get(i));
+			Item item=items.get(i);
+			if(item.getItemProperty(DEBUG_PROPERTY_ID_BATCH_INDEX)!=null) {
+				item.getItemProperty(DEBUG_PROPERTY_ID_BATCH_INDEX).setValue(startIndex/batchSize);
+			}
+			if(item.getItemProperty(DEBUG_PROPERTY_ID_QUERY_INDEX)!=null) {
+				item.getItemProperty(DEBUG_PROPERTY_ID_QUERY_INDEX).setValue(queryCount);
+			}
+			if(item.getItemProperty(DEBUG_PROPERTY_ID_BATCH_QUERY_TIME)!=null) {
+				item.getItemProperty(DEBUG_PROPERTY_ID_BATCH_QUERY_TIME).setValue(queryEndTime-queryStartTime);
+			}
+			itemCache.put(itemIndex,item);
 			itemCacheOrder.addLast(itemIndex);
 		}
 		
@@ -112,6 +154,7 @@ public class LazyQueryView implements QueryView {
 	private Query getQuery() {
 		if(query==null) {
 			query=factory.constructQuery(sortPropertyIds,ascendingStates);
+			queryCount++;
 		}
 		return query;
 	}

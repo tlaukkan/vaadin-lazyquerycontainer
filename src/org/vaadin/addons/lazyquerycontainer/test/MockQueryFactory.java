@@ -27,10 +27,13 @@ public class MockQueryFactory implements QueryFactory {
 
 	private QueryDefinition definition;
 	private int resultSize;
-	private int refreshCount=0;
+	private int batchQueryMinTime;
+	private int batchQueryMaxTime;
 	
-	public MockQueryFactory(int resultSize) {
+	public MockQueryFactory(int resultSize, int batchQueryMinTime, int batchQueryMaxTime) {
 		this.resultSize=resultSize;
+		this.batchQueryMinTime=batchQueryMinTime;
+		this.batchQueryMaxTime=batchQueryMaxTime;
 	}
 	
 	@Override
@@ -40,11 +43,7 @@ public class MockQueryFactory implements QueryFactory {
 	
 	@Override
 	public Query constructQuery(Object[] sortPropertyIds, boolean[] ascendingStates) {
-		return new MockQuery(definition,resultSize,refreshCount,sortPropertyIds, ascendingStates);
+		return new MockQuery(definition,resultSize,sortPropertyIds, ascendingStates,batchQueryMinTime,batchQueryMaxTime);
 	}
 	
-	public void increaseRefreshCount() {
-		refreshCount++;
-	}
-
 }
