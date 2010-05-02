@@ -66,9 +66,9 @@ public class ExampleApplication extends Application implements ClickListener {
 		
 		container.addContainerProperty("Index", Integer.class, 0, true, true);
 		container.addContainerProperty("ReverseIndex", Integer.class, 0, true, true);
-		container.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_QUERY_INDEX, Integer.class, 0, false, true);
-		container.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_INDEX, Integer.class, 0, false, true);
-		container.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_QUERY_TIME, Integer.class, 0, false, true);
+		container.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_QUERY_INDEX, Integer.class, 0, false, false);
+		container.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_INDEX, Integer.class, 0, false, false);
+		container.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_QUERY_TIME, Integer.class, 0, false, false);
 		
 		table.setContainerDataSource(container);
 	
