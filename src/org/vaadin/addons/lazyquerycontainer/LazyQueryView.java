@@ -75,6 +75,9 @@ public class LazyQueryView implements QueryView {
 	
 	private void initialize(QueryDefinition definition, QueryFactory factory) {
 		this.definition=definition;
+		if (this.definition.getBatchSize() < 0) {
+		    this.definition.setBatchSize(this.batchSize);
+		}
 		this.factory=factory;
 		this.factory.setQueryDefinition(definition);
 		this.sortPropertyIds=new Object[0];

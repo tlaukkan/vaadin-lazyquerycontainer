@@ -69,5 +69,9 @@ public interface QueryDefinition {
 	 * Removes the given property from the definition.
 	 * @param propertyId If of the property to be removed.
 	 */
-	public void removeProperty(Object propertyId);	
+	public void removeProperty(Object propertyId);
+	
+	public int getBatchSize();
+	
+	public void setBatchSize(int batchSize);
 }
