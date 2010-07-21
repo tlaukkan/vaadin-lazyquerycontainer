@@ -35,7 +35,11 @@ public class DefaultQueryDefinition implements QueryDefinition {
 	private Map<Object,Object> defaultValues=new HashMap<Object,Object>();
 	private Map<Object,Boolean> readOnlyStates=new HashMap<Object,Boolean>();
 	private Map<Object,Boolean> sortableStates=new HashMap<Object,Boolean>();
-	private int batchSize = -1;
+	private final int batchSize;
+	
+	public DefaultQueryDefinition(int batchSize) {
+	    this.batchSize = batchSize;
+	}
 	
 	@Override
 	public Collection<?> getPropertyIds() {
@@ -90,11 +94,6 @@ public class DefaultQueryDefinition implements QueryDefinition {
 		defaultValues.remove(propertyId);
 		readOnlyStates.remove(propertyId);
 		sortableStates.remove(propertyId);
-	}
-
-	@Override
-	public void setBatchSize(int batchSize) {
-	    this.batchSize = batchSize;
 	}
 
 	@Override

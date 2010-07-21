@@ -47,7 +47,15 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
 	public LazyQueryContainer(QueryFactory queryFactory) {
 		this.view=new LazyQueryView(queryFactory);
 	}
-	
+
+	/**
+	 * Constructs LazyQueryContainer with LazyQueryView and given queryFactory and queryDefinition.
+	 * @param queryFactory The query factory to be used.
+	 * @param queryDefinition The query definition to be used.
+	 */
+	public LazyQueryContainer(QueryDefinition queryDefinition, QueryFactory queryFactory) {
+	    this.view=new LazyQueryView(queryDefinition, queryFactory);
+	}
 	/**
 	 * Constructs LazyQueryContainer with the given QueryView. This constructor 
 	 * role is to enable use of custom view implementations.

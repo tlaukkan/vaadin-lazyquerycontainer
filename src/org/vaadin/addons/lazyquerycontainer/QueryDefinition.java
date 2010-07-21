@@ -72,6 +72,4 @@ public interface QueryDefinition {
 	public void removeProperty(Object propertyId);
 	
 	public int getBatchSize();
-	
-	public void setBatchSize(int batchSize);
 }

@@ -47,7 +47,7 @@ public class LazyQueryContainerTest extends TestCase implements ItemSetChangeLis
 	protected void setUp() throws Exception {
 		super.setUp();
 		
-		DefaultQueryDefinition definition=new DefaultQueryDefinition();
+		DefaultQueryDefinition definition=new DefaultQueryDefinition(this.viewSize);
 		definition.addProperty("Index", Integer.class, 0, true, true);
 		definition.addProperty("Reverse Index", Integer.class, 0, true, false);		
 		
