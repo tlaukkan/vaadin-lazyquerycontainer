@@ -41,7 +41,6 @@ public class LazyQueryView implements QueryView {
 	public static final String DEBUG_PROPERTY_ID_BATCH_INDEX="DEBUG_PROPERTY_ID_BATCH_INDEX";
 	public static final String DEBUG_PROPERTY_ID_BATCH_QUERY_TIME="DEBUG_PROPERTY_ID_ACCESS_COUNT";
 	
-	private int batchSize=50;
 	private int maxCacheSize=1000;
 	private int queryCount=0;
 	
@@ -58,9 +57,10 @@ public class LazyQueryView implements QueryView {
 	/**
 	 * Constructs LazyQueryView with DefaultQueryDefinition and the given QueryFactory.
 	 * @param factory The QueryFactory to be used.
+	 * @param batchSize The batch size to be used when loading data.
 	 */
-	public LazyQueryView(QueryFactory factory) {
-		initialize(new DefaultQueryDefinition(this.batchSize),factory);
+	public LazyQueryView(QueryFactory factory, int batchSize) {
+		initialize(new DefaultQueryDefinition(batchSize),factory);
 	}
 	
 	/**
@@ -75,7 +75,6 @@ public class LazyQueryView implements QueryView {
 	
 	private void initialize(QueryDefinition definition, QueryFactory factory) {
 		this.definition=definition;
-		this.batchSize=this.definition.getBatchSize();
 		this.factory=factory;
 		this.factory.setQueryDefinition(definition);
 		this.sortPropertyIds=new Object[0];
@@ -107,11 +106,7 @@ public class LazyQueryView implements QueryView {
 	}
 
 	public int getBatchSize() {
-		return batchSize;
-	}
-
-	public void setBatchSize(int batchSize) {
-		this.batchSize = batchSize;
+		return definition.getBatchSize();
 	}
 
 	@Override
@@ -123,6 +118,7 @@ public class LazyQueryView implements QueryView {
 	}
 
 	private void queryItem(int index) {		
+		int batchSize=getBatchSize();
 		int startIndex=index-index%batchSize;
 		int count=Math.min(batchSize, size()-startIndex);
 		

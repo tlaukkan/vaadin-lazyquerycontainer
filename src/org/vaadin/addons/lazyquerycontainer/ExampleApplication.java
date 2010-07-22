@@ -60,8 +60,7 @@ public class ExampleApplication extends Application implements ClickListener {
 		table=new Table("Example Table");
 				
 		mockQueryFactory=new MockQueryFactory(100,25,50);
-		LazyQueryView view=new LazyQueryView(mockQueryFactory);
-		view.setBatchSize(5);
+		LazyQueryView view=new LazyQueryView(mockQueryFactory,5);
 		container=new LazyQueryContainer(view);
 		
 		container.addContainerProperty("Index", Integer.class, 0, true, true);

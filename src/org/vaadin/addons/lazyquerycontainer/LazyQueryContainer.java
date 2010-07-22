@@ -43,9 +43,10 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
 	/**
 	 * Constructs LazyQueryContainer with LazyQueryView and given queryFactory.
 	 * @param queryFactory The query factory to be used.
+	 * @param batchSize The batch size to be used when loading data.
 	 */
-	public LazyQueryContainer(QueryFactory queryFactory) {
-		this.view=new LazyQueryView(queryFactory);
+	public LazyQueryContainer(QueryFactory queryFactory, int batchSize) {
+		this.view=new LazyQueryView(queryFactory, batchSize);
 	}
 
 	/**
