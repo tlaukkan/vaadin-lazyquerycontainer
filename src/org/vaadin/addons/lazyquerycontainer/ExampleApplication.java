@@ -57,14 +57,14 @@ public class ExampleApplication extends Application implements ClickListener {
 		addPropertyButton.addListener(this);
 		mainWindow.addComponent(addPropertyButton);
 		
-		table=new Table("Example Table");
+		table=new Table("Example Table 2");
 				
 		mockQueryFactory=new MockQueryFactory(100,25,50);
 		LazyQueryView view=new LazyQueryView(mockQueryFactory,5);
 		container=new LazyQueryContainer(view);
 		
 		container.addContainerProperty("Index", Integer.class, 0, true, true);
-		container.addContainerProperty("ReverseIndex", Integer.class, 0, true, true);
+		container.addContainerProperty("ReverseIndex", Integer.class, 0, false, true);
 		container.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_QUERY_INDEX, Integer.class, 0, false, false);
 		container.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_INDEX, Integer.class, 0, false, false);
 		container.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_QUERY_TIME, Integer.class, 0, false, false);
@@ -86,6 +86,8 @@ public class ExampleApplication extends Application implements ClickListener {
 		table.setVisibleColumns(visibleColumnIds.toArray());
 		table.setColumnHeaders(visibleColumnLabels.toArray(new String[0]));
 		
+		table.setEditable(true);
+
 		mainWindow.addComponent(table);
 
 		setMainWindow(mainWindow);
@@ -106,7 +108,9 @@ public class ExampleApplication extends Application implements ClickListener {
 
 			visibleColumnIds.add(newPropertyId);
 			visibleColumnLabels.add(newPropertyId);	
-						
+
+			table.setEditable(true);
+
 			table.setVisibleColumns(visibleColumnIds.toArray());
 			table.setColumnHeaders(visibleColumnLabels.toArray(new String[0]));
 			table.requestRepaint();
