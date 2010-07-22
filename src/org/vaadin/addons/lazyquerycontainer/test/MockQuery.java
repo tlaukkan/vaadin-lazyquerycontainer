@@ -21,6 +21,7 @@ import java.util.List;
 import org.vaadin.addons.lazyquerycontainer.Query;
 
 import com.vaadin.data.Item;
+import com.vaadin.data.Property;
 
 /**
  * Mock implementation of Query interface for JUnit tests and example application.
@@ -58,6 +59,11 @@ public class MockQuery implements Query {
 	@Override
 	public int size() {
 		return items.size();
+	}
+
+	@Override
+	public void itemValueChange(Item item, Object propertyId, Property property) {
+		System.out.println("Mock query - item change: "+propertyId+"="+property.getValue()+" to item: "+item.toString());
 	}
 
 }

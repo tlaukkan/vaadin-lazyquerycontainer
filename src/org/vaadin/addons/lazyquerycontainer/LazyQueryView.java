@@ -21,6 +21,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.vaadin.data.Item;
+import com.vaadin.data.Property;
+import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.Property.ValueChangeListener;
+import com.vaadin.data.Property.ValueChangeNotifier;
 
 /**
  * Lazy loading implementation of QueryView. This implementation supports
@@ -35,7 +39,8 @@ import com.vaadin.data.Item;
  * 
  * @author Tommi S.E. Laukkanen 
  */
-public class LazyQueryView implements QueryView {
+public class LazyQueryView implements QueryView, ValueChangeListener {
+	private static final long serialVersionUID = 1L;
 
 	public static final String DEBUG_PROPERTY_ID_QUERY_INDEX="DEBUG_PROPERTY_ID_QUERY_COUT";
 	public static final String DEBUG_PROPERTY_ID_BATCH_INDEX="DEBUG_PROPERTY_ID_BATCH_INDEX";
@@ -53,6 +58,8 @@ public class LazyQueryView implements QueryView {
 	
 	private LinkedList<Integer> itemCacheOrder=new LinkedList<Integer>();
 	private Map<Integer,Item> itemCache=new HashMap<Integer,Item>();
+	private Map<Property,Item> propertyItemMapCache=new HashMap<Property,Item>();
+	private Map<Property,Object> propertyIdMapCache=new HashMap<Property,Object>();
 	
 	/**
 	 * Constructs LazyQueryView with DefaultQueryDefinition and the given QueryFactory.
@@ -95,9 +102,19 @@ public class LazyQueryView implements QueryView {
 	
 	@Override
 	public void refresh() {
+		
+		for(Property property : propertyItemMapCache.keySet()) {
+			if(property instanceof ValueChangeNotifier) {
+				ValueChangeNotifier notifier=(ValueChangeNotifier) property;
+				notifier.removeListener(this);
+			}
+		}
+		
 		query=null;
 		itemCache.clear();
 		itemCacheOrder.clear();		
+		propertyItemMapCache.clear();
+		propertyIdMapCache.clear();
 	}
 
 	@Override
@@ -115,6 +132,14 @@ public class LazyQueryView implements QueryView {
 			queryItem(index);
 		}
 		return itemCache.get(index);
+	}
+	
+	@Override
+	public void valueChange(ValueChangeEvent event) {
+		Property property=event.getProperty();
+		Item item=propertyItemMapCache.get(property);
+		Object propertyId=propertyIdMapCache.get(property);
+		query.itemValueChange(item, propertyId, property);
 	}
 
 	private void queryItem(int index) {		
@@ -138,13 +163,35 @@ public class LazyQueryView implements QueryView {
 			if(item.getItemProperty(DEBUG_PROPERTY_ID_BATCH_QUERY_TIME)!=null) {
 				item.getItemProperty(DEBUG_PROPERTY_ID_BATCH_QUERY_TIME).setValue(queryEndTime-queryStartTime);
 			}
+						
+			for(Object propertyId : item.getItemPropertyIds()) {
+				Property property=item.getItemProperty(propertyId);
+				if(property instanceof ValueChangeNotifier) {
+					ValueChangeNotifier notifier=(ValueChangeNotifier) property;
+					notifier.addListener(this);
+					propertyItemMapCache.put(property, item);		
+					propertyIdMapCache.put(property, propertyId);	
+				}
+			}
+			
 			itemCache.put(itemIndex,item);
 			itemCacheOrder.addLast(itemIndex);
 		}
 		
 		while(itemCache.size()>maxCacheSize) {
 			int removedIndex=itemCacheOrder.removeFirst();
-			itemCache.remove(removedIndex);
+			Item removedItem=itemCache.remove(removedIndex);
+						
+			for(Object propertyId : removedItem.getItemPropertyIds()) {
+				Property property=removedItem.getItemProperty(propertyId);
+				if(property instanceof ValueChangeNotifier) {
+					ValueChangeNotifier notifier=(ValueChangeNotifier) property;
+					notifier.removeListener(this);
+					propertyItemMapCache.remove(property);									
+					propertyIdMapCache.remove(property);	
+				}
+			}
+
 		}		
 	}
 

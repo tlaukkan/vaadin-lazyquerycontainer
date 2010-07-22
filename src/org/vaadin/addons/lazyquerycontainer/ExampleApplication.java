@@ -87,7 +87,10 @@ public class ExampleApplication extends Application implements ClickListener {
 		table.setColumnHeaders(visibleColumnLabels.toArray(new String[0]));
 		
 		table.setEditable(true);
-
+		//table.setImmediate(true);
+		//table.setReadThrough(true);
+		table.setWriteThrough(true);
+		
 		mainWindow.addComponent(table);
 
 		setMainWindow(mainWindow);

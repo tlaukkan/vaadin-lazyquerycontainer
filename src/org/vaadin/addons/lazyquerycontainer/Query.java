@@ -18,6 +18,7 @@ package org.vaadin.addons.lazyquerycontainer;
 import java.util.List;
 
 import com.vaadin.data.Item;
+import com.vaadin.data.Property;
 
 /**
  * Interface for querying data in batches.
@@ -31,6 +32,14 @@ public interface Query {
 	 * @return List of items.
 	 */
 	public List<Item> getItems(int startIndex,int count);
+	/**
+	 * Invoked by QueryView to notify Query that value has been changed and should be stored
+	 * to data store.
+	 * @param item Item containing the changed property.
+	 * @param propertyId The id of the property containing changed value.
+	 * @param property The property containing the changed value.
+	 */
+	public void itemValueChange(Item item, Object propertyId, Property property);
 	/**
 	 * Gets number of items available through this query.
 	 * @return Number of items.
