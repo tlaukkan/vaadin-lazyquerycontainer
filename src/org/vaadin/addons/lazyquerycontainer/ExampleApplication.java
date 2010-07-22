@@ -103,13 +103,12 @@ public class ExampleApplication extends Application implements ClickListener {
 
 			String newPropertyId="Property-"+addedPropertyCount;
 			
-			container.addContainerProperty(newPropertyId, Integer.class, 0, true, true);			
+			container.addContainerProperty(newPropertyId, Integer.class, 0, false, true);
+			mockQueryFactory.addProperty(newPropertyId, Integer.class, 0, false, true);
 			container.refresh();
 
 			visibleColumnIds.add(newPropertyId);
 			visibleColumnLabels.add(newPropertyId);	
-
-			table.setEditable(true);
 
 			table.setVisibleColumns(visibleColumnIds.toArray());
 			table.setColumnHeaders(visibleColumnLabels.toArray(new String[0]));

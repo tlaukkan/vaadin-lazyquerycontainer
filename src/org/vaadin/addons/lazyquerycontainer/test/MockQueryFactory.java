@@ -94,6 +94,16 @@ public class MockQueryFactory implements QueryFactory {
 		return new MockQuery(this.items,batchQueryMinTime,batchQueryMaxTime);
 	}
 	
+	public void addProperty(Object propertyId, Class<?> type,
+			Object defaultValue, boolean readOnly, boolean sortable) {
+		for(Item item : this.items) {
+			((PropertysetItem)item).addItemProperty(
+					propertyId, new ObjectProperty(defaultValue,type,readOnly));
+							
+		}
+	}
+
+	
 	public class ItemComparator implements Comparator<Item> {
 
 		private Object[] sortPropertyIds;
