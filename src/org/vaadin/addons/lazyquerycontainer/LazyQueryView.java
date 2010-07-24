@@ -156,6 +156,14 @@ public class LazyQueryView implements QueryView, ValueChangeListener {
 		for(int i=0;i<count;i++) {
 			int itemIndex=startIndex+i;
 			Item item=items.get(i);
+			
+			itemCache.put(itemIndex,item);
+			itemCacheOrder.addLast(itemIndex);			
+		}
+		
+		for(int i=0;i<count;i++) {
+			Item item=items.get(i);
+			
 			if(item.getItemProperty(DEBUG_PROPERTY_ID_BATCH_INDEX)!=null) {
 				item.getItemProperty(DEBUG_PROPERTY_ID_BATCH_INDEX).setReadOnly(false);
 				item.getItemProperty(DEBUG_PROPERTY_ID_BATCH_INDEX).setValue(startIndex/batchSize);
@@ -171,7 +179,7 @@ public class LazyQueryView implements QueryView, ValueChangeListener {
 				item.getItemProperty(DEBUG_PROPERTY_ID_BATCH_QUERY_TIME).setValue(queryEndTime-queryStartTime);
 				item.getItemProperty(DEBUG_PROPERTY_ID_BATCH_QUERY_TIME).setReadOnly(true);
 			}
-						
+			
 			for(Object propertyId : item.getItemPropertyIds()) {
 				Property property=item.getItemProperty(propertyId);
 				if(property instanceof ValueChangeNotifier) {
@@ -180,9 +188,7 @@ public class LazyQueryView implements QueryView, ValueChangeListener {
 					propertyItemMapCache.put(property, item);		
 				}
 			}
-			
-			itemCache.put(itemIndex,item);
-			itemCacheOrder.addLast(itemIndex);
+
 		}
 		
 		while(itemCache.size()>maxCacheSize) {
@@ -214,7 +220,7 @@ public class LazyQueryView implements QueryView, ValueChangeListener {
 		Item item=getQuery().constructItem();
 		if(item.getItemProperty(PROPERTY_ID_ITEM_STATUS)!=null) {
 			item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(false);
-			item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setValue(ItemStatus.Added);
+			item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setValue(QueryItemStatus.Added);
 			item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(true);
 		}
 		addedItems.add(item);
@@ -229,9 +235,9 @@ public class LazyQueryView implements QueryView, ValueChangeListener {
 			return;
 		}
 		if(item.getItemProperty(PROPERTY_ID_ITEM_STATUS)!=null&&
-				((ItemStatus)item.getItemProperty(PROPERTY_ID_ITEM_STATUS).getValue())!=ItemStatus.Modified) {
+				((QueryItemStatus)item.getItemProperty(PROPERTY_ID_ITEM_STATUS).getValue())!=QueryItemStatus.Modified) {
 			item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(false);
-			item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setValue(ItemStatus.Modified);
+			item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setValue(QueryItemStatus.Modified);
 			item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(true);
 		}
 		modifiedItems.add(item);
@@ -240,11 +246,13 @@ public class LazyQueryView implements QueryView, ValueChangeListener {
 	@Override
 	public void removeItem(int index) {
 		Item item=getItem(index);
+		
 		if(item.getItemProperty(PROPERTY_ID_ITEM_STATUS)!=null) {
 			item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(false);
-			item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setValue(ItemStatus.Removed);
+			item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setValue(QueryItemStatus.Removed);
 			item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(true);
 		}
+				
 		removedItems.add(item);
 	}
 
@@ -263,21 +271,21 @@ public class LazyQueryView implements QueryView, ValueChangeListener {
 		for(Item item : addedItems) {
 			if(item.getItemProperty(PROPERTY_ID_ITEM_STATUS)!=null) {
 				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(false);
-				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setValue(ItemStatus.None);
+				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setValue(QueryItemStatus.None);
 				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(true);
 			}			
 		}
 		for(Item item : modifiedItems) {
 			if(item.getItemProperty(PROPERTY_ID_ITEM_STATUS)!=null) {
 				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(false);
-				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setValue(ItemStatus.None);
+				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setValue(QueryItemStatus.None);
 				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(true);
 			}			
 		}
 		for(Item item : removedItems) {
 			if(item.getItemProperty(PROPERTY_ID_ITEM_STATUS)!=null) {
 				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(false);
-				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setValue(ItemStatus.None);
+				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setValue(QueryItemStatus.None);
 				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(true);
 			}			
 		}
@@ -292,21 +300,21 @@ public class LazyQueryView implements QueryView, ValueChangeListener {
 		for(Item item : addedItems) {
 			if(item.getItemProperty(PROPERTY_ID_ITEM_STATUS)!=null) {
 				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(false);
-				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setValue(ItemStatus.None);
+				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setValue(QueryItemStatus.None);
 				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(true);
 			}			
 		}
 		for(Item item : modifiedItems) {
 			if(item.getItemProperty(PROPERTY_ID_ITEM_STATUS)!=null) {
 				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(false);
-				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setValue(ItemStatus.None);
+				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setValue(QueryItemStatus.None);
 				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(true);
 			}			
 		}
 		for(Item item : removedItems) {
 			if(item.getItemProperty(PROPERTY_ID_ITEM_STATUS)!=null) {
 				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(false);
-				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setValue(ItemStatus.None);
+				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setValue(QueryItemStatus.None);
 				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(true);
 			}			
 		}

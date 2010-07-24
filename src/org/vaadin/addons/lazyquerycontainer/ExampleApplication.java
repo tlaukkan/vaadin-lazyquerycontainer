@@ -41,8 +41,9 @@ public class ExampleApplication extends Application implements ClickListener {
 	private LazyQueryContainer container;
 	private MockQueryFactory mockQueryFactory;
 	private Button refreshButton;
-	private Button saveChangesButton;
-	private Button discardChangesButton;
+	private Button editButton;
+	private Button saveButton;
+	private Button cancelButton;
 	private Button addItemButton;
 	private Button removeItemButton;
 	private Button removeAllItemsButton;
@@ -78,22 +79,6 @@ public class ExampleApplication extends Application implements ClickListener {
 		refreshButton.addListener(this);
 		buttonPanel.addComponent(refreshButton);
 		
-		saveChangesButton=new Button("Save Changes");
-		saveChangesButton.addListener(this);
-		buttonPanel.addComponent(saveChangesButton);
-
-		discardChangesButton=new Button("Discard Changes");
-		discardChangesButton.addListener(this);
-		buttonPanel.addComponent(discardChangesButton);
-
-		addItemButton=new Button("Add Row");
-		addItemButton.addListener(this);
-		buttonPanel.addComponent(addItemButton);
-
-		removeItemButton=new Button("Remove Row");
-		removeItemButton.addListener(this);
-		buttonPanel.addComponent(removeItemButton);
-		
 		removeAllItemsButton=new Button("Remove All Rows");
 		removeAllItemsButton.addListener(this);
 		buttonPanel.addComponent(removeAllItemsButton);
@@ -101,14 +86,38 @@ public class ExampleApplication extends Application implements ClickListener {
 		addPropertyButton=new Button("Add Column");
 		addPropertyButton.addListener(this);
 		buttonPanel.addComponent(addPropertyButton);
+
+		editButton=new Button("Edit");
+		editButton.addListener(this);
+		buttonPanel.addComponent(editButton);
 		
+		saveButton=new Button("Save");
+		saveButton.addListener(this);
+		saveButton.setEnabled(false);
+		buttonPanel.addComponent(saveButton);
+
+		cancelButton=new Button("Cancel");
+		cancelButton.addListener(this);
+		cancelButton.setEnabled(false);
+		buttonPanel.addComponent(cancelButton);
+
+		addItemButton=new Button("Add Row");
+		addItemButton.addListener(this);
+		addItemButton.setEnabled(false);
+		buttonPanel.addComponent(addItemButton);
+
+		removeItemButton=new Button("Remove Row");
+		removeItemButton.addListener(this);
+		removeItemButton.setEnabled(false);
+		buttonPanel.addComponent(removeItemButton);
+				
 		table=new Table();
 				
 		mockQueryFactory=new MockQueryFactory(100,25,50);
 		LazyQueryView view=new LazyQueryView(mockQueryFactory,5);
 		container=new LazyQueryContainer(view);
 		
-		container.addContainerProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS, ItemStatus.class, ItemStatus.None, true, false);
+		container.addContainerProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS, QueryItemStatus.class, QueryItemStatus.None, true, false);
 		container.addContainerProperty("Index", Integer.class, 0, true, true);
 		container.addContainerProperty("ReverseIndex", Integer.class, 0, true, true);
 		container.addContainerProperty("Editable", String.class, "", false, false);
@@ -137,10 +146,8 @@ public class ExampleApplication extends Application implements ClickListener {
 		table.setVisibleColumns(visibleColumnIds.toArray());
 		table.setColumnHeaders(visibleColumnLabels.toArray(new String[0]));
 		
-		table.setEditable(true);
+		table.setEditable(false);
 		table.setSelectable(true);
-		//table.setImmediate(true);
-		//table.setReadThrough(true);
 		table.setWriteThrough(true);
 		
 		mainPanel.addComponent(table);
@@ -148,16 +155,46 @@ public class ExampleApplication extends Application implements ClickListener {
 		setMainWindow(mainWindow);
 	}
 
+	private void setEditMode(boolean editMode) {
+		if(editMode) {
+			table.setEditable(true);
+			refreshButton.setEnabled(false);
+			removeAllItemsButton.setEnabled(false);
+			addPropertyButton.setEnabled(false);
+			editButton.setEnabled(false);
+			saveButton.setEnabled(true);
+			cancelButton.setEnabled(true);
+			addItemButton.setEnabled(true);
+			removeItemButton.setEnabled(true);
+		} else {
+			table.setEditable(false);
+			refreshButton.setEnabled(true);
+			removeAllItemsButton.setEnabled(true);
+			addPropertyButton.setEnabled(true);
+			editButton.setEnabled(true);
+			saveButton.setEnabled(false);
+			cancelButton.setEnabled(false);
+			addItemButton.setEnabled(false);
+			removeItemButton.setEnabled(false);
+		}
+	}
+	
 	@Override
 	public void buttonClick(ClickEvent event) {
 		if(event.getButton()==refreshButton) {
 			container.refresh();
 		}
-		if(event.getButton()==saveChangesButton) {
+		if(event.getButton()==editButton) {
 			container.commit();
+			setEditMode(true);
 		}
-		if(event.getButton()==discardChangesButton) {
+		if(event.getButton()==saveButton) {
+			container.commit();
+			setEditMode(false);
+		}
+		if(event.getButton()==cancelButton) {
 			container.discard();
+			setEditMode(false);
 		}
 		if(event.getButton()==addItemButton) {
 			container.addItem();

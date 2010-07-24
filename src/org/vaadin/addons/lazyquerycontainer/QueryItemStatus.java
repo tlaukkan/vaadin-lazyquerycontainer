@@ -1,6 +1,6 @@
 package org.vaadin.addons.lazyquerycontainer;
 
-public enum ItemStatus {
+public enum QueryItemStatus {
 	None,
 	Added,
 	Modified,

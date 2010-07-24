@@ -69,11 +69,11 @@ public interface QueryView {
 	 */
 	public boolean isModified();
 	/**
-	 * Saves modifications.
+	 * Saves changes.
 	 */
 	public void commit();
 	/**
-	 * Cancels modifications.
+	 * Cancels changes.
 	 */
 	public void discard();
 }
