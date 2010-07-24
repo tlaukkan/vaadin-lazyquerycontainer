@@ -21,7 +21,6 @@ import java.util.List;
 import org.vaadin.addons.lazyquerycontainer.Query;
 
 import com.vaadin.data.Item;
-import com.vaadin.data.Property;
 
 /**
  * Mock implementation of Query interface for JUnit tests and example application.
@@ -30,18 +29,20 @@ import com.vaadin.data.Property;
 public class MockQuery implements Query {
 
 	//private QueryDefinition definition;
+	private MockQueryFactory queryFactory;
 	private List<Item> items;
 	private int batchQueryMinTime;
 	private int batchQueryMaxTime;
 	
-	public MockQuery(List<Item> items,int batchQueryMinTime, int batchQueryMaxTime) {
+	public MockQuery(MockQueryFactory queryFactory,List<Item> items,int batchQueryMinTime, int batchQueryMaxTime) {
+		this.queryFactory=queryFactory;
 		this.items=items;
 		this.batchQueryMinTime=batchQueryMinTime;
 		this.batchQueryMaxTime=batchQueryMaxTime;
 	}
 	
 	@Override
-	public List<Item> getItems(int startIndex, int count) {
+	public List<Item> loadItems(int startIndex, int count) {
 		List<Item> resultItems=new ArrayList<Item>();
 		
 		for(int i=0;i<count;i++) {
@@ -62,8 +63,21 @@ public class MockQuery implements Query {
 	}
 
 	@Override
-	public void itemValueChange(Item item, Object propertyId, Property property) {
-		System.out.println("Mock query - item change: "+propertyId+"="+property.getValue()+" to item: "+item.toString());
+	public Item constructItem() {
+		return queryFactory.constructNewItem();
+	}
+
+	@Override
+	public boolean deleteAllItems() {
+		items.clear();
+		return true;
+	}
+
+	@Override
+	public void saveItems(List<Item> addedItems, List<Item> modifiedItems,
+			List<Item> removedItems) {
+		items.addAll(addedItems);
+		items.removeAll(removedItems);
 	}
 
 }

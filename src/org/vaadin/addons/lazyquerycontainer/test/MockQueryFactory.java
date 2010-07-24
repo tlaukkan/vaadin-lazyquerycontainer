@@ -60,29 +60,8 @@ public class MockQueryFactory implements QueryFactory {
 			items=new ArrayList<Item>();
 			
 			for(int i=0;i<resultSize;i++) {
-				PropertysetItem item=new PropertysetItem();
 				
-				for(Object propertyId : this.definition.getPropertyIds()) {
-					
-					Object value=null;
-					
-					if("Index".equals(propertyId)) {
-						value=i;
-					} else if("ReverseIndex".equals(propertyId)) {
-						value=resultSize-i;
-					} else {
-						value=this.definition.getPropertyDefaultValue(propertyId);
-					}
-					
-					item.addItemProperty(propertyId, new ObjectProperty(
-							value,
-							this.definition.getPropertyType(propertyId),
-							this.definition.isPropertyReadOnly(propertyId)
-							));
-					
-				}
-				
-				this.items.add(item);
+				this.items.add(constructNewItem());
 			}
 		}
 		
@@ -91,7 +70,36 @@ public class MockQueryFactory implements QueryFactory {
 			Collections.sort(this.items,comparator);
 		}
 		
-		return new MockQuery(this.items,batchQueryMinTime,batchQueryMaxTime);
+		return new MockQuery(this,this.items,batchQueryMinTime,batchQueryMaxTime);
+	}
+	
+	public Item constructNewItem() {
+		
+		int i=items.size();
+		
+		PropertysetItem item=new PropertysetItem();
+		
+		for(Object propertyId : this.definition.getPropertyIds()) {
+			
+			Object value=null;
+			
+			if("Index".equals(propertyId)) {
+				value=i;
+			} else if("ReverseIndex".equals(propertyId)) {
+				value=resultSize-i;
+			} else {
+				value=this.definition.getPropertyDefaultValue(propertyId);
+			}
+			
+			item.addItemProperty(propertyId, new ObjectProperty(
+					value,
+					this.definition.getPropertyType(propertyId),
+					this.definition.isPropertyReadOnly(propertyId)
+					));
+			
+		}
+		
+		return item;
 	}
 	
 	public void addProperty(Object propertyId, Class<?> type,

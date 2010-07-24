@@ -49,4 +49,31 @@ public interface QueryView {
 	 * @return The item identified by the index.
 	 */
 	public Item getItem(int index);
+	/**
+	 * Adds a new item to the end of the query result set.
+	 * @return The index of the new item.
+	 */
+	public int addItem();
+	/**
+	 * Removes item at given index.
+	 * @param index Index of the Item to be removed.
+	 */
+	public void removeItem(int index);
+	/**
+	 * Removes all items.
+	 */
+	public void removeAllItems();
+	/**
+	 * Check if query view contains modifications.
+	 * @return
+	 */
+	public boolean isModified();
+	/**
+	 * Saves modifications.
+	 */
+	public void commit();
+	/**
+	 * Cancels modifications.
+	 */
+	public void discard();
 }

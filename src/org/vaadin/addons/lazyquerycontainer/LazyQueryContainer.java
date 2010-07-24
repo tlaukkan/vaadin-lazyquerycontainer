@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.vaadin.data.Buffered;
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
@@ -26,6 +27,7 @@ import com.vaadin.data.Container.Indexed;
 import com.vaadin.data.Container.ItemSetChangeNotifier;
 import com.vaadin.data.Container.PropertySetChangeNotifier;
 import com.vaadin.data.Container.Sortable;
+import com.vaadin.data.Validator.InvalidValueException;
 
 /**
  * LazyQueryContainer provides lazy loading of items from business services. See package
@@ -33,7 +35,7 @@ import com.vaadin.data.Container.Sortable;
  * and delegates other methods to QueryView aggregate.
  * @author Tommi S.E. Laukkanen
  */
-public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotifier, PropertySetChangeNotifier {
+public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotifier, PropertySetChangeNotifier, Buffered {
 	private static final long serialVersionUID = 1L;
 
 	private QueryView view;
@@ -181,13 +183,14 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
 		throw new UnsupportedOperationException();
 	}
 
+
 	@Override
-	public Item addItemAt(int index, Object newItemId) {
+	public Object addItemAfter(Object previousItemId) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Object addItemAfter(Object previousItemId) {
+	public Item addItemAt(int index, Object newItemId) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -197,23 +200,28 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
 	}
 
 	@Override
-	public Object addItem() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
 	public Item addItem(Object itemId) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public boolean removeAllItems() {
-		throw new UnsupportedOperationException();
+	public Object addItem() {
+		Object itemId=view.addItem();
+		notifyItemSetChanged();
+		return itemId;
 	}
 
 	@Override
 	public boolean removeItem(Object itemId) {
-		throw new UnsupportedOperationException();
+		view.removeItem((Integer)itemId);		
+		return true;
+	}
+
+	@Override
+	public boolean removeAllItems() {
+		view.removeAllItems();
+		refresh();
+		return true;
 	}
 
 	@Override
@@ -288,5 +296,43 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
 			return container;
 		}
 		
+	}
+
+	@Override
+	public void commit() throws SourceException, InvalidValueException {
+		view.commit();
+		refresh();
+	}
+
+	@Override
+	public void discard() throws SourceException {
+		view.discard();
+		refresh();
+	}
+
+	@Override
+	public boolean isModified() {
+		return view.isModified();
+	}
+
+	@Override
+	public boolean isReadThrough() {
+		return false;
+	}
+
+	@Override
+	public boolean isWriteThrough() {
+		return false;
+	}
+
+	@Override
+	public void setReadThrough(boolean readThrough) throws SourceException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void setWriteThrough(boolean writeThrough) throws SourceException,
+			InvalidValueException {
+		throw new UnsupportedOperationException();
 	}
 }
