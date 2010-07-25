@@ -16,7 +16,9 @@
 package org.vaadin.addons.lazyquerycontainer.test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.vaadin.addons.lazyquerycontainer.Query;
 
@@ -33,6 +35,7 @@ public class MockQuery implements Query {
 	private List<Item> items;
 	private int batchQueryMinTime;
 	private int batchQueryMaxTime;
+	private Map<Item,Item> cloneMap=new HashMap<Item,Item>();
 	
 	public MockQuery(MockQueryFactory queryFactory,List<Item> items,int batchQueryMinTime, int batchQueryMaxTime) {
 		this.queryFactory=queryFactory;
@@ -46,7 +49,11 @@ public class MockQuery implements Query {
 		List<Item> resultItems=new ArrayList<Item>();
 		
 		for(int i=0;i<count;i++) {
-			resultItems.add(items.get(startIndex+i));
+			// Returning clones to be able to control commit/discard of modifications.
+			Item original=items.get(startIndex+i);
+			Item clone=queryFactory.cloneItem(original);
+			resultItems.add(clone);
+			cloneMap.put(clone, original);
 		}
 		
 		try {
@@ -77,7 +84,14 @@ public class MockQuery implements Query {
 	public void saveItems(List<Item> addedItems, List<Item> modifiedItems,
 			List<Item> removedItems) {
 		items.addAll(addedItems);
-		items.removeAll(removedItems);
+		for(Item clone : removedItems) {
+			Item original=cloneMap.get(clone);
+			items.remove(original);
+		}
+		for(Item clone : modifiedItems) {
+			Item original=cloneMap.get(clone);
+			queryFactory.setItemValues(original, clone);
+		}
 	}
 
 }

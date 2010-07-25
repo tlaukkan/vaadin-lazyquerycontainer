@@ -69,11 +69,11 @@ public interface QueryView {
 	 */
 	public boolean isModified();
 	/**
-	 * Saves changes.
+	 * Saves changes. Refresh has to be invoked after this method to clear the cache.
 	 */
 	public void commit();
 	/**
-	 * Cancels changes.
+	 * Cancels changes. Refresh has to be invoked after this method to clear the cache.
 	 */
 	public void discard();
 }

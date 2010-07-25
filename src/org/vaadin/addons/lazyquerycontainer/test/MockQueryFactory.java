@@ -102,6 +102,31 @@ public class MockQueryFactory implements QueryFactory {
 		return item;
 	}
 	
+	public Item cloneItem(Item originalItem) {
+		PropertysetItem newItem=new PropertysetItem();
+		for(Object propertyId : originalItem.getItemPropertyIds()) {
+			Property originalProperty=originalItem.getItemProperty(propertyId);
+			newItem.addItemProperty(propertyId, 
+					new ObjectProperty(
+					originalProperty.getValue(),
+					originalProperty.getType(),
+					originalProperty.isReadOnly()
+					));			
+		}
+		return newItem;
+	}
+	
+	public void setItemValues(Item target, Item source) {
+		for(Object propertyId : source.getItemPropertyIds()) {
+			Property sourceProperty=source.getItemProperty(propertyId);
+			Property targetProperty=target.getItemProperty(propertyId);
+			boolean readonlyState=targetProperty.isReadOnly();
+			targetProperty.setReadOnly(false);
+			target.getItemProperty(propertyId).setValue(sourceProperty.getValue());			
+			targetProperty.setReadOnly(readonlyState);
+		}		
+	}
+	
 	public void addProperty(Object propertyId, Class<?> type,
 			Object defaultValue, boolean readOnly, boolean sortable) {
 		for(Item item : this.items) {
@@ -110,7 +135,6 @@ public class MockQueryFactory implements QueryFactory {
 							
 		}
 	}
-
 	
 	public class ItemComparator implements Comparator<Item> {
 
