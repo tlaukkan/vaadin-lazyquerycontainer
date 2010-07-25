@@ -214,6 +214,7 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
 	@Override
 	public boolean removeItem(Object itemId) {
 		view.removeItem((Integer)itemId);		
+		notifyItemSetChanged();
 		return true;
 	}
 

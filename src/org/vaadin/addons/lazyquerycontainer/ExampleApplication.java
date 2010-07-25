@@ -19,10 +19,13 @@ import java.util.ArrayList;
 
 import org.vaadin.addons.lazyquerycontainer.test.MockQueryFactory;
 
-
 import com.vaadin.Application;
+import com.vaadin.terminal.ClassResource;
+import com.vaadin.terminal.Resource;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Embedded;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
@@ -65,7 +68,20 @@ public class ExampleApplication extends Application implements ClickListener {
 		mainLayout.setSpacing(true);
 		mainPanel.setContent(mainLayout);
 		mainWindow.addComponent(mainPanel);
-		
+
+		Panel titlePanel=new Panel();
+		titlePanel.addStyleName(Runo.PANEL_LIGHT);
+		HorizontalLayout titleLayout=new HorizontalLayout();
+		titleLayout.setMargin(false);
+		titleLayout.setSpacing(true);
+		titlePanel.setContent(titleLayout);		
+		Resource titleIconResource = new ClassResource("images/table.png", this);		
+		Embedded titleIcon=new Embedded(null,titleIconResource);
+		titlePanel.addComponent(titleIcon);
+		Label titleLabel=new Label("LazyQueryContainer Table Example");
+		titlePanel.addComponent(titleLabel);
+		mainPanel.addComponent(titlePanel);
+				
 		Panel buttonPanel=new Panel();
 		buttonPanel.addStyleName(Runo.PANEL_LIGHT);
 		HorizontalLayout buttonLayout=new HorizontalLayout();
@@ -74,46 +90,62 @@ public class ExampleApplication extends Application implements ClickListener {
 		buttonPanel.setContent(buttonLayout);		
 		mainPanel.addComponent(buttonPanel);
 
+		Panel buttonPanel2=new Panel();
+		buttonPanel2.addStyleName(Runo.PANEL_LIGHT);
+		HorizontalLayout buttonLayout2=new HorizontalLayout();
+		buttonLayout2.setMargin(false);
+		buttonLayout2.setSpacing(true);
+		buttonPanel2.setContent(buttonLayout2);		
+		mainPanel.addComponent(buttonPanel2);
+
 		
 		refreshButton=new Button("Refresh");
+		refreshButton.setIcon(new ClassResource("images/table_refresh.png", this));
 		refreshButton.addListener(this);
 		buttonPanel.addComponent(refreshButton);
 		
 		removeAllItemsButton=new Button("Remove All Rows");
+		removeAllItemsButton.setIcon(new ClassResource("images/delete.png", this));
 		removeAllItemsButton.addListener(this);
 		buttonPanel.addComponent(removeAllItemsButton);
 		
 		addPropertyButton=new Button("Add Column");
+		addPropertyButton.setIcon(new ClassResource("images/tab_add.png", this));
 		addPropertyButton.addListener(this);
 		buttonPanel.addComponent(addPropertyButton);
 
 		editButton=new Button("Edit");
+		editButton.setIcon(new ClassResource("images/table_edit.png", this));
 		editButton.addListener(this);
 		buttonPanel.addComponent(editButton);
 		
 		saveButton=new Button("Save");
+		saveButton.setIcon(new ClassResource("images/table_save.png", this));
 		saveButton.addListener(this);
 		saveButton.setEnabled(false);
-		buttonPanel.addComponent(saveButton);
+		buttonPanel2.addComponent(saveButton);
 
 		cancelButton=new Button("Cancel");
+		cancelButton.setIcon(new ClassResource("images/cancel.png", this));
 		cancelButton.addListener(this);
 		cancelButton.setEnabled(false);
-		buttonPanel.addComponent(cancelButton);
+		buttonPanel2.addComponent(cancelButton);
 
 		addItemButton=new Button("Add Row");
+		addItemButton.setIcon(new ClassResource("images/table_row_insert.png", this));
 		addItemButton.addListener(this);
 		addItemButton.setEnabled(false);
-		buttonPanel.addComponent(addItemButton);
+		buttonPanel2.addComponent(addItemButton);
 
 		removeItemButton=new Button("Remove Row");
+		removeItemButton.setIcon(new ClassResource("images/table_row_delete.png", this));
 		removeItemButton.addListener(this);
 		removeItemButton.setEnabled(false);
-		buttonPanel.addComponent(removeItemButton);
+		buttonPanel2.addComponent(removeItemButton);
 				
 		table=new Table();
 				
-		mockQueryFactory=new MockQueryFactory(100,25,50);
+		mockQueryFactory=new MockQueryFactory(100,10,20);
 		LazyQueryView view=new LazyQueryView(mockQueryFactory,5);
 		container=new LazyQueryContainer(view);
 		
@@ -135,7 +167,7 @@ public class ExampleApplication extends Application implements ClickListener {
 		visibleColumnIds.add(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_INDEX);
 		visibleColumnIds.add(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_QUERY_TIME);
 
-		visibleColumnLabels.add("Status");
+		visibleColumnLabels.add("");
 		visibleColumnLabels.add("Index");
 		visibleColumnLabels.add("Reverse Index");
 		visibleColumnLabels.add("Editable");
@@ -146,10 +178,13 @@ public class ExampleApplication extends Application implements ClickListener {
 		table.setVisibleColumns(visibleColumnIds.toArray());
 		table.setColumnHeaders(visibleColumnLabels.toArray(new String[0]));
 		
+		table.setColumnWidth(LazyQueryView.PROPERTY_ID_ITEM_STATUS, 16);
+		table.addGeneratedColumn(LazyQueryView.PROPERTY_ID_ITEM_STATUS, new QueryItemStatusColumnGenerator(this));
+
 		table.setEditable(false);
 		table.setSelectable(true);
 		table.setWriteThrough(true);
-		
+				
 		mainPanel.addComponent(table);
 
 		setMainWindow(mainWindow);
