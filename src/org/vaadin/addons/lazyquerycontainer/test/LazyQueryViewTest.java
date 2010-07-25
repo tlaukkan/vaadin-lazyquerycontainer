@@ -43,6 +43,7 @@ public class LazyQueryViewTest extends TestCase {
 		definition.addProperty("Reverse Index", Integer.class, 0, true, false);
 		definition.addProperty("Editable", String.class, "", false, false);
 		definition.addProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS, QueryItemStatus.class, QueryItemStatus.None, true, false);
+		
 		MockQueryFactory factory=new MockQueryFactory(viewSize,0,0);
 		factory.setQueryDefinition(definition);
 		view=new LazyQueryView(definition,factory);
@@ -149,10 +150,12 @@ public class LazyQueryViewTest extends TestCase {
 		int removeIndex=0;
 		int originalViewSize=view.size();
 		assertFalse(view.isModified());
+		assertFalse(view.getItem(removeIndex).getItemProperty("Editable").isReadOnly());
 		view.removeItem(removeIndex);	
 		assertEquals(originalViewSize,view.size());
 		assertEquals(QueryItemStatus.Removed,
 				view.getItem(removeIndex).getItemProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());
+		assertTrue(view.getItem(removeIndex).getItemProperty("Editable").isReadOnly());
 		assertTrue(view.isModified());
 		view.commit();
 		view.refresh();
@@ -166,10 +169,12 @@ public class LazyQueryViewTest extends TestCase {
 		int removeIndex=0;
 		int originalViewSize=view.size();
 		assertFalse(view.isModified());
+		assertFalse(view.getItem(removeIndex).getItemProperty("Editable").isReadOnly());
 		view.removeItem(removeIndex);	
 		assertEquals(originalViewSize,view.size());
 		assertEquals(QueryItemStatus.Removed,
 				view.getItem(removeIndex).getItemProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());
+		assertTrue(view.getItem(removeIndex).getItemProperty("Editable").isReadOnly());
 		assertTrue(view.isModified());
 		view.discard();
 		view.refresh();
@@ -177,6 +182,7 @@ public class LazyQueryViewTest extends TestCase {
 		assertEquals(originalViewSize,view.size());
 		assertEquals(removeIndex,
 				view.getItem(removeIndex).getItemProperty("Index").getValue());
+		assertFalse(view.getItem(removeIndex).getItemProperty("Editable").isReadOnly());
 	}	
 	
 }
