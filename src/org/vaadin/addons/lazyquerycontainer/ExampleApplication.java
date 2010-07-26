@@ -62,12 +62,17 @@ public class ExampleApplication extends Application implements ClickListener {
 	
 	@Override
 	public void init() {
+		
+		//this.setTheme("runo");
+		
 		Window mainWindow = new Window("Lazycontainer Application");
 		
 		VerticalLayout mainLayout=new VerticalLayout();
 		mainLayout.setMargin(true);
 		mainLayout.setSpacing(true);
 		mainWindow.setContent(mainLayout);
+		
+		//mainLayout.addStyleName(Reindeer.LAYOUT_WHITE);
 		
 		Panel titlePanel=new Panel();
 		titlePanel.addStyleName(Runo.PANEL_LIGHT);
@@ -81,7 +86,7 @@ public class ExampleApplication extends Application implements ClickListener {
 		Label titleLabel=new Label("LazyQueryContainer Table Example");
 		titlePanel.addComponent(titleLabel);
 		mainWindow.addComponent(titlePanel);
-				
+						
 		Panel buttonPanel=new Panel();
 		buttonPanel.addStyleName(Runo.PANEL_LIGHT);
 		HorizontalLayout buttonLayout=new HorizontalLayout();
@@ -195,6 +200,7 @@ public class ExampleApplication extends Application implements ClickListener {
 	private void setEditMode(boolean editMode) {
 		if(editMode) {
 			table.setEditable(true);
+			table.setSortDisabled(true);
 			refreshButton.setEnabled(false);
 			removeAllItemsButton.setEnabled(false);
 			addPropertyButton.setEnabled(false);
@@ -205,6 +211,7 @@ public class ExampleApplication extends Application implements ClickListener {
 			removeItemButton.setEnabled(true);
 		} else {
 			table.setEditable(false);
+			table.setSortDisabled(false);
 			refreshButton.setEnabled(true);
 			removeAllItemsButton.setEnabled(true);
 			addPropertyButton.setEnabled(true);
