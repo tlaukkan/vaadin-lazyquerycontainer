@@ -16,6 +16,7 @@
 package org.vaadin.addons.lazyquerycontainer;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.vaadin.addons.lazyquerycontainer.test.MockQueryFactory;
 
@@ -30,6 +31,7 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.AbstractSelect.MultiSelectMode;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.themes.Runo;
@@ -62,13 +64,11 @@ public class ExampleApplication extends Application implements ClickListener {
 	public void init() {
 		Window mainWindow = new Window("Lazycontainer Application");
 		
-		Panel mainPanel=new Panel();
 		VerticalLayout mainLayout=new VerticalLayout();
 		mainLayout.setMargin(true);
 		mainLayout.setSpacing(true);
-		mainPanel.setContent(mainLayout);
-		mainWindow.addComponent(mainPanel);
-
+		mainWindow.setContent(mainLayout);
+		
 		Panel titlePanel=new Panel();
 		titlePanel.addStyleName(Runo.PANEL_LIGHT);
 		HorizontalLayout titleLayout=new HorizontalLayout();
@@ -80,7 +80,7 @@ public class ExampleApplication extends Application implements ClickListener {
 		titlePanel.addComponent(titleIcon);
 		Label titleLabel=new Label("LazyQueryContainer Table Example");
 		titlePanel.addComponent(titleLabel);
-		mainPanel.addComponent(titlePanel);
+		mainWindow.addComponent(titlePanel);
 				
 		Panel buttonPanel=new Panel();
 		buttonPanel.addStyleName(Runo.PANEL_LIGHT);
@@ -88,7 +88,7 @@ public class ExampleApplication extends Application implements ClickListener {
 		buttonLayout.setMargin(false);
 		buttonLayout.setSpacing(true);
 		buttonPanel.setContent(buttonLayout);		
-		mainPanel.addComponent(buttonPanel);
+		mainWindow.addComponent(buttonPanel);
 
 		Panel buttonPanel2=new Panel();
 		buttonPanel2.addStyleName(Runo.PANEL_LIGHT);
@@ -96,7 +96,7 @@ public class ExampleApplication extends Application implements ClickListener {
 		buttonLayout2.setMargin(false);
 		buttonLayout2.setSpacing(true);
 		buttonPanel2.setContent(buttonLayout2);		
-		mainPanel.addComponent(buttonPanel2);
+		mainWindow.addComponent(buttonPanel2);
 
 		
 		refreshButton=new Button("Refresh");
@@ -104,20 +104,20 @@ public class ExampleApplication extends Application implements ClickListener {
 		refreshButton.addListener(this);
 		buttonPanel.addComponent(refreshButton);
 		
-		removeAllItemsButton=new Button("Remove All Rows");
-		removeAllItemsButton.setIcon(new ClassResource("images/delete.png", this));
-		removeAllItemsButton.addListener(this);
-		buttonPanel.addComponent(removeAllItemsButton);
-		
-		addPropertyButton=new Button("Add Column");
-		addPropertyButton.setIcon(new ClassResource("images/tab_add.png", this));
-		addPropertyButton.addListener(this);
-		buttonPanel.addComponent(addPropertyButton);
-
 		editButton=new Button("Edit");
 		editButton.setIcon(new ClassResource("images/table_edit.png", this));
 		editButton.addListener(this);
 		buttonPanel.addComponent(editButton);
+
+		addPropertyButton=new Button("Add Column");
+		addPropertyButton.setIcon(new ClassResource("images/tab_add.png", this));
+		addPropertyButton.addListener(this);
+		buttonPanel.addComponent(addPropertyButton);
+		
+		removeAllItemsButton=new Button("Remove All Rows");
+		removeAllItemsButton.setIcon(new ClassResource("images/delete.png", this));
+		removeAllItemsButton.addListener(this);
+		buttonPanel.addComponent(removeAllItemsButton);
 		
 		saveButton=new Button("Save");
 		saveButton.setIcon(new ClassResource("images/table_save.png", this));
@@ -182,10 +182,12 @@ public class ExampleApplication extends Application implements ClickListener {
 		table.addGeneratedColumn(LazyQueryView.PROPERTY_ID_ITEM_STATUS, new QueryItemStatusColumnGenerator(this));
 
 		table.setEditable(false);
+		table.setMultiSelect(true);
+		table.setMultiSelectMode(MultiSelectMode.DEFAULT);
 		table.setSelectable(true);
 		table.setWriteThrough(true);
 				
-		mainPanel.addComponent(table);
+		mainWindow.addComponent(table);
 
 		setMainWindow(mainWindow);
 	}
@@ -214,6 +216,7 @@ public class ExampleApplication extends Application implements ClickListener {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void buttonClick(ClickEvent event) {
 		if(event.getButton()==refreshButton) {
@@ -235,10 +238,22 @@ public class ExampleApplication extends Application implements ClickListener {
 			container.addItem();
 		}
 		if(event.getButton()==removeItemButton) {
-			Integer selectedIndex=(Integer)table.getValue();
-			if(selectedIndex!=null) {
-				container.removeItem(selectedIndex);
+			Object selection=table.getValue();
+			if(selection==null) {
+				return;
 			}
+			if(selection instanceof Integer) {
+				Integer selectedIndex=(Integer)selection;
+				if(selectedIndex!=null) {
+					container.removeItem(selectedIndex);
+				}
+			}
+			if(selection instanceof Collection) {
+				Collection selectionIndexes=(Collection)selection;
+				for(Object selectedIndex : selectionIndexes) {
+					container.removeItem((Integer)selectedIndex);
+				}
+			}			
 		}
 		if(event.getButton()==removeAllItemsButton) {
 			container.removeAllItems();

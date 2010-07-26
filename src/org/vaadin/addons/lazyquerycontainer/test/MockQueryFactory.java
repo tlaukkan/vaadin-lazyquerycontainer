@@ -54,14 +54,13 @@ public class MockQueryFactory implements QueryFactory {
 	
 	@Override
 	public Query constructQuery(Object[] sortPropertyIds, boolean[] ascendingStates) {
-
 		// Creating items on demand when constructQuery is first time called.
 		if(items==null) {
 			items=new ArrayList<Item>();
 			
 			for(int i=0;i<resultSize;i++) {
 				
-				this.items.add(constructNewItem());
+				this.items.add(constructItem());
 			}
 		}
 		
@@ -73,20 +72,16 @@ public class MockQueryFactory implements QueryFactory {
 		return new MockQuery(this,this.items,batchQueryMinTime,batchQueryMaxTime);
 	}
 	
-	public Item constructNewItem() {
-		
-		int i=items.size();
-		
-		PropertysetItem item=new PropertysetItem();
-		
+	public Item constructItem() {
+		PropertysetItem item=new PropertysetItem();	
 		for(Object propertyId : this.definition.getPropertyIds()) {
 			
 			Object value=null;
 			
 			if("Index".equals(propertyId)) {
-				value=i;
+				value=items.size();
 			} else if("ReverseIndex".equals(propertyId)) {
-				value=resultSize-i;
+				value=resultSize-items.size();
 			} else {
 				value=this.definition.getPropertyDefaultValue(propertyId);
 			}
@@ -97,34 +92,8 @@ public class MockQueryFactory implements QueryFactory {
 					this.definition.isPropertyReadOnly(propertyId)
 					));
 			
-		}
-		
-		return item;
-	}
-	
-	public Item cloneItem(Item originalItem) {
-		PropertysetItem newItem=new PropertysetItem();
-		for(Object propertyId : originalItem.getItemPropertyIds()) {
-			Property originalProperty=originalItem.getItemProperty(propertyId);
-			newItem.addItemProperty(propertyId, 
-					new ObjectProperty(
-					originalProperty.getValue(),
-					originalProperty.getType(),
-					originalProperty.isReadOnly()
-					));			
-		}
-		return newItem;
-	}
-	
-	public void setItemValues(Item target, Item source) {
-		for(Object propertyId : source.getItemPropertyIds()) {
-			Property sourceProperty=source.getItemProperty(propertyId);
-			Property targetProperty=target.getItemProperty(propertyId);
-			boolean readonlyState=targetProperty.isReadOnly();
-			targetProperty.setReadOnly(false);
-			target.getItemProperty(propertyId).setValue(sourceProperty.getValue());			
-			targetProperty.setReadOnly(readonlyState);
 		}		
+		return item;
 	}
 	
 	public void addProperty(Object propertyId, Class<?> type,
@@ -137,7 +106,6 @@ public class MockQueryFactory implements QueryFactory {
 	}
 	
 	public class ItemComparator implements Comparator<Item> {
-
 		private Object[] sortPropertyIds;
 		private boolean[] ascendingStates;
 		

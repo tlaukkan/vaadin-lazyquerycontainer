@@ -23,14 +23,16 @@ import java.util.Map;
 import org.vaadin.addons.lazyquerycontainer.Query;
 
 import com.vaadin.data.Item;
+import com.vaadin.data.Property;
+import com.vaadin.data.util.ObjectProperty;
+import com.vaadin.data.util.PropertysetItem;
 
 /**
  * Mock implementation of Query interface for JUnit tests and example application.
  * @author tommilaukkanen
  */
 public class MockQuery implements Query {
-
-	//private QueryDefinition definition;
+	
 	private MockQueryFactory queryFactory;
 	private List<Item> items;
 	private int batchQueryMinTime;
@@ -46,12 +48,11 @@ public class MockQuery implements Query {
 	
 	@Override
 	public List<Item> loadItems(int startIndex, int count) {
-		List<Item> resultItems=new ArrayList<Item>();
-		
+		List<Item> resultItems=new ArrayList<Item>();		
 		for(int i=0;i<count;i++) {
 			// Returning clones to be able to control commit/discard of modifications.
 			Item original=items.get(startIndex+i);
-			Item clone=queryFactory.cloneItem(original);
+			Item clone=cloneItem(original);
 			resultItems.add(clone);
 			cloneMap.put(clone, original);
 		}
@@ -63,6 +64,7 @@ public class MockQuery implements Query {
 		
 		return resultItems;
 	}
+	
 
 	@Override
 	public int size() {
@@ -71,7 +73,7 @@ public class MockQuery implements Query {
 
 	@Override
 	public Item constructItem() {
-		return queryFactory.constructNewItem();
+		return queryFactory.constructItem();
 	}
 
 	@Override
@@ -90,8 +92,33 @@ public class MockQuery implements Query {
 		}
 		for(Item clone : modifiedItems) {
 			Item original=cloneMap.get(clone);
-			queryFactory.setItemValues(original, clone);
+			copyItemValues(original, clone);
 		}
 	}
-
+	
+	private Item cloneItem(Item originalItem) {
+		PropertysetItem newItem=new PropertysetItem();
+		for(Object propertyId : originalItem.getItemPropertyIds()) {
+			Property originalProperty=originalItem.getItemProperty(propertyId);
+			newItem.addItemProperty(propertyId, 
+					new ObjectProperty(
+					originalProperty.getValue(),
+					originalProperty.getType(),
+					originalProperty.isReadOnly()
+					));			
+		}
+		return newItem;
+	}
+	
+	private void copyItemValues(Item target, Item source) {
+		for(Object propertyId : source.getItemPropertyIds()) {
+			Property sourceProperty=source.getItemProperty(propertyId);
+			Property targetProperty=target.getItemProperty(propertyId);
+			boolean readonlyState=targetProperty.isReadOnly();
+			targetProperty.setReadOnly(false);
+			target.getItemProperty(propertyId).setValue(sourceProperty.getValue());			
+			targetProperty.setReadOnly(readonlyState);
+		}		
+	}
+	
 }

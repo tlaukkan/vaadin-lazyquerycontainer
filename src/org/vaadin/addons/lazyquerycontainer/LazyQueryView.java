@@ -144,7 +144,7 @@ public class LazyQueryView implements QueryView, ValueChangeListener {
 		return itemCache.get(index);
 	}
 	
-	private void queryItem(int index) {		
+	private void queryItem(int index) {				
 		int batchSize=getBatchSize();
 		int startIndex=index-index%batchSize;
 		int count=Math.min(batchSize, getQuery().size()-startIndex);
