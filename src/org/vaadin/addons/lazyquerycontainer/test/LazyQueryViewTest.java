@@ -98,7 +98,8 @@ public class LazyQueryViewTest extends TestCase {
 	public void testAddCommitItem() {
 		int originalViewSize=view.size();
 		assertFalse(view.isModified());
-		int addIndex=view.addItem();	
+		int addIndex=view.addItem();
+		assertEquals("Item must be added at the beginning", addIndex,0);
 		assertEquals(originalViewSize+1,view.size());
 		assertEquals(QueryItemStatus.Added,
 				view.getItem(addIndex).getItemProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());
@@ -113,7 +114,8 @@ public class LazyQueryViewTest extends TestCase {
 	public void testAddDiscardItem() {
 		int originalViewSize=view.size();
 		assertFalse(view.isModified());
-		int addIndex=view.addItem();	
+		int addIndex=view.addItem();
+		assertEquals("Item must be added at the beginning", addIndex,0);
 		assertEquals(originalViewSize+1,view.size());
 		assertEquals(QueryItemStatus.Added,
 				view.getItem(addIndex).getItemProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());

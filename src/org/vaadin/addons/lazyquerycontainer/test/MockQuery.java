@@ -48,7 +48,7 @@ public class MockQuery implements Query {
 	
 	@Override
 	public List<Item> loadItems(int startIndex, int count) {
-		List<Item> resultItems=new ArrayList<Item>();		
+		List<Item> resultItems=new ArrayList<Item>();
 		for(int i=0;i<count;i++) {
 			// Returning clones to be able to control commit/discard of modifications.
 			Item original=items.get(startIndex+i);
@@ -85,7 +85,7 @@ public class MockQuery implements Query {
 	@Override
 	public void saveItems(List<Item> addedItems, List<Item> modifiedItems,
 			List<Item> removedItems) {
-		items.addAll(addedItems);
+		items.addAll(0,addedItems);
 		for(Item clone : removedItems) {
 			Item original=cloneMap.get(clone);
 			items.remove(original);
@@ -105,7 +105,7 @@ public class MockQuery implements Query {
 					originalProperty.getValue(),
 					originalProperty.getType(),
 					originalProperty.isReadOnly()
-					));			
+					));
 		}
 		return newItem;
 	}
@@ -118,7 +118,7 @@ public class MockQuery implements Query {
 			targetProperty.setReadOnly(false);
 			target.getItemProperty(propertyId).setValue(sourceProperty.getValue());			
 			targetProperty.setReadOnly(readonlyState);
-		}		
+		}
 	}
 	
 }

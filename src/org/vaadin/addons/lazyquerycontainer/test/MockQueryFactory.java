@@ -73,6 +73,9 @@ public class MockQueryFactory implements QueryFactory {
 	}
 	
 	public Item constructItem() {
+		// since construct item needs to know what the current size is (including added items)
+		// to populate Index and ReverseIndex we should provide it somehow here!
+		// At the moment adding multiple items leads to strange behaviour.
 		PropertysetItem item=new PropertysetItem();	
 		for(Object propertyId : this.definition.getPropertyIds()) {
 			

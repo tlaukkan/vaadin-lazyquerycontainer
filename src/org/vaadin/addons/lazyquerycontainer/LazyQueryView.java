@@ -135,21 +135,26 @@ public class LazyQueryView implements QueryView, ValueChangeListener {
 
 	@Override
 	public Item getItem(int index) {
-		if(index>getQuery().size()-1) {
-			return addedItems.get(index-getQuery().size());
+		int addedItemCount = addedItems.size();
+		if (index < addedItemCount) {
+			//an item from the addedItems was requested
+			return addedItems.get(index);
 		}
-		if(!itemCache.containsKey(index)) {
-			queryItem(index);
+		if(!itemCache.containsKey(index - addedItemCount)) {
+			//item is not in our cache, ask the query for more items
+			queryItem(index - addedItemCount);
 		}
-		return itemCache.get(index);
+		//item is already in our cache
+		return itemCache.get(index - addedItemCount);
 	}
 	
-	private void queryItem(int index) {				
+	private void queryItem(int index) {
 		int batchSize=getBatchSize();
 		int startIndex=index-index%batchSize;
 		int count=Math.min(batchSize, getQuery().size()-startIndex);
 		
 		long queryStartTime=System.currentTimeMillis();
+		//load more items
 		List<Item> items=getQuery().loadItems(startIndex, count);
 		long queryEndTime=System.currentTimeMillis();
 		
@@ -158,7 +163,7 @@ public class LazyQueryView implements QueryView, ValueChangeListener {
 			Item item=items.get(i);
 			
 			itemCache.put(itemIndex,item);
-			itemCacheOrder.addLast(itemIndex);			
+			itemCacheOrder.addLast(itemIndex);
 		}
 		
 		for(int i=0;i<count;i++) {
@@ -194,17 +199,17 @@ public class LazyQueryView implements QueryView, ValueChangeListener {
 		while(itemCache.size()>maxCacheSize) {
 			int removedIndex=itemCacheOrder.removeFirst();
 			Item removedItem=itemCache.remove(removedIndex);
-						
+
 			for(Object propertyId : removedItem.getItemPropertyIds()) {
 				Property property=removedItem.getItemProperty(propertyId);
 				if(property instanceof ValueChangeNotifier) {
 					ValueChangeNotifier notifier=(ValueChangeNotifier) property;
 					notifier.removeListener(this);
-					propertyItemMapCache.remove(property);									
+					propertyItemMapCache.remove(property);
 				}
 			}
 
-		}		
+		}
 	}
 
 	private Query getQuery() {
@@ -224,7 +229,7 @@ public class LazyQueryView implements QueryView, ValueChangeListener {
 			item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(true);
 		}
 		addedItems.add(item);
-		return query.size()+addedItems.size()-1;
+		return addedItems.size()-1;
 	}
 
 	@Override

@@ -137,8 +137,32 @@ public class LazyQueryContainerTest extends TestCase implements ItemSetChangeLis
 	public void testAddCommitItem() {
 		int originalViewSize=container.size();
 		assertFalse(container.isModified());
-		int addIndex=(Integer)container.addItem();	
+		int addIndex=(Integer)container.addItem();
+		assertEquals("Item must be added at the beginning", addIndex,0);
 		assertEquals(originalViewSize+1,container.size());
+		assertEquals(QueryItemStatus.Added,
+				container.getItem(addIndex).getItemProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());
+		assertTrue(container.isModified());
+		container.commit();
+		assertFalse(container.isModified());
+		assertEquals(QueryItemStatus.None,
+				container.getItem(addIndex).getItemProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());
+	}
+
+	public void testAddTwiceCommitItem() {
+		int originalViewSize=container.size();
+		assertFalse(container.isModified());
+		//Add the first Item
+		int addIndex=(Integer)container.addItem();
+		assertEquals("Item must be added at the beginning", addIndex,0);
+		assertEquals(originalViewSize+1,container.size());
+		assertEquals(QueryItemStatus.Added,
+				container.getItem(addIndex).getItemProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());
+		assertTrue(container.isModified());
+		//Add a second Item
+		addIndex=(Integer)container.addItem();
+		assertEquals("Second item must be added at the second position", addIndex,1);
+		assertEquals(originalViewSize+2,container.size());
 		assertEquals(QueryItemStatus.Added,
 				container.getItem(addIndex).getItemProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());
 		assertTrue(container.isModified());
@@ -151,7 +175,8 @@ public class LazyQueryContainerTest extends TestCase implements ItemSetChangeLis
 	public void testAddDiscardItem() {
 		int originalViewSize=container.size();
 		assertFalse(container.isModified());
-		int addIndex=(Integer)container.addItem();	
+		int addIndex=(Integer)container.addItem();
+		assertEquals("Item must be added at the beginning", addIndex,0);
 		assertEquals(originalViewSize+1,container.size());
 		assertEquals(QueryItemStatus.Added,
 				container.getItem(addIndex).getItemProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());
