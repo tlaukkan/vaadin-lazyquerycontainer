@@ -54,35 +54,13 @@ public class MockQueryFactory implements QueryFactory {
 	
 	@Override
 	public Query constructQuery(Object[] sortPropertyIds, boolean[] ascendingStates) {
-
 		// Creating items on demand when constructQuery is first time called.
 		if(items==null) {
 			items=new ArrayList<Item>();
 			
 			for(int i=0;i<resultSize;i++) {
-				PropertysetItem item=new PropertysetItem();
 				
-				for(Object propertyId : this.definition.getPropertyIds()) {
-					
-					Object value=null;
-					
-					if("Index".equals(propertyId)) {
-						value=i;
-					} else if("ReverseIndex".equals(propertyId)) {
-						value=resultSize-i;
-					} else {
-						value=this.definition.getPropertyDefaultValue(propertyId);
-					}
-					
-					item.addItemProperty(propertyId, new ObjectProperty(
-							value,
-							this.definition.getPropertyType(propertyId),
-							this.definition.isPropertyReadOnly(propertyId)
-							));
-					
-				}
-				
-				this.items.add(item);
+				this.items.add(constructItem());
 			}
 		}
 		
@@ -91,7 +69,31 @@ public class MockQueryFactory implements QueryFactory {
 			Collections.sort(this.items,comparator);
 		}
 		
-		return new MockQuery(this.items,batchQueryMinTime,batchQueryMaxTime);
+		return new MockQuery(this,this.items,batchQueryMinTime,batchQueryMaxTime);
+	}
+	
+	public Item constructItem() {
+		PropertysetItem item=new PropertysetItem();	
+		for(Object propertyId : this.definition.getPropertyIds()) {
+			
+			Object value=null;
+			
+			if("Index".equals(propertyId)) {
+				value=items.size();
+			} else if("ReverseIndex".equals(propertyId)) {
+				value=resultSize-items.size();
+			} else {
+				value=this.definition.getPropertyDefaultValue(propertyId);
+			}
+			
+			item.addItemProperty(propertyId, new ObjectProperty(
+					value,
+					this.definition.getPropertyType(propertyId),
+					this.definition.isPropertyReadOnly(propertyId)
+					));
+			
+		}		
+		return item;
 	}
 	
 	public void addProperty(Object propertyId, Class<?> type,
@@ -102,10 +104,8 @@ public class MockQueryFactory implements QueryFactory {
 							
 		}
 	}
-
 	
 	public class ItemComparator implements Comparator<Item> {
-
 		private Object[] sortPropertyIds;
 		private boolean[] ascendingStates;
 		

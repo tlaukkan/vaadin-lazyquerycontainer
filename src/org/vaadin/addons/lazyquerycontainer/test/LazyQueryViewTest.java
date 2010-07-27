@@ -19,6 +19,7 @@ import java.util.Collection;
 
 import org.vaadin.addons.lazyquerycontainer.DefaultQueryDefinition;
 import org.vaadin.addons.lazyquerycontainer.LazyQueryView;
+import org.vaadin.addons.lazyquerycontainer.QueryItemStatus;
 
 import junit.framework.TestCase;
 
@@ -40,6 +41,9 @@ public class LazyQueryViewTest extends TestCase {
 		DefaultQueryDefinition definition=new DefaultQueryDefinition(this.viewSize);
 		definition.addProperty("Index", Integer.class, 0, true, true);
 		definition.addProperty("Reverse Index", Integer.class, 0, true, false);
+		definition.addProperty("Editable", String.class, "", false, false);
+		definition.addProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS, QueryItemStatus.class, QueryItemStatus.None, true, false);
+		
 		MockQueryFactory factory=new MockQueryFactory(viewSize,0,0);
 		factory.setQueryDefinition(definition);
 		view=new LazyQueryView(definition,factory);
@@ -90,5 +94,95 @@ public class LazyQueryViewTest extends TestCase {
 		assertEquals(1,sortablePropertyIds.size());
 		assertEquals("Index",sortablePropertyIds.iterator().next());
 	}
+	
+	public void testAddCommitItem() {
+		int originalViewSize=view.size();
+		assertFalse(view.isModified());
+		int addIndex=view.addItem();	
+		assertEquals(originalViewSize+1,view.size());
+		assertEquals(QueryItemStatus.Added,
+				view.getItem(addIndex).getItemProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());
+		assertTrue(view.isModified());
+		view.commit();
+		view.refresh();
+		assertFalse(view.isModified());
+		assertEquals(QueryItemStatus.None,
+				view.getItem(addIndex).getItemProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());
+	}
 
+	public void testAddDiscardItem() {
+		int originalViewSize=view.size();
+		assertFalse(view.isModified());
+		int addIndex=view.addItem();	
+		assertEquals(originalViewSize+1,view.size());
+		assertEquals(QueryItemStatus.Added,
+				view.getItem(addIndex).getItemProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());
+		assertTrue(view.isModified());
+		view.discard();
+		view.refresh();
+		assertFalse(view.isModified());
+		assertEquals(originalViewSize,view.size());
+	}
+	
+	public void testModifyCommitItem() {
+		int modifyIndex=0;
+		assertFalse(view.isModified());
+		view.getItem(modifyIndex).getItemProperty("Editable").setValue("test");
+		assertTrue(view.isModified());
+		view.commit();
+		view.refresh();
+		assertFalse(view.isModified());
+		assertEquals("test",view.getItem(modifyIndex).getItemProperty("Editable").getValue());
+	}
+
+	public void testModifyDiscardItem() {
+		int modifyIndex=0;
+		assertFalse(view.isModified());
+		view.getItem(modifyIndex).getItemProperty("Editable").setValue("test");
+		assertTrue(view.isModified());
+		view.discard();
+		view.refresh();
+		assertFalse(view.isModified());
+		assertEquals("",view.getItem(modifyIndex).getItemProperty("Editable").getValue());
+	}
+
+	public void testRemoveCommitItem() {
+		int removeIndex=0;
+		int originalViewSize=view.size();
+		assertFalse(view.isModified());
+		assertFalse(view.getItem(removeIndex).getItemProperty("Editable").isReadOnly());
+		view.removeItem(removeIndex);	
+		assertEquals(originalViewSize,view.size());
+		assertEquals(QueryItemStatus.Removed,
+				view.getItem(removeIndex).getItemProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());
+		assertTrue(view.getItem(removeIndex).getItemProperty("Editable").isReadOnly());
+		assertTrue(view.isModified());
+		view.commit();
+		view.refresh();
+		assertFalse(view.isModified());
+		assertEquals(originalViewSize-1,view.size());
+		assertEquals(removeIndex+1,
+				view.getItem(removeIndex).getItemProperty("Index").getValue());
+	}	
+
+	public void testRemoveDiscardItem() {
+		int removeIndex=0;
+		int originalViewSize=view.size();
+		assertFalse(view.isModified());
+		assertFalse(view.getItem(removeIndex).getItemProperty("Editable").isReadOnly());
+		view.removeItem(removeIndex);	
+		assertEquals(originalViewSize,view.size());
+		assertEquals(QueryItemStatus.Removed,
+				view.getItem(removeIndex).getItemProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());
+		assertTrue(view.getItem(removeIndex).getItemProperty("Editable").isReadOnly());
+		assertTrue(view.isModified());
+		view.discard();
+		view.refresh();
+		assertFalse(view.isModified());
+		assertEquals(originalViewSize,view.size());
+		assertEquals(removeIndex,
+				view.getItem(removeIndex).getItemProperty("Index").getValue());
+		assertFalse(view.getItem(removeIndex).getItemProperty("Editable").isReadOnly());
+	}	
+	
 }

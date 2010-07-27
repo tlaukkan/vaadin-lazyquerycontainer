@@ -16,16 +16,22 @@
 package org.vaadin.addons.lazyquerycontainer;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.vaadin.addons.lazyquerycontainer.test.MockQueryFactory;
 
-
 import com.vaadin.Application;
+import com.vaadin.terminal.ClassResource;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.AbstractSelect.MultiSelectMode;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.themes.Runo;
 
 /**
  * Example application demonstrating the Lazy Query Container features.
@@ -37,6 +43,12 @@ public class ExampleApplication extends Application implements ClickListener {
 	private LazyQueryContainer container;
 	private MockQueryFactory mockQueryFactory;
 	private Button refreshButton;
+	private Button editButton;
+	private Button saveButton;
+	private Button cancelButton;
+	private Button addItemButton;
+	private Button removeItemButton;
+	private Button removeAllItemsButton;
 	private Button addPropertyButton;
 	private Table table;
 	private int addedPropertyCount=0;
@@ -47,38 +59,105 @@ public class ExampleApplication extends Application implements ClickListener {
 	
 	@Override
 	public void init() {
+		
 		Window mainWindow = new Window("Lazycontainer Application");
+		
+		VerticalLayout mainLayout=new VerticalLayout();
+		mainLayout.setMargin(false);
+		mainLayout.setSpacing(true);
+		mainWindow.setContent(mainLayout);
+						
+		Panel buttonPanel=new Panel();
+		buttonPanel.addStyleName(Runo.PANEL_LIGHT);
+		HorizontalLayout buttonLayout=new HorizontalLayout();
+		buttonLayout.setMargin(false);
+		buttonLayout.setSpacing(true);
+		buttonPanel.setContent(buttonLayout);		
+		mainWindow.addComponent(buttonPanel);
 
+		Panel buttonPanel2=new Panel();
+		buttonPanel2.addStyleName(Runo.PANEL_LIGHT);
+		HorizontalLayout buttonLayout2=new HorizontalLayout();
+		buttonLayout2.setMargin(false);
+		buttonLayout2.setSpacing(true);
+		buttonPanel2.setContent(buttonLayout2);		
+		mainWindow.addComponent(buttonPanel2);
+
+		
 		refreshButton=new Button("Refresh");
+		refreshButton.setIcon(new ClassResource("images/table_refresh.png", this));
 		refreshButton.addListener(this);
-		mainWindow.addComponent(refreshButton);
+		buttonPanel.addComponent(refreshButton);
 		
+		editButton=new Button("Edit");
+		editButton.setIcon(new ClassResource("images/table_edit.png", this));
+		editButton.addListener(this);
+		buttonPanel.addComponent(editButton);
+
 		addPropertyButton=new Button("Add Column");
+		addPropertyButton.setIcon(new ClassResource("images/tab_add.png", this));
 		addPropertyButton.addListener(this);
-		mainWindow.addComponent(addPropertyButton);
+		buttonPanel.addComponent(addPropertyButton);
 		
-		table=new Table("Example Table");
+		removeAllItemsButton=new Button("Remove All Rows");
+		removeAllItemsButton.setIcon(new ClassResource("images/delete.png", this));
+		removeAllItemsButton.addListener(this);
+		buttonPanel.addComponent(removeAllItemsButton);
+		
+		saveButton=new Button("Save");
+		saveButton.setIcon(new ClassResource("images/table_save.png", this));
+		saveButton.addListener(this);
+		saveButton.setEnabled(false);
+		buttonPanel2.addComponent(saveButton);
+
+		cancelButton=new Button("Cancel");
+		cancelButton.setIcon(new ClassResource("images/cancel.png", this));
+		cancelButton.addListener(this);
+		cancelButton.setEnabled(false);
+		buttonPanel2.addComponent(cancelButton);
+
+		addItemButton=new Button("Add Row");
+		addItemButton.setIcon(new ClassResource("images/table_row_insert.png", this));
+		addItemButton.addListener(this);
+		addItemButton.setEnabled(false);
+		buttonPanel2.addComponent(addItemButton);
+
+		removeItemButton=new Button("Remove Row");
+		removeItemButton.setIcon(new ClassResource("images/table_row_delete.png", this));
+		removeItemButton.addListener(this);
+		removeItemButton.setEnabled(false);
+		buttonPanel2.addComponent(removeItemButton);
 				
-		mockQueryFactory=new MockQueryFactory(100,25,50);
+		table=new Table();
+		
+		table.setHeight("200px");
+				
+		mockQueryFactory=new MockQueryFactory(100,10,20);
 		LazyQueryView view=new LazyQueryView(mockQueryFactory,5);
 		container=new LazyQueryContainer(view);
 		
+		container.addContainerProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS, QueryItemStatus.class, QueryItemStatus.None, true, false);
 		container.addContainerProperty("Index", Integer.class, 0, true, true);
 		container.addContainerProperty("ReverseIndex", Integer.class, 0, true, true);
-		container.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_QUERY_INDEX, Integer.class, 0, false, false);
-		container.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_INDEX, Integer.class, 0, false, false);
-		container.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_QUERY_TIME, Integer.class, 0, false, false);
+		container.addContainerProperty("Editable", String.class, "", false, false);
+		container.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_QUERY_INDEX, Integer.class, 0, true, false);
+		container.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_INDEX, Integer.class, 0, true, false);
+		container.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_QUERY_TIME, Integer.class, 0, true, false);
 		
 		table.setContainerDataSource(container);
 	
+		visibleColumnIds.add(LazyQueryView.PROPERTY_ID_ITEM_STATUS);
 		visibleColumnIds.add("Index");
 		visibleColumnIds.add("ReverseIndex");
+		visibleColumnIds.add("Editable");
 		visibleColumnIds.add(LazyQueryView.DEBUG_PROPERTY_ID_QUERY_INDEX);
 		visibleColumnIds.add(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_INDEX);
 		visibleColumnIds.add(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_QUERY_TIME);
 
+		visibleColumnLabels.add("");
 		visibleColumnLabels.add("Index");
 		visibleColumnLabels.add("Reverse Index");
+		visibleColumnLabels.add("Editable");
 		visibleColumnLabels.add("Query");
 		visibleColumnLabels.add("Batch");
 		visibleColumnLabels.add("Time [ms]");
@@ -86,20 +165,87 @@ public class ExampleApplication extends Application implements ClickListener {
 		table.setVisibleColumns(visibleColumnIds.toArray());
 		table.setColumnHeaders(visibleColumnLabels.toArray(new String[0]));
 		
-		table.setEditable(true);
-		//table.setImmediate(true);
-		//table.setReadThrough(true);
+		table.setColumnWidth(LazyQueryView.PROPERTY_ID_ITEM_STATUS, 16);
+		table.addGeneratedColumn(LazyQueryView.PROPERTY_ID_ITEM_STATUS, new QueryItemStatusColumnGenerator(this));
+
+		table.setEditable(false);
+		table.setMultiSelect(true);
+		table.setMultiSelectMode(MultiSelectMode.DEFAULT);
+		table.setSelectable(true);
 		table.setWriteThrough(true);
-		
+				
 		mainWindow.addComponent(table);
 
 		setMainWindow(mainWindow);
 	}
 
+	private void setEditMode(boolean editMode) {
+		if(editMode) {
+			table.setEditable(true);
+			table.setSortDisabled(true);
+			refreshButton.setEnabled(false);
+			removeAllItemsButton.setEnabled(false);
+			addPropertyButton.setEnabled(false);
+			editButton.setEnabled(false);
+			saveButton.setEnabled(true);
+			cancelButton.setEnabled(true);
+			addItemButton.setEnabled(true);
+			removeItemButton.setEnabled(true);
+		} else {
+			table.setEditable(false);
+			table.setSortDisabled(false);
+			refreshButton.setEnabled(true);
+			removeAllItemsButton.setEnabled(true);
+			addPropertyButton.setEnabled(true);
+			editButton.setEnabled(true);
+			saveButton.setEnabled(false);
+			cancelButton.setEnabled(false);
+			addItemButton.setEnabled(false);
+			removeItemButton.setEnabled(false);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void buttonClick(ClickEvent event) {
 		if(event.getButton()==refreshButton) {
 			container.refresh();
+		}
+		if(event.getButton()==editButton) {
+			container.commit();
+			setEditMode(true);
+		}
+		if(event.getButton()==saveButton) {
+			container.commit();
+			setEditMode(false);
+		}
+		if(event.getButton()==cancelButton) {
+			container.discard();
+			setEditMode(false);
+		}
+		if(event.getButton()==addItemButton) {
+			container.addItem();
+		}
+		if(event.getButton()==removeItemButton) {
+			Object selection=table.getValue();
+			if(selection==null) {
+				return;
+			}
+			if(selection instanceof Integer) {
+				Integer selectedIndex=(Integer)selection;
+				if(selectedIndex!=null) {
+					container.removeItem(selectedIndex);
+				}
+			}
+			if(selection instanceof Collection) {
+				Collection selectionIndexes=(Collection)selection;
+				for(Object selectedIndex : selectionIndexes) {
+					container.removeItem((Integer)selectedIndex);
+				}
+			}			
+		}
+		if(event.getButton()==removeAllItemsButton) {
+			container.removeAllItems();
 		}
 		if(event.getButton()==addPropertyButton) {
 			addedPropertyCount++;

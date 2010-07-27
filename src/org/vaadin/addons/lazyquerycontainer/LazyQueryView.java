@@ -15,6 +15,7 @@
  */
 package org.vaadin.addons.lazyquerycontainer;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,7 +47,9 @@ public class LazyQueryView implements QueryView, ValueChangeListener {
 	public static final String DEBUG_PROPERTY_ID_BATCH_INDEX="DEBUG_PROPERTY_ID_BATCH_INDEX";
 	public static final String DEBUG_PROPERTY_ID_BATCH_QUERY_TIME="DEBUG_PROPERTY_ID_ACCESS_COUNT";
 	
-	private int maxCacheSize=1000;
+	public static final String PROPERTY_ID_ITEM_STATUS="PROPERTY_ID_ITEM_STATUS";
+	
+	private int maxCacheSize=5000;
 	private int queryCount=0;
 	
 	private QueryDefinition definition;
@@ -59,7 +62,10 @@ public class LazyQueryView implements QueryView, ValueChangeListener {
 	private LinkedList<Integer> itemCacheOrder=new LinkedList<Integer>();
 	private Map<Integer,Item> itemCache=new HashMap<Integer,Item>();
 	private Map<Property,Item> propertyItemMapCache=new HashMap<Property,Item>();
-	private Map<Property,Object> propertyIdMapCache=new HashMap<Property,Object>();
+	
+	private List<Item> addedItems=new ArrayList<Item>();
+	private List<Item> modifiedItems=new ArrayList<Item>();
+	private List<Item> removedItems=new ArrayList<Item>();
 	
 	/**
 	 * Constructs LazyQueryView with DefaultQueryDefinition and the given QueryFactory.
@@ -114,12 +120,13 @@ public class LazyQueryView implements QueryView, ValueChangeListener {
 		itemCache.clear();
 		itemCacheOrder.clear();		
 		propertyItemMapCache.clear();
-		propertyIdMapCache.clear();
+		
+		discard();
 	}
 
 	@Override
 	public int size() {
-		return getQuery().size();
+		return getQuery().size()+addedItems.size();
 	}
 
 	public int getBatchSize() {
@@ -128,54 +135,60 @@ public class LazyQueryView implements QueryView, ValueChangeListener {
 
 	@Override
 	public Item getItem(int index) {
+		if(index>getQuery().size()-1) {
+			return addedItems.get(index-getQuery().size());
+		}
 		if(!itemCache.containsKey(index)) {
 			queryItem(index);
 		}
 		return itemCache.get(index);
 	}
 	
-	@Override
-	public void valueChange(ValueChangeEvent event) {
-		Property property=event.getProperty();
-		Item item=propertyItemMapCache.get(property);
-		Object propertyId=propertyIdMapCache.get(property);
-		query.itemValueChange(item, propertyId, property);
-	}
-
-	private void queryItem(int index) {		
+	private void queryItem(int index) {				
 		int batchSize=getBatchSize();
 		int startIndex=index-index%batchSize;
-		int count=Math.min(batchSize, size()-startIndex);
+		int count=Math.min(batchSize, getQuery().size()-startIndex);
 		
 		long queryStartTime=System.currentTimeMillis();
-		List<Item> items=getQuery().getItems(startIndex, count);
+		List<Item> items=getQuery().loadItems(startIndex, count);
 		long queryEndTime=System.currentTimeMillis();
 		
 		for(int i=0;i<count;i++) {
 			int itemIndex=startIndex+i;
 			Item item=items.get(i);
+			
+			itemCache.put(itemIndex,item);
+			itemCacheOrder.addLast(itemIndex);			
+		}
+		
+		for(int i=0;i<count;i++) {
+			Item item=items.get(i);
+			
 			if(item.getItemProperty(DEBUG_PROPERTY_ID_BATCH_INDEX)!=null) {
+				item.getItemProperty(DEBUG_PROPERTY_ID_BATCH_INDEX).setReadOnly(false);
 				item.getItemProperty(DEBUG_PROPERTY_ID_BATCH_INDEX).setValue(startIndex/batchSize);
+				item.getItemProperty(DEBUG_PROPERTY_ID_BATCH_INDEX).setReadOnly(true);
 			}
 			if(item.getItemProperty(DEBUG_PROPERTY_ID_QUERY_INDEX)!=null) {
+				item.getItemProperty(DEBUG_PROPERTY_ID_QUERY_INDEX).setReadOnly(false);
 				item.getItemProperty(DEBUG_PROPERTY_ID_QUERY_INDEX).setValue(queryCount);
+				item.getItemProperty(DEBUG_PROPERTY_ID_QUERY_INDEX).setReadOnly(true);
 			}
 			if(item.getItemProperty(DEBUG_PROPERTY_ID_BATCH_QUERY_TIME)!=null) {
+				item.getItemProperty(DEBUG_PROPERTY_ID_BATCH_QUERY_TIME).setReadOnly(false);
 				item.getItemProperty(DEBUG_PROPERTY_ID_BATCH_QUERY_TIME).setValue(queryEndTime-queryStartTime);
+				item.getItemProperty(DEBUG_PROPERTY_ID_BATCH_QUERY_TIME).setReadOnly(true);
 			}
-						
+			
 			for(Object propertyId : item.getItemPropertyIds()) {
 				Property property=item.getItemProperty(propertyId);
 				if(property instanceof ValueChangeNotifier) {
 					ValueChangeNotifier notifier=(ValueChangeNotifier) property;
 					notifier.addListener(this);
 					propertyItemMapCache.put(property, item);		
-					propertyIdMapCache.put(property, propertyId);	
 				}
 			}
-			
-			itemCache.put(itemIndex,item);
-			itemCacheOrder.addLast(itemIndex);
+
 		}
 		
 		while(itemCache.size()>maxCacheSize) {
@@ -188,7 +201,6 @@ public class LazyQueryView implements QueryView, ValueChangeListener {
 					ValueChangeNotifier notifier=(ValueChangeNotifier) property;
 					notifier.removeListener(this);
 					propertyItemMapCache.remove(property);									
-					propertyIdMapCache.remove(property);	
 				}
 			}
 
@@ -202,5 +214,119 @@ public class LazyQueryView implements QueryView, ValueChangeListener {
 		}
 		return query;
 	}
+
+	@Override
+	public int addItem() {
+		Item item=getQuery().constructItem();
+		if(item.getItemProperty(PROPERTY_ID_ITEM_STATUS)!=null) {
+			item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(false);
+			item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setValue(QueryItemStatus.Added);
+			item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(true);
+		}
+		addedItems.add(item);
+		return query.size()+addedItems.size()-1;
+	}
+
+	@Override
+	public void valueChange(ValueChangeEvent event) {
+		Property property=event.getProperty();
+		Item item=propertyItemMapCache.get(property);
+		if(property==item.getItemProperty(PROPERTY_ID_ITEM_STATUS)) {
+			return;
+		}
+		if(item.getItemProperty(PROPERTY_ID_ITEM_STATUS)!=null&&
+				((QueryItemStatus)item.getItemProperty(PROPERTY_ID_ITEM_STATUS).getValue())!=QueryItemStatus.Modified) {
+			item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(false);
+			item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setValue(QueryItemStatus.Modified);
+			item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(true);
+		}
+		modifiedItems.add(item);
+	}
+	
+	@Override
+	public void removeItem(int index) {
+		Item item=getItem(index);
+		
+		if(item.getItemProperty(PROPERTY_ID_ITEM_STATUS)!=null) {
+			item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(false);
+			item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setValue(QueryItemStatus.Removed);
+			item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(true);
+		}
+		
+		for(Object propertyId : item.getItemPropertyIds()) {
+			Property property=item.getItemProperty(propertyId);
+			property.setReadOnly(true);
+		}
+				
+		removedItems.add(item);
+	}
+
+	@Override
+	public void removeAllItems() {
+		getQuery().deleteAllItems();
+	}
+
+	@Override
+	public boolean isModified() {
+		return addedItems.size()!=0||modifiedItems.size()!=0||removedItems.size()!=0;
+	}
+
+	@Override
+	public void commit() {
+		for(Item item : addedItems) {
+			if(item.getItemProperty(PROPERTY_ID_ITEM_STATUS)!=null) {
+				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(false);
+				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setValue(QueryItemStatus.None);
+				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(true);
+			}			
+		}
+		for(Item item : modifiedItems) {
+			if(item.getItemProperty(PROPERTY_ID_ITEM_STATUS)!=null) {
+				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(false);
+				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setValue(QueryItemStatus.None);
+				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(true);
+			}			
+		}
+		for(Item item : removedItems) {
+			if(item.getItemProperty(PROPERTY_ID_ITEM_STATUS)!=null) {
+				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(false);
+				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setValue(QueryItemStatus.None);
+				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(true);
+			}			
+		}
+		getQuery().saveItems(addedItems, modifiedItems, removedItems);
+		addedItems.clear();
+		modifiedItems.clear();
+		removedItems.clear();
+	}
+	
+	@Override
+	public void discard() {
+		for(Item item : addedItems) {
+			if(item.getItemProperty(PROPERTY_ID_ITEM_STATUS)!=null) {
+				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(false);
+				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setValue(QueryItemStatus.None);
+				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(true);
+			}			
+		}
+		for(Item item : modifiedItems) {
+			if(item.getItemProperty(PROPERTY_ID_ITEM_STATUS)!=null) {
+				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(false);
+				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setValue(QueryItemStatus.None);
+				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(true);
+			}			
+		}
+		for(Item item : removedItems) {
+			if(item.getItemProperty(PROPERTY_ID_ITEM_STATUS)!=null) {
+				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(false);
+				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setValue(QueryItemStatus.None);
+				item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(true);
+			}			
+		}
+		addedItems.clear();
+		modifiedItems.clear();
+		removedItems.clear();
+	}
+
 	
 }
