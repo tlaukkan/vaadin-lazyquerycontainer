@@ -22,11 +22,8 @@ import org.vaadin.addons.lazyquerycontainer.test.MockQueryFactory;
 
 import com.vaadin.Application;
 import com.vaadin.terminal.ClassResource;
-import com.vaadin.terminal.Resource;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Embedded;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
@@ -63,29 +60,12 @@ public class ExampleApplication extends Application implements ClickListener {
 	@Override
 	public void init() {
 		
-		//this.setTheme("runo");
-		
 		Window mainWindow = new Window("Lazycontainer Application");
 		
 		VerticalLayout mainLayout=new VerticalLayout();
-		mainLayout.setMargin(true);
+		mainLayout.setMargin(false);
 		mainLayout.setSpacing(true);
 		mainWindow.setContent(mainLayout);
-		
-		//mainLayout.addStyleName(Reindeer.LAYOUT_WHITE);
-		
-		Panel titlePanel=new Panel();
-		titlePanel.addStyleName(Runo.PANEL_LIGHT);
-		HorizontalLayout titleLayout=new HorizontalLayout();
-		titleLayout.setMargin(false);
-		titleLayout.setSpacing(true);
-		titlePanel.setContent(titleLayout);		
-		Resource titleIconResource = new ClassResource("images/table.png", this);		
-		Embedded titleIcon=new Embedded(null,titleIconResource);
-		titlePanel.addComponent(titleIcon);
-		Label titleLabel=new Label("LazyQueryContainer Table Example");
-		titlePanel.addComponent(titleLabel);
-		mainWindow.addComponent(titlePanel);
 						
 		Panel buttonPanel=new Panel();
 		buttonPanel.addStyleName(Runo.PANEL_LIGHT);
@@ -149,6 +129,8 @@ public class ExampleApplication extends Application implements ClickListener {
 		buttonPanel2.addComponent(removeItemButton);
 				
 		table=new Table();
+		
+		table.setHeight("200px");
 				
 		mockQueryFactory=new MockQueryFactory(100,10,20);
 		LazyQueryView view=new LazyQueryView(mockQueryFactory,5);
