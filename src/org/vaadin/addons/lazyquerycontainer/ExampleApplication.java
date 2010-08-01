@@ -64,7 +64,7 @@ public class ExampleApplication extends Application implements ClickListener {
 		Window mainWindow = new Window("Lazycontainer Application");
 		
 		VerticalLayout mainLayout=new VerticalLayout();
-		mainLayout.setMargin(false);
+		mainLayout.setMargin(true);
 		mainLayout.setSpacing(true);
 		mainWindow.setContent(mainLayout);
 						
@@ -162,6 +162,8 @@ public class ExampleApplication extends Application implements ClickListener {
 		visibleColumnLabels.add("Query");
 		visibleColumnLabels.add("Batch");
 		visibleColumnLabels.add("Time [ms]");
+		
+		table.setColumnWidth("Editable", 135);
 
 		table.setVisibleColumns(visibleColumnIds.toArray());
 		table.setColumnHeaders(visibleColumnLabels.toArray(new String[0]));

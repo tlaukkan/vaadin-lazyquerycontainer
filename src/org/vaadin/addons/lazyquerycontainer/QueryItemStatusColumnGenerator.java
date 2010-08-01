@@ -36,6 +36,7 @@ public class QueryItemStatusColumnGenerator implements ColumnGenerator, ValueCha
 		removedIconResource = new ClassResource("images/textfield_delete.png", this.application);		
 		
 		statusIcon=new Embedded(null,noneIconResource);
+		statusIcon.setHeight("16px");
 
 		if(statusProperty instanceof ValueChangeNotifier) {
 			ValueChangeNotifier notifier=(ValueChangeNotifier) statusProperty;

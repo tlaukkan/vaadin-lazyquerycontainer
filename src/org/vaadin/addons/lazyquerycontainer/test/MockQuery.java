@@ -88,7 +88,13 @@ public class MockQuery implements Query {
 		items.addAll(0,addedItems);
 		for(Item clone : removedItems) {
 			Item original=cloneMap.get(clone);
-			items.remove(original);
+			if(addedItems.contains(clone)) {
+				// If item is new then it is not mapped through clone map.
+				items.remove(clone);								
+			}
+			else {
+				items.remove(original);				
+			}
 		}
 		for(Item clone : modifiedItems) {
 			Item original=cloneMap.get(clone);
