@@ -60,7 +60,7 @@ public class MockQueryFactory implements QueryFactory {
 			
 			for(int i=0;i<resultSize;i++) {
 				
-				this.items.add(constructItem());
+				this.items.add(constructItem(items.size(),resultSize-items.size()));
 			}
 		}
 		
@@ -72,7 +72,7 @@ public class MockQueryFactory implements QueryFactory {
 		return new MockQuery(this,this.items,batchQueryMinTime,batchQueryMaxTime);
 	}
 	
-	public Item constructItem() {
+	public Item constructItem(int indexColumnValue, int reverseIndexColumnValue) {
 		// since construct item needs to know what the current size is (including added items)
 		// to populate Index and ReverseIndex we should provide it somehow here!
 		// At the moment adding multiple items leads to strange behaviour.
@@ -82,9 +82,9 @@ public class MockQueryFactory implements QueryFactory {
 			Object value=null;
 			
 			if("Index".equals(propertyId)) {
-				value=items.size();
+				value=indexColumnValue;
 			} else if("ReverseIndex".equals(propertyId)) {
-				value=resultSize-items.size();
+				value=reverseIndexColumnValue;
 			} else {
 				value=this.definition.getPropertyDefaultValue(propertyId);
 			}

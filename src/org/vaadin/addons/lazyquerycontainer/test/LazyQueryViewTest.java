@@ -110,6 +110,30 @@ public class LazyQueryViewTest extends TestCase {
 		assertEquals(QueryItemStatus.None,
 				view.getItem(addIndex).getItemProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());
 	}
+	
+	public void testAddTwiceCommitItem() {
+		int originalViewSize=view.size();
+		assertFalse(view.isModified());
+		//Add the first Item
+		int addIndex=(Integer)view.addItem();
+		assertEquals("Item must be added at the beginning.", addIndex,0);
+		assertEquals(originalViewSize+1,view.size());
+		assertEquals(QueryItemStatus.Added,
+				view.getItem(addIndex).getItemProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());
+		assertTrue(view.isModified());
+		//Add a second Item
+		addIndex=(Integer)view.addItem();
+		assertEquals("Second item must be added at the beginning as well.", addIndex,0);
+		assertEquals(originalViewSize+2,view.size());
+		assertEquals(QueryItemStatus.Added,
+				view.getItem(addIndex).getItemProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());
+		assertTrue(view.isModified());
+		view.commit();
+		view.refresh();
+		assertFalse(view.isModified());
+		assertEquals(QueryItemStatus.None,
+				view.getItem(addIndex).getItemProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());
+	}
 
 	public void testAddDiscardItem() {
 		int originalViewSize=view.size();

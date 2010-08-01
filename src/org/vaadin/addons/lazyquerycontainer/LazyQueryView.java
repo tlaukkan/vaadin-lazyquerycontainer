@@ -228,8 +228,8 @@ public class LazyQueryView implements QueryView, ValueChangeListener {
 			item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setValue(QueryItemStatus.Added);
 			item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(true);
 		}
-		addedItems.add(item);
-		return addedItems.size()-1;
+		addedItems.add(0,item);
+		return 0;
 	}
 
 	@Override

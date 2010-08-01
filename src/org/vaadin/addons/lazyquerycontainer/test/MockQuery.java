@@ -73,7 +73,7 @@ public class MockQuery implements Query {
 
 	@Override
 	public Item constructItem() {
-		return queryFactory.constructItem();
+		return queryFactory.constructItem(-1,-1);
 	}
 
 	@Override

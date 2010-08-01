@@ -37,6 +37,7 @@ import com.vaadin.ui.themes.Runo;
  * Example application demonstrating the Lazy Query Container features.
  * @author Tommi S.E. Laukkanen
  */
+@SuppressWarnings("rawtypes")
 public class ExampleApplication extends Application implements ClickListener {
 	private static final long serialVersionUID = 1L;
 
@@ -130,7 +131,7 @@ public class ExampleApplication extends Application implements ClickListener {
 				
 		table=new Table();
 		
-		table.setHeight("200px");
+		table.setPageLength(20);
 				
 		mockQueryFactory=new MockQueryFactory(100,10,20);
 		LazyQueryView view=new LazyQueryView(mockQueryFactory,5);
@@ -205,7 +206,6 @@ public class ExampleApplication extends Application implements ClickListener {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public void buttonClick(ClickEvent event) {
 		if(event.getButton()==refreshButton) {

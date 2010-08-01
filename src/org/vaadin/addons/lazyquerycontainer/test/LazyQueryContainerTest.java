@@ -161,7 +161,7 @@ public class LazyQueryContainerTest extends TestCase implements ItemSetChangeLis
 		assertTrue(container.isModified());
 		//Add a second Item
 		addIndex=(Integer)container.addItem();
-		assertEquals("Second item must be added at the second position", addIndex,1);
+		assertEquals("Second item must be added first as well.", addIndex,0);
 		assertEquals(originalViewSize+2,container.size());
 		assertEquals(QueryItemStatus.Added,
 				container.getItem(addIndex).getItemProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());
