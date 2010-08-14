@@ -207,8 +207,8 @@ public class LazyQueryView implements QueryView, ValueChangeListener {
 			int firstIndex=itemCacheAccessLog.getFirst();
 			Item firstItem=itemCache.get(firstIndex);
 
-			// Remove oldest item in cache access log if it is not modified.
-			if(!modifiedItems.contains(firstItem)) {			
+			// Remove oldest item in cache access log if it is not modified or removed.
+			if(!modifiedItems.contains(firstItem)&&!removedItems.contains(firstItem)) {			
 				itemCacheAccessLog.remove(new Integer(firstIndex));
 				itemCache.remove(firstIndex);
 	
