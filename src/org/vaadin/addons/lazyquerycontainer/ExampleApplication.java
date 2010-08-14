@@ -86,45 +86,45 @@ public class ExampleApplication extends Application implements ClickListener {
 
 		
 		refreshButton=new Button("Refresh");
-		refreshButton.setIcon(new ClassResource("images/table_refresh.png", this));
+		refreshButton.setIcon(new ClassResource(QueryItemStatusColumnGenerator.class, "images/table_refresh.png", this));
 		refreshButton.addListener(this);
 		buttonPanel.addComponent(refreshButton);
 		
 		editButton=new Button("Edit");
-		editButton.setIcon(new ClassResource("images/table_edit.png", this));
+		editButton.setIcon(new ClassResource(QueryItemStatusColumnGenerator.class, "images/table_edit.png", this));
 		editButton.addListener(this);
 		buttonPanel.addComponent(editButton);
 
 		addPropertyButton=new Button("Add Column");
-		addPropertyButton.setIcon(new ClassResource("images/tab_add.png", this));
+		addPropertyButton.setIcon(new ClassResource(QueryItemStatusColumnGenerator.class, "images/tab_add.png", this));
 		addPropertyButton.addListener(this);
 		buttonPanel.addComponent(addPropertyButton);
 		
 		removeAllItemsButton=new Button("Remove All Rows");
-		removeAllItemsButton.setIcon(new ClassResource("images/delete.png", this));
+		removeAllItemsButton.setIcon(new ClassResource(QueryItemStatusColumnGenerator.class, "images/delete.png", this));
 		removeAllItemsButton.addListener(this);
 		buttonPanel.addComponent(removeAllItemsButton);
 		
 		saveButton=new Button("Save");
-		saveButton.setIcon(new ClassResource("images/table_save.png", this));
+		saveButton.setIcon(new ClassResource(QueryItemStatusColumnGenerator.class, "images/table_save.png", this));
 		saveButton.addListener(this);
 		saveButton.setEnabled(false);
 		buttonPanel2.addComponent(saveButton);
 
 		cancelButton=new Button("Cancel");
-		cancelButton.setIcon(new ClassResource("images/cancel.png", this));
+		cancelButton.setIcon(new ClassResource(QueryItemStatusColumnGenerator.class, "images/cancel.png", this));
 		cancelButton.addListener(this);
 		cancelButton.setEnabled(false);
 		buttonPanel2.addComponent(cancelButton);
 
 		addItemButton=new Button("Add Row");
-		addItemButton.setIcon(new ClassResource("images/table_row_insert.png", this));
+		addItemButton.setIcon(new ClassResource(QueryItemStatusColumnGenerator.class, "images/table_row_insert.png", this));
 		addItemButton.addListener(this);
 		addItemButton.setEnabled(false);
 		buttonPanel2.addComponent(addItemButton);
 
 		removeItemButton=new Button("Remove Row");
-		removeItemButton.setIcon(new ClassResource("images/table_row_delete.png", this));
+		removeItemButton.setIcon(new ClassResource(QueryItemStatusColumnGenerator.class, "images/table_row_delete.png", this));
 		removeItemButton.addListener(this);
 		removeItemButton.setEnabled(false);
 		buttonPanel2.addComponent(removeItemButton);
