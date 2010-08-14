@@ -49,7 +49,7 @@ public class LazyQueryView implements QueryView, ValueChangeListener {
 	
 	public static final String PROPERTY_ID_ITEM_STATUS="PROPERTY_ID_ITEM_STATUS";
 	
-	private int maxCacheSize=5000;
+	private int maxCacheSize=1000;
 	private int queryCount=0;
 	
 	private QueryDefinition definition;
@@ -59,7 +59,7 @@ public class LazyQueryView implements QueryView, ValueChangeListener {
 	private Object[] sortPropertyIds; 
 	private boolean[] ascendingStates;
 	
-	private LinkedList<Integer> itemCacheOrder=new LinkedList<Integer>();
+	private LinkedList<Integer> itemCacheAccessLog=new LinkedList<Integer>();
 	private Map<Integer,Item> itemCache=new HashMap<Integer,Item>();
 	private Map<Property,Item> propertyItemMapCache=new HashMap<Property,Item>();
 	
@@ -118,7 +118,7 @@ public class LazyQueryView implements QueryView, ValueChangeListener {
 		
 		query=null;
 		itemCache.clear();
-		itemCacheOrder.clear();		
+		itemCacheAccessLog.clear();		
 		propertyItemMapCache.clear();
 		
 		discard();
@@ -143,8 +143,13 @@ public class LazyQueryView implements QueryView, ValueChangeListener {
 		if(!itemCache.containsKey(index - addedItemCount)) {
 			//item is not in our cache, ask the query for more items
 			queryItem(index - addedItemCount);
+		} else {
+			//item is already in our cache
+			//refresh cache access log.		
+			itemCacheAccessLog.remove(new Integer(index));
+			itemCacheAccessLog.addLast(new Integer(index));
 		}
-		//item is already in our cache
+		
 		return itemCache.get(index - addedItemCount);
 	}
 	
@@ -163,7 +168,7 @@ public class LazyQueryView implements QueryView, ValueChangeListener {
 			Item item=items.get(i);
 			
 			itemCache.put(itemIndex,item);
-			itemCacheOrder.addLast(itemIndex);
+			itemCacheAccessLog.addLast(itemIndex);
 		}
 		
 		for(int i=0;i<count;i++) {
@@ -196,19 +201,36 @@ public class LazyQueryView implements QueryView, ValueChangeListener {
 
 		}
 		
+		// Evict items from cache if cache size exceeds max cache size
+		int counter=0;
 		while(itemCache.size()>maxCacheSize) {
-			int removedIndex=itemCacheOrder.removeFirst();
-			Item removedItem=itemCache.remove(removedIndex);
+			int firstIndex=itemCacheAccessLog.getFirst();
+			Item firstItem=itemCache.get(firstIndex);
 
-			for(Object propertyId : removedItem.getItemPropertyIds()) {
-				Property property=removedItem.getItemProperty(propertyId);
-				if(property instanceof ValueChangeNotifier) {
-					ValueChangeNotifier notifier=(ValueChangeNotifier) property;
-					notifier.removeListener(this);
-					propertyItemMapCache.remove(property);
+			// Remove oldest item in cache access log if it is not modified.
+			if(!modifiedItems.contains(firstItem)) {			
+				itemCacheAccessLog.remove(new Integer(firstIndex));
+				itemCache.remove(firstIndex);
+	
+				for(Object propertyId : firstItem.getItemPropertyIds()) {
+					Property property=firstItem.getItemProperty(propertyId);
+					if(property instanceof ValueChangeNotifier) {
+						ValueChangeNotifier notifier=(ValueChangeNotifier) property;
+						notifier.removeListener(this);
+						propertyItemMapCache.remove(property);
+					}
 				}
+			
+			} else {
+				itemCacheAccessLog.remove(firstIndex);
+				itemCacheAccessLog.addLast(firstIndex);
 			}
-
+			
+			// Break from loop if entire cache has been iterated (all items are modified).
+			counter++;
+			if(counter>itemCache.size()) {
+				break;
+			}
 		}
 	}
 

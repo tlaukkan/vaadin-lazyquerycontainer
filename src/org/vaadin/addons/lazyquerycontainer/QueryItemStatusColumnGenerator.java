@@ -30,10 +30,10 @@ public class QueryItemStatusColumnGenerator implements ColumnGenerator, ValueCha
 	public Component generateCell(Table source, Object itemId, Object columnId) {
 		Property statusProperty = source.getItem(itemId).getItemProperty(columnId);
 
-		noneIconResource = new ClassResource("images/textfield.png", this.application);		
-		addedIconResource = new ClassResource("images/textfield_add.png", this.application);		
-		modifiedIconResource = new ClassResource("images/textfield_rename.png", this.application);		
-		removedIconResource = new ClassResource("images/textfield_delete.png", this.application);		
+		noneIconResource = new ClassResource(QueryItemStatusColumnGenerator.class, "images/textfield.png", this.application);		
+		addedIconResource = new ClassResource(QueryItemStatusColumnGenerator.class, "images/textfield_add.png", this.application);		
+		modifiedIconResource = new ClassResource(QueryItemStatusColumnGenerator.class, "images/textfield_rename.png", this.application);		
+		removedIconResource = new ClassResource(QueryItemStatusColumnGenerator.class, "images/textfield_delete.png", this.application);		
 		
 		statusIcon=new Embedded(null,noneIconResource);
 		statusIcon.setHeight("16px");
