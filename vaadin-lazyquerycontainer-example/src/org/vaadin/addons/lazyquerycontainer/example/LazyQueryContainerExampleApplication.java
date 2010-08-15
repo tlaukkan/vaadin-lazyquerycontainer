@@ -27,7 +27,7 @@ import com.vaadin.ui.themes.Runo;
  * @author Tommi S.E. Laukkanen
  */
 @SuppressWarnings("rawtypes")
-public class LazyQueryContainerTestApplication extends Application implements ClickListener {
+public class LazyQueryContainerExampleApplication extends Application implements ClickListener {
 	private static final long serialVersionUID = 1L;
 
 	private LazyQueryContainer container;

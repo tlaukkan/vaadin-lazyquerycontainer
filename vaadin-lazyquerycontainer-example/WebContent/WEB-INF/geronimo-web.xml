@@ -3,10 +3,10 @@
     <dep:environment>
         <dep:moduleId>
             <dep:groupId>default</dep:groupId>
-            <dep:artifactId>lazyquerycontainertest</dep:artifactId>
+            <dep:artifactId>lazyquerycontainerexample</dep:artifactId>
             <dep:version>1.0</dep:version>
             <dep:type>car</dep:type>
         </dep:moduleId>
     </dep:environment>
-    <web:context-root>/vaadin-lazyquerycontainer-test</web:context-root>
+    <web:context-root>/vaadin-lazyquerycontainer-example</web:context-root>
 </web:web-app>
