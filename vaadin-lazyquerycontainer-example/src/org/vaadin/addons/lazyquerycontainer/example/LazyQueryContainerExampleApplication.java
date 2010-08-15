@@ -3,6 +3,10 @@ package org.vaadin.addons.lazyquerycontainer.example;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+
 import org.vaadin.addons.lazyquerycontainer.LazyQueryContainer;
 import org.vaadin.addons.lazyquerycontainer.LazyQueryView;
 import org.vaadin.addons.lazyquerycontainer.QueryItemStatus;
@@ -10,7 +14,6 @@ import org.vaadin.addons.lazyquerycontainer.QueryItemStatusColumnGenerator;
 import org.vaadin.addons.lazyquerycontainer.test.MockQueryFactory;
 
 import com.vaadin.Application;
-import com.vaadin.terminal.ClassResource;
 import com.vaadin.ui.AbstractSelect.MultiSelectMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -30,6 +33,8 @@ import com.vaadin.ui.themes.Runo;
 public class LazyQueryContainerExampleApplication extends Application implements ClickListener {
 	private static final long serialVersionUID = 1L;
 
+	public static final String PERSISTENCE_UNIT="vaadin-lazyquerycontainer-example";
+	
 	private LazyQueryContainer container;
 	private MockQueryFactory mockQueryFactory;
 	private Button refreshButton;
@@ -113,6 +118,9 @@ public class LazyQueryContainerExampleApplication extends Application implements
 		table=new Table();
 		
 		table.setPageLength(20);
+		
+		EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT);
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
 				
 		mockQueryFactory=new MockQueryFactory(2000,10,20);
 		container=new LazyQueryContainer(mockQueryFactory,50);
