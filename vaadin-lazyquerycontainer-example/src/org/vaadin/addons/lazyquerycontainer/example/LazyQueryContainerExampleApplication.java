@@ -120,7 +120,6 @@ public class LazyQueryContainerExampleApplication extends Application implements
 		container.addContainerProperty("name", String.class, "", true, true);
 		container.addContainerProperty("reporter", String.class, "", true, true);
 		container.addContainerProperty("assignee", String.class, "", true, true);
-		container.addContainerProperty("completed", Boolean.class, false, true, true);
 
 		container.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_QUERY_INDEX, Integer.class, 0, true, false);
 		container.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_INDEX, Integer.class, 0, true, false);
@@ -132,7 +131,6 @@ public class LazyQueryContainerExampleApplication extends Application implements
 		visibleColumnIds.add("name");
 		visibleColumnIds.add("reporter");
 		visibleColumnIds.add("assignee");
-		visibleColumnIds.add("completed");
 		visibleColumnIds.add(LazyQueryView.DEBUG_PROPERTY_ID_QUERY_INDEX);
 		visibleColumnIds.add(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_INDEX);
 		visibleColumnIds.add(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_QUERY_TIME);
@@ -141,12 +139,13 @@ public class LazyQueryContainerExampleApplication extends Application implements
 		visibleColumnLabels.add("Name");
 		visibleColumnLabels.add("Reporter");
 		visibleColumnLabels.add("Assignee");
-		visibleColumnLabels.add("Completed");
 		visibleColumnLabels.add("Query");
 		visibleColumnLabels.add("Batch");
 		visibleColumnLabels.add("Time [ms]");
 		
-		table.setColumnWidth("Editable", 135);
+		table.setColumnWidth("name", 135);
+		table.setColumnWidth("reporter", 135);
+		table.setColumnWidth("assignee", 135);
 
 		table.setVisibleColumns(visibleColumnIds.toArray());
 		table.setColumnHeaders(visibleColumnLabels.toArray(new String[0]));

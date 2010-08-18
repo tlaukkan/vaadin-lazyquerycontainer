@@ -17,7 +17,6 @@ public class Task implements Serializable {
 	private String name;
 	private String reporter;
 	private String assignee;
-	private boolean completed;
 	private static final long serialVersionUID = 1L;
 
 	public Task() {
@@ -54,12 +53,5 @@ public class Task implements Serializable {
 	public void setAssignee(String assignee) {
 		this.assignee = assignee;
 	}   
-	public boolean getCompleted() {
-		return this.completed;
-	}
-
-	public void setCompleted(boolean completed) {
-		this.completed = completed;
-	}
-   
+  
 }
