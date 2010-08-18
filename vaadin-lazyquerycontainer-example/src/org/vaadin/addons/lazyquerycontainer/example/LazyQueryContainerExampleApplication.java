@@ -36,18 +36,16 @@ public class LazyQueryContainerExampleApplication extends Application implements
 	public static final String PERSISTENCE_UNIT="vaadin-lazyquerycontainer-example";
 	
 	private LazyQueryContainer container;
-	private MockQueryFactory mockQueryFactory;
+	private TaskQueryFactory queryFactory;
 	private Button refreshButton;
 	private Button editButton;
 	private Button saveButton;
 	private Button cancelButton;
 	private Button addItemButton;
 	private Button removeItemButton;
-	private Button removeAllItemsButton;
-	private Button addPropertyButton;
+
 	private Table table;
-	private int addedPropertyCount=0;
-	
+
 	private ArrayList<Object> visibleColumnIds=new ArrayList<Object>();
 	private ArrayList<String> visibleColumnLabels=new ArrayList<String>();
 	
@@ -86,14 +84,6 @@ public class LazyQueryContainerExampleApplication extends Application implements
 		editButton=new Button("Edit");
 		editButton.addListener(this);
 		buttonPanel.addComponent(editButton);
-
-		addPropertyButton=new Button("Add Column");
-		addPropertyButton.addListener(this);
-		buttonPanel.addComponent(addPropertyButton);
-		
-		removeAllItemsButton=new Button("Remove All Rows");
-		removeAllItemsButton.addListener(this);
-		buttonPanel.addComponent(removeAllItemsButton);
 		
 		saveButton=new Button("Save");
 		saveButton.addListener(this);
@@ -122,13 +112,16 @@ public class LazyQueryContainerExampleApplication extends Application implements
 		EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT);
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 				
-		mockQueryFactory=new MockQueryFactory(2000,10,20);
-		container=new LazyQueryContainer(mockQueryFactory,50);
+		queryFactory=new TaskQueryFactory(entityManager);
+		container=new LazyQueryContainer(queryFactory,50);
 		
 		container.addContainerProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS, QueryItemStatus.class, QueryItemStatus.None, true, false);
-		container.addContainerProperty("Index", Integer.class, 0, true, true);
-		container.addContainerProperty("ReverseIndex", Integer.class, 0, true, true);
-		container.addContainerProperty("Editable", String.class, "", false, false);
+		
+		container.addContainerProperty("name", String.class, "", true, true);
+		container.addContainerProperty("reporter", String.class, "", true, true);
+		container.addContainerProperty("assignee", String.class, "", true, true);
+		container.addContainerProperty("completed", Boolean.class, false, true, true);
+
 		container.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_QUERY_INDEX, Integer.class, 0, true, false);
 		container.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_INDEX, Integer.class, 0, true, false);
 		container.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_QUERY_TIME, Integer.class, 0, true, false);
@@ -136,17 +129,19 @@ public class LazyQueryContainerExampleApplication extends Application implements
 		table.setContainerDataSource(container);
 	
 		visibleColumnIds.add(LazyQueryView.PROPERTY_ID_ITEM_STATUS);
-		visibleColumnIds.add("Index");
-		visibleColumnIds.add("ReverseIndex");
-		visibleColumnIds.add("Editable");
+		visibleColumnIds.add("name");
+		visibleColumnIds.add("reporter");
+		visibleColumnIds.add("assignee");
+		visibleColumnIds.add("completed");
 		visibleColumnIds.add(LazyQueryView.DEBUG_PROPERTY_ID_QUERY_INDEX);
 		visibleColumnIds.add(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_INDEX);
 		visibleColumnIds.add(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_QUERY_TIME);
 
 		visibleColumnLabels.add("");
-		visibleColumnLabels.add("Index");
-		visibleColumnLabels.add("Reverse Index");
-		visibleColumnLabels.add("Editable");
+		visibleColumnLabels.add("Name");
+		visibleColumnLabels.add("Reporter");
+		visibleColumnLabels.add("Assignee");
+		visibleColumnLabels.add("Completed");
 		visibleColumnLabels.add("Query");
 		visibleColumnLabels.add("Batch");
 		visibleColumnLabels.add("Time [ms]");
@@ -175,8 +170,6 @@ public class LazyQueryContainerExampleApplication extends Application implements
 			table.setEditable(true);
 			table.setSortDisabled(true);
 			refreshButton.setEnabled(false);
-			removeAllItemsButton.setEnabled(false);
-			addPropertyButton.setEnabled(false);
 			editButton.setEnabled(false);
 			saveButton.setEnabled(true);
 			cancelButton.setEnabled(true);
@@ -186,8 +179,6 @@ public class LazyQueryContainerExampleApplication extends Application implements
 			table.setEditable(false);
 			table.setSortDisabled(false);
 			refreshButton.setEnabled(true);
-			removeAllItemsButton.setEnabled(true);
-			addPropertyButton.setEnabled(true);
 			editButton.setEnabled(true);
 			saveButton.setEnabled(false);
 			cancelButton.setEnabled(false);
@@ -233,25 +224,6 @@ public class LazyQueryContainerExampleApplication extends Application implements
 					container.removeItem((Integer)selectedIndex);
 				}
 			}			
-		}
-		if(event.getButton()==removeAllItemsButton) {
-			container.removeAllItems();
-		}
-		if(event.getButton()==addPropertyButton) {
-			addedPropertyCount++;
-
-			String newPropertyId="Property-"+addedPropertyCount;
-			
-			container.addContainerProperty(newPropertyId, Integer.class, 0, false, true);
-			mockQueryFactory.addProperty(newPropertyId, Integer.class, 0, false, true);
-			container.refresh();
-
-			visibleColumnIds.add(newPropertyId);
-			visibleColumnLabels.add(newPropertyId);	
-
-			table.setVisibleColumns(visibleColumnIds.toArray());
-			table.setColumnHeaders(visibleColumnLabels.toArray(new String[0]));
-			table.requestRepaint();
 		}
 	}
 
