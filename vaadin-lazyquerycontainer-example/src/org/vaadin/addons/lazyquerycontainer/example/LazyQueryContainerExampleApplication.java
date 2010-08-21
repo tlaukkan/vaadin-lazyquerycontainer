@@ -7,11 +7,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+import org.vaadin.addons.lazyquerycontainer.JpaQueryFactory;
 import org.vaadin.addons.lazyquerycontainer.LazyQueryContainer;
 import org.vaadin.addons.lazyquerycontainer.LazyQueryView;
 import org.vaadin.addons.lazyquerycontainer.QueryItemStatus;
 import org.vaadin.addons.lazyquerycontainer.QueryItemStatusColumnGenerator;
-import org.vaadin.addons.lazyquerycontainer.test.MockQueryFactory;
 
 import com.vaadin.Application;
 import com.vaadin.ui.AbstractSelect.MultiSelectMode;
@@ -36,7 +36,6 @@ public class LazyQueryContainerExampleApplication extends Application implements
 	public static final String PERSISTENCE_UNIT="vaadin-lazyquerycontainer-example";
 	
 	private LazyQueryContainer container;
-	private TaskQueryFactory queryFactory;
 	private Button refreshButton;
 	private Button editButton;
 	private Button saveButton;
@@ -112,7 +111,7 @@ public class LazyQueryContainerExampleApplication extends Application implements
 		EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT);
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 				
-		queryFactory=new TaskQueryFactory(entityManager);
+		JpaQueryFactory<Task> queryFactory=new JpaQueryFactory<Task>(entityManager,Task.class,"SELECT t from Task as t","SELECT count(t) from Task as t",new Object[]{"name"},new boolean[]{true});
 		container=new LazyQueryContainer(queryFactory,50);
 		
 		container.addContainerProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS, QueryItemStatus.class, QueryItemStatus.None, true, false);

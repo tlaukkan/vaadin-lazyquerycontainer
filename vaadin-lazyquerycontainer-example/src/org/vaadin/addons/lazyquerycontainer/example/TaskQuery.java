@@ -73,7 +73,8 @@ public class TaskQuery implements Query {
                 query.setFirstResult(startIndex);
                 query.setMaxResults(count);
                 
-                List<Task> tasks=query.getResultList();
+                @SuppressWarnings("unchecked")
+				List<Task> tasks=query.getResultList();
                 List<Item> items=new ArrayList<Item>();
                 for(Task task : tasks) {
                         items.add(toItem(task));
@@ -122,7 +123,8 @@ public class TaskQuery implements Query {
             return compositeItem;
         }
 
-        private Task fromItem(Item item) {
+        @SuppressWarnings("rawtypes")
+		private Task fromItem(Item item) {
         	return (Task)((BeanItem)(((CompositeItem)item).getItem("task"))).getBean();
         }
 }
