@@ -45,16 +45,18 @@ public class JpaQuery<T extends Object> implements Query {
         private String jpaSelectCountQuery;
         private String criteria;
         private Class<T> beanClass;
+        private boolean transactionManagement;
         
         public JpaQuery(Class<T> beanClass, EntityManager entityManager, 
         		String jpaSelectQuery, String jpaSelectCountQuery, QueryDefinition definition, 
         		Object[] nativeSortPropertyIds, boolean[] nativeSortStates, 
-        		Object[] sortPropertyIds, boolean[] sortStates) {
+        		Object[] sortPropertyIds, boolean[] sortStates, boolean transactionManagement) {
                 
                 this.entityManager = entityManager;
                 this.definition = definition;
                 this.beanClass=beanClass;
                 this.jpaSelectCountQuery=jpaSelectCountQuery;
+                this.transactionManagement=transactionManagement;
 
                 if(nativeSortPropertyIds.length==0) {
             		throw new RuntimeException("Native sort is mandatory. Define at least one native sort property id and corresponding native sort state.");
@@ -138,7 +140,9 @@ public class JpaQuery<T extends Object> implements Query {
         @Override
         public void saveItems(List<Item> addedItems, List<Item> modifiedItems,
                         List<Item> removedItems) {
-        		entityManager.getTransaction().begin();
+        		if(transactionManagement) {
+        			entityManager.getTransaction().begin();
+        		}
                 for(Item item : addedItems) {
                 	entityManager.persist(fromItem(item));
                 }
@@ -148,7 +152,9 @@ public class JpaQuery<T extends Object> implements Query {
                 for(Item item : removedItems) {
                     entityManager.remove(fromItem(item));
                 }
-                entityManager.getTransaction().commit();
+        		if(transactionManagement) {
+        			entityManager.getTransaction().commit();
+        		}
         }
         
         @Override

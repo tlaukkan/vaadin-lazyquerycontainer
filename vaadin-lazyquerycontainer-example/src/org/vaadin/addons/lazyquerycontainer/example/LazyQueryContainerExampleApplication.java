@@ -111,7 +111,7 @@ public class LazyQueryContainerExampleApplication extends Application implements
 		EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT);
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 				
-		JpaQueryFactory<Task> queryFactory=new JpaQueryFactory<Task>(entityManager,Task.class,"SELECT t from Task as t","SELECT count(t) from Task as t",new Object[]{"name"},new boolean[]{true});
+		JpaQueryFactory<Task> queryFactory=new JpaQueryFactory<Task>(entityManager,Task.class,"SELECT t from Task as t","SELECT count(t) from Task as t",new Object[]{"name"},new boolean[]{true},true);
 		container=new LazyQueryContainer(queryFactory,50);
 		
 		container.addContainerProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS, QueryItemStatus.class, QueryItemStatus.None, true, false);

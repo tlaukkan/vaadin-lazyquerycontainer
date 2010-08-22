@@ -24,7 +24,7 @@ import org.vaadin.addons.lazyquerycontainer.QueryFactory;
 /**
  * Query factory implementation for JpaQuery.
  * @author Tommi Laukkanen
- * @param <T> Bean class
+ * @param <T> The value bean class
  */
 public class JpaQueryFactory<T> implements QueryFactory {
 
@@ -35,8 +35,19 @@ public class JpaQueryFactory<T> implements QueryFactory {
         private String jpaSelectCountQuery;
         private Object[] nativeSortPropertyIds;
         private boolean[] nativeSortStates;
-        
-        public JpaQueryFactory(EntityManager entityManager, Class<T> beanClass, String jpaSelectQuery, String jpaSelectCountQuery, Object[] nativeSortPropertyIds, boolean[] nativeSortStates) {
+        private boolean transactionManagement;
+
+        /**
+         * Constructs JpaQueryFactory and sets the user defined parameters.
+         * @param entityManager The entity manager to be used.
+         * @param beanClass The value bean class.
+         * @param jpaSelectQuery The select query used to select batches of value beans.
+         * @param jpaSelectCountQuery The select count query which returns total number of beans.
+         * @param nativeSortPropertyIds The properties used in native sort.
+         * @param nativeSortStates The native sort states. True corresponds ascending and false descending.
+         * @param transactionManagement True if application managed transactions are to be used. 
+         */
+        public JpaQueryFactory(EntityManager entityManager, Class<T> beanClass, String jpaSelectQuery, String jpaSelectCountQuery, Object[] nativeSortPropertyIds, boolean[] nativeSortStates, boolean transactionManagement) {
                 super();
                 this.entityManager = entityManager;
                 this.beanClass=beanClass;
@@ -44,6 +55,7 @@ public class JpaQueryFactory<T> implements QueryFactory {
                 this.jpaSelectCountQuery=jpaSelectCountQuery;
                 this.nativeSortPropertyIds=nativeSortPropertyIds;
                 this.nativeSortStates=nativeSortStates;
+                this.transactionManagement=transactionManagement;
         }
 
         @Override
@@ -53,7 +65,7 @@ public class JpaQueryFactory<T> implements QueryFactory {
         
         @Override
         public Query constructQuery(Object[] sortPropertyIds, boolean[] sortStates) {
-                return new JpaQuery<T>(beanClass, entityManager, jpaSelectQuery, jpaSelectCountQuery, definition, nativeSortPropertyIds, nativeSortStates, sortPropertyIds, sortStates);
+                return new JpaQuery<T>(beanClass, entityManager, jpaSelectQuery, jpaSelectCountQuery, definition, nativeSortPropertyIds, nativeSortStates, sortPropertyIds, sortStates, transactionManagement);
         }
 
 }
