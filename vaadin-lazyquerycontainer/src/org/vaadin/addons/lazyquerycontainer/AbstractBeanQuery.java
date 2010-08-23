@@ -20,6 +20,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.util.BeanItem;
@@ -34,7 +35,7 @@ import com.vaadin.data.util.ObjectProperty;
 public abstract class AbstractBeanQuery<T extends Object> implements Query {
 
         private QueryDefinition definition;
-		private Class<T> beanClass;
+		protected Map<String,Object> queryConfiguration;
         
         public AbstractBeanQuery() {
         }
@@ -43,15 +44,15 @@ public abstract class AbstractBeanQuery<T extends Object> implements Query {
 			this.definition = definition;
 		}
 
-		public void setBeanClass(Class<T> beanClass) {
-			this.beanClass = beanClass;
+		public void setQueryConfiguration(Map<String, Object> queryConfiguration) {
+			this.queryConfiguration = queryConfiguration;
 		}
-        
+		
         @Override
         public Item constructItem() {
         	try {
-            	T bean=beanClass.newInstance();
-	        	BeanInfo info = Introspector.getBeanInfo( beanClass );
+            	T bean=constructBean();
+	        	BeanInfo info = Introspector.getBeanInfo( bean.getClass() );
 	            for ( PropertyDescriptor pd : info.getPropertyDescriptors() ) {
 	            	for(Object propertyId : definition.getPropertyIds()) {               
 	            		if(pd.getName().equals(propertyId)) {
@@ -64,6 +65,8 @@ public abstract class AbstractBeanQuery<T extends Object> implements Query {
         		throw new RuntimeException("Error in bean construction or property population with default values.",e);
         	}
         }
+        
+    	protected abstract T constructBean();
         
         @Override
         public abstract int size();

@@ -15,27 +15,37 @@
  */
 package org.vaadin.addons.lazyquerycontainer;
 
+import java.util.Map;
+
 /**
  * QueryFactory implementation for BeanQuery.
  * @author Tommi Laukkanen
  * @param <Q> The BeanQuery implementation class
  * @param <T> The value bean class
  */
-public class BeanQueryFactory<Q extends AbstractBeanQuery<T>,T> implements QueryFactory {
+@SuppressWarnings("rawtypes")
+public class BeanQueryFactory<Q extends AbstractBeanQuery> implements QueryFactory {
 
 		private QueryDefinition definition;
-        private Class<T> beanClass;
         private Class<Q> queryClass;
+        private Map<String,Object> queryConfiguration;
 
         /**
          * Constructs BeanQuery and sets the user defined parameters.
          * @param queryClass The BeanQuery class;
          * @param beanClass The value bean class.
          */
-        public BeanQueryFactory(Class<Q> queryClass,Class<T> beanClass) {
+        public BeanQueryFactory(Class<Q> queryClass) {
                 super();
                 this.queryClass=queryClass;
-                this.beanClass=beanClass;
+        }
+        
+        /**
+         * Sets the query configuration for the custom query implementation.
+         * @param queryConfiguration The query configuration to be used by the custom query implementation.
+         */
+        public void setQueryConfiguration(Map<String,Object> queryConfiguration) {
+        	this.queryConfiguration=queryConfiguration;
         }
 
         @Override
@@ -43,7 +53,8 @@ public class BeanQueryFactory<Q extends AbstractBeanQuery<T>,T> implements Query
                 this.definition=definition;
         }
         
-        @Override
+        @SuppressWarnings("unchecked")
+		@Override
         public Query constructQuery(Object[] sortPropertyIds, boolean[] sortStates) {
         	Q query;
 
@@ -54,7 +65,8 @@ public class BeanQueryFactory<Q extends AbstractBeanQuery<T>,T> implements Query
 			}
 			
         	query.setDefinition(definition);
-        	query.setBeanClass(beanClass);
+        	query.setQueryConfiguration(queryConfiguration);
+
         	return query;
         }
 

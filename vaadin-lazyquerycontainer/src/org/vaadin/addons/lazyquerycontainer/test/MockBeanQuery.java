@@ -14,6 +14,7 @@ public class MockBeanQuery extends AbstractBeanQuery<MockBean> {
 		beans.clear();
 		MockBean mockBean=new MockBean();
 		mockBean.setName("test-bean-1");
+		mockBean.setDescription("test-bean-description-1");
 		beans.add(mockBean);
 	}
 	
@@ -23,6 +24,13 @@ public class MockBeanQuery extends AbstractBeanQuery<MockBean> {
 	@Override
 	public int size() {
 		return beans.size();
+	}
+	
+	@Override
+	protected MockBean constructBean() {
+		MockBean mockBean=new MockBean();
+		mockBean.setDescription((String)queryConfiguration.get("description"));
+		return mockBean;
 	}
 
 	@Override
