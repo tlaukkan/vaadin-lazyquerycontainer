@@ -40,6 +40,9 @@ public class BeanQueryTest {
 		Assert.assertEquals(2, view.size());
 		Item item=view.getItem(index);
 		Assert.assertEquals("test-bean-2", item.getItemProperty("name").getValue());
+		Assert.assertFalse((Boolean)item.getItemProperty("saved").getValue());
+		view.commit();	
+		Assert.assertTrue((Boolean)item.getItemProperty("saved").getValue());
 	}
 
 }

@@ -34,12 +34,15 @@ public class MockBeanQuery extends AbstractBeanQuery<MockBean> {
 	protected void saveBeans(List<MockBean> addedItems, List<MockBean> modifiedItems, List<MockBean> removedItems) {
 		for(MockBean bean : addedItems) {
 			Assert.notNull(bean.getName());
+			bean.setSaved(true);
 		}
 		for(MockBean bean : modifiedItems) {
 			Assert.notNull(bean.getName());
+			bean.setSaved(true);
 		}
 		for(MockBean bean : removedItems) {
 			Assert.notNull(bean.getName());
+			bean.setSaved(true);
 		}
 	}
 
