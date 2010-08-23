@@ -36,8 +36,10 @@ public abstract class AbstractBeanQuery<T extends Object> implements Query {
 
         private QueryDefinition definition;
 		protected Map<String,Object> queryConfiguration;
+		protected Object[] sortPropertyIds;
+		protected boolean[] sortStates;
         
-        public AbstractBeanQuery() {
+		public AbstractBeanQuery() {
         }
 
         public void setDefinition(QueryDefinition definition) {
@@ -46,6 +48,14 @@ public abstract class AbstractBeanQuery<T extends Object> implements Query {
 
 		public void setQueryConfiguration(Map<String, Object> queryConfiguration) {
 			this.queryConfiguration = queryConfiguration;
+		}
+		
+		public void setSortPropertyIds(Object[] sortPropertyIds) {
+			this.sortPropertyIds = sortPropertyIds;
+		}
+
+		public void setSortStates(boolean[] sortStates) {
+			this.sortStates = sortStates;
 		}
 		
         @Override
@@ -88,7 +98,7 @@ public abstract class AbstractBeanQuery<T extends Object> implements Query {
         	saveBeans(fromItems(addedItems),fromItems(modifiedItems),fromItems(removedItems));
         }
         
-        protected abstract void saveBeans(List<T> addedItems, List<T> modifiedItems, List<T> removedItems);
+        protected abstract void saveBeans(List<T> addedTasks, List<T> modifiedTasks, List<T> removedTasks);
         
         @Override
         public boolean deleteAllItems() {

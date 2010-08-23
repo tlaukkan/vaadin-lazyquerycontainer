@@ -47,6 +47,7 @@ public class TaskTest {
 		transaction.commit();
 		
 		Query query=entityManager.createQuery("select t from Task as t");
+		@SuppressWarnings("unchecked")
 		List<Task> result=query.getResultList();
 		Assert.assertEquals("Did select find the saved task.",1,result.size());
 		

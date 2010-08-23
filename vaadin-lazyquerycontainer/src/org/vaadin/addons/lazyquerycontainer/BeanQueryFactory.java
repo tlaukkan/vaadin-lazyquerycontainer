@@ -66,6 +66,8 @@ public class BeanQueryFactory<Q extends AbstractBeanQuery> implements QueryFacto
 			
         	query.setDefinition(definition);
         	query.setQueryConfiguration(queryConfiguration);
+        	query.setSortPropertyIds(sortPropertyIds);
+        	query.setSortStates(sortStates);
 
         	return query;
         }
