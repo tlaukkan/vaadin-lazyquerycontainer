@@ -2,11 +2,19 @@ package org.vaadin.addons.lazyquerycontainer.test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.myfaces.shared_impl.util.Assert;
 import org.vaadin.addons.lazyquerycontainer.AbstractBeanQuery;
+import org.vaadin.addons.lazyquerycontainer.QueryDefinition;
 
 public class MockBeanQuery extends AbstractBeanQuery<MockBean> {
+
+	public MockBeanQuery(QueryDefinition definition,
+			Map<String, Object> queryConfiguration, Object[] sortPropertyIds,
+			boolean[] sortStates) {
+		super(definition, queryConfiguration, sortPropertyIds, sortStates);
+	}
 
 	private static ArrayList<MockBean> beans=new ArrayList<MockBean>();
 	
@@ -16,9 +24,6 @@ public class MockBeanQuery extends AbstractBeanQuery<MockBean> {
 		mockBean.setName("test-bean-1");
 		mockBean.setDescription("test-bean-description-1");
 		beans.add(mockBean);
-	}
-	
-	public MockBeanQuery() {
 	}
 	
 	@Override

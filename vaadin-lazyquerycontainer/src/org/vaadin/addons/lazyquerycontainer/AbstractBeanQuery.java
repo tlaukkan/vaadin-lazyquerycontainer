@@ -34,27 +34,16 @@ import com.vaadin.data.util.ObjectProperty;
  */
 public abstract class AbstractBeanQuery<T extends Object> implements Query {
 
-        private QueryDefinition definition;
-		protected Map<String,Object> queryConfiguration;
-		protected Object[] sortPropertyIds;
-		protected boolean[] sortStates;
+        protected QueryDefinition definition;
+        protected Map<String,Object> queryConfiguration;
+        protected Object[] sortPropertyIds; 
+        protected boolean[] sortStates;
         
-		public AbstractBeanQuery() {
-        }
-
-        public void setDefinition(QueryDefinition definition) {
+		public AbstractBeanQuery(QueryDefinition definition, Map<String, Object> queryConfiguration,
+				Object[] sortPropertyIds, boolean[] sortStates) {
 			this.definition = definition;
-		}
-
-		public void setQueryConfiguration(Map<String, Object> queryConfiguration) {
 			this.queryConfiguration = queryConfiguration;
-		}
-		
-		public void setSortPropertyIds(Object[] sortPropertyIds) {
 			this.sortPropertyIds = sortPropertyIds;
-		}
-
-		public void setSortStates(boolean[] sortStates) {
 			this.sortStates = sortStates;
 		}
 		

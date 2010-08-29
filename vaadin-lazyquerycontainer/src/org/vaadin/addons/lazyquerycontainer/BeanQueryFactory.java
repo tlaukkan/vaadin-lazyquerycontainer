@@ -53,22 +53,20 @@ public class BeanQueryFactory<Q extends AbstractBeanQuery> implements QueryFacto
                 this.definition=definition;
         }
         
-        @SuppressWarnings("unchecked")
 		@Override
         public Query constructQuery(Object[] sortPropertyIds, boolean[] sortStates) {
         	Q query;
 
         	try {
-				query = queryClass.newInstance();
+				query = queryClass.getConstructor(new Class[]{
+						QueryDefinition.class,Map.class,Object[].class,boolean[].class
+						}).newInstance( new Object[]{
+								definition,queryConfiguration,sortPropertyIds,sortStates
+						});
 			} catch (Exception e) {
 				throw new RuntimeException("Error instantiating query.");
 			}
-			
-        	query.setDefinition(definition);
-        	query.setQueryConfiguration(queryConfiguration);
-        	query.setSortPropertyIds(sortPropertyIds);
-        	query.setSortStates(sortStates);
-
+			        	
         	return query;
         }
 

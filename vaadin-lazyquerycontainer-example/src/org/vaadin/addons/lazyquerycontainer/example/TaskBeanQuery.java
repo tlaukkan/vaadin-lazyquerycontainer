@@ -1,10 +1,18 @@
 package org.vaadin.addons.lazyquerycontainer.example;
 
 import java.util.List;
+import java.util.Map;
 
 import org.vaadin.addons.lazyquerycontainer.AbstractBeanQuery;
+import org.vaadin.addons.lazyquerycontainer.QueryDefinition;
 
 public class TaskBeanQuery extends AbstractBeanQuery<Task> {
+
+	public TaskBeanQuery(QueryDefinition definition,
+			Map<String, Object> queryConfiguration, Object[] sortPropertyIds,
+			boolean[] sortStates) {
+		super(definition, queryConfiguration, sortPropertyIds, sortStates);
+	}
 
 	@Override
 	protected Task constructBean() {
