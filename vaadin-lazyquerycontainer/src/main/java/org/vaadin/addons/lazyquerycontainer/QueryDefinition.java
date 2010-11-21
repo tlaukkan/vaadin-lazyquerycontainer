@@ -26,50 +26,53 @@ public interface QueryDefinition {
 	 * Lists of the property IDs queried.
 	 * @return A list of property IDs queried.
 	 */
-	public Collection<?> getPropertyIds();
+	Collection<?> getPropertyIds();
 	/**
 	 * List of the property IDs which can be sorted.
 	 * @return A list of the property IDs which can be sorted.
 	 */
-	public Collection<?> getSortablePropertyIds();
+	Collection<?> getSortablePropertyIds();
 	/**
 	 * Gets the property value class of the given property.
 	 * @param propertyId If of the property of interest.
 	 * @return The value class of the given property.
 	 */
-	public Class<?> getPropertyType(Object propertyId);
+	Class<?> getPropertyType(Object propertyId);
 	/**
 	 * Gets the default value of the given property.
 	 * @param propertyId If of the property of interest.
 	 * @return The default value of the given property.
 	 */
-	public Object getPropertyDefaultValue(Object propertyId);
+	Object getPropertyDefaultValue(Object propertyId);
 	/**
 	 * Returns true if the given property is read only.
 	 * @param propertyId If of the property of interest.
 	 * @return True if the given property is read only.
 	 */
-	public boolean isPropertyReadOnly(Object propertyId);
+	boolean isPropertyReadOnly(Object propertyId);
 	/**
 	 * Returns true if the given property is sortable.
 	 * @param propertyId If of the property of interest.
 	 * @return True if the given property is sortable.
 	 */
-	public boolean isPropertySortable(Object propertyId);
+	boolean isPropertySortable(Object propertyId);
 	/**
-	 * Adds a new property to the definition,
+	 * Adds a new property to the definition.
 	 * @param propertyId Id of the property.
 	 * @param type Value class of the property.
 	 * @param defaultValue Default value of the property.
 	 * @param readOnly Read only state of the property.
 	 * @param sortable Sortable state of the property.
 	 */
-	public void addProperty(Object propertyId, Class<?> type, Object defaultValue, boolean readOnly, boolean sortable);
+	void addProperty(Object propertyId, Class<?> type, Object defaultValue, boolean readOnly, boolean sortable);
 	/**
 	 * Removes the given property from the definition.
 	 * @param propertyId If of the property to be removed.
 	 */
-	public void removeProperty(Object propertyId);
-	
-	public int getBatchSize();
+	void removeProperty(Object propertyId);	
+	/**
+	 * Gets the batch size.
+	 * @return the batch size
+	 */
+	int getBatchSize();
 }

@@ -28,33 +28,33 @@ public interface Query {
 	 * Gets number of items available through this query.
 	 * @return Number of items.
 	 */
-	public int size();
+	int size();
 	/**
 	 * Load batch of items.
 	 * @param startIndex Starting index of the item list.
 	 * @param count Count of the items to be retrieved.
 	 * @return List of items.
 	 */
-	public List<Item> loadItems(int startIndex,int count);
+	List<Item> loadItems(int startIndex, int count);
 	/**
 	 * Saves the modifications done by container to the query result.
 	 * Query will be discarded after changes have been saved
 	 * and new query loaded so that changed items are sorted
 	 * appropriately.
-	 * @param addedItems
-	 * @param modifiedItems
-	 * @param deletedItems
+	 * @param addedItems Items to be inserted.
+	 * @param modifiedItems Items to be updated.
+	 * @param removedItems Items to be deleted.
 	 */
-	public void saveItems(List<Item> addedItems,List<Item> modifiedItems,List<Item> removedItems);
+	void saveItems(List<Item> addedItems, List<Item> modifiedItems, List<Item> removedItems);
 	/**
 	 * Removes all items.
 	 * Query will be discarded after delete all items has been called.
 	 * @return true if the operation succeeded or false in case of a failure.
 	 */
-	public boolean deleteAllItems();
+	boolean deleteAllItems();
 	/**
 	 * Constructs new item to be used when adding items.
 	 * @return The new item.
 	 */
-	public Item constructItem();
+	Item constructItem();
 }

@@ -6,7 +6,7 @@
 	<artifactId>vaadin-lazyquerycontainer</artifactId>
 	<packaging>jar</packaging>
 	<version>1.0</version>
-	<name>vaadin-lazy-query-container</name>
+	<name>vaadin-lazyquerycontainer</name>
 
 	<parent>
 		<groupId>org.vaadin.addons.lazyquerycontainer</groupId>
@@ -32,6 +32,16 @@
 		</plugins>
 	</build>
 
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+        <version>2.4</version>
+      </plugin>
+    </plugins>
+  </reporting>
+  
 	<repositories>
 		<repository>
 			<id>vaadin-snapshots</id>

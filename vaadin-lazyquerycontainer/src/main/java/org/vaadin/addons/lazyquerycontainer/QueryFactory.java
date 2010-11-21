@@ -24,12 +24,12 @@ public interface QueryFactory {
 	 * Gets the definition of properties to be queried.
 	 * @param queryDefinition The query definition.
 	 */
-	public void setQueryDefinition(QueryDefinition queryDefinition);
+	void setQueryDefinition(QueryDefinition queryDefinition);
 	/**
 	 * Constructs a new query according to the given sort state.
 	 * @param sortPropertyIds Properties participating in the sorting.
 	 * @param ascendingStates List of sort order for the properties.
 	 * @return A new query constructed according to the given sort state.
 	 */
-	public Query constructQuery(Object[] sortPropertyIds, boolean[] ascendingStates);
+	Query constructQuery(Object[] sortPropertyIds, boolean[] ascendingStates);
 }

@@ -18,55 +18,67 @@ package org.vaadin.addons.lazyquerycontainer;
 import java.util.Map;
 
 /**
- * QueryFactory implementation for BeanQuery.
+ * QueryFactory implementation for BeanQuery. BeanQuery can be used to simplify
+ * implementation of queries returning JavaBeans.
+ * 
  * @author Tommi Laukkanen
- * @param <Q> The BeanQuery implementation class
- * @param <T> The value bean class
+ * @param <Q>
+ *            The BeanQuery implementation class
  */
 @SuppressWarnings("rawtypes")
-public class BeanQueryFactory<Q extends AbstractBeanQuery> implements QueryFactory {
+public final class BeanQueryFactory<Q extends AbstractBeanQuery> implements QueryFactory {
+    /** QueryDefinition contains definition of the query properties. */
+    private QueryDefinition queryDefinition;
+    /** Query configuration contains implementation specific configuration. */
+    private Class<Q> queryClass;
+    /** The query implementation class. */
+    private Map<String, Object> queryConfiguration;
 
-		private QueryDefinition definition;
-        private Class<Q> queryClass;
-        private Map<String,Object> queryConfiguration;
+    /**
+     * Constructs BeanQuery and sets the user defined parameters.
+     * 
+     * @param queryClass
+     *            The BeanQuery class;
+     */
+    public BeanQueryFactory(final Class<Q> queryClass) {
+        super();
+        this.queryClass = queryClass;
+    }
 
-        /**
-         * Constructs BeanQuery and sets the user defined parameters.
-         * @param queryClass The BeanQuery class;
-         * @param beanClass The value bean class.
-         */
-        public BeanQueryFactory(Class<Q> queryClass) {
-                super();
-                this.queryClass=queryClass;
-        }
-        
-        /**
-         * Sets the query configuration for the custom query implementation.
-         * @param queryConfiguration The query configuration to be used by the custom query implementation.
-         */
-        public void setQueryConfiguration(Map<String,Object> queryConfiguration) {
-        	this.queryConfiguration=queryConfiguration;
+    /**
+     * Sets the query configuration for the custom query implementation.
+     * @param queryConfiguration  The query configuration to be used by the custom query implementation.
+     */
+    public void setQueryConfiguration(final Map<String, Object> queryConfiguration) {
+        this.queryConfiguration = queryConfiguration;
+    }
+
+    /**
+     * Sets the query definition.
+     * @param queryDefinition New query definition to be set.
+     */
+    public void setQueryDefinition(final QueryDefinition queryDefinition) {
+        this.queryDefinition = queryDefinition;
+    }
+
+    /**
+     * Constructs new query.
+     * @param sortPropertyIds The properties participating in sort.
+     * @param sortStates  The ascending or descending state of sort properties.
+     * @return new instance of Query interface implementation.
+     */
+    public Query constructQuery(final Object[] sortPropertyIds, final boolean[] sortStates) {
+        Q query;
+
+        try {
+            query = queryClass.getConstructor(
+                    new Class[] { QueryDefinition.class, Map.class, Object[].class, boolean[].class }).newInstance(
+                    new Object[] { queryDefinition, queryConfiguration, sortPropertyIds, sortStates });
+        } catch (Exception e) {
+            throw new RuntimeException("Error instantiating query.");
         }
 
-        public void setQueryDefinition(QueryDefinition definition) {
-                this.definition=definition;
-        }
-        
-        public Query constructQuery(Object[] sortPropertyIds, boolean[] sortStates) {
-        	Q query;
-
-        	try {
-				query = queryClass.getConstructor(new Class[]{
-						QueryDefinition.class,Map.class,Object[].class,boolean[].class
-						}).newInstance( new Object[]{
-								definition,queryConfiguration,sortPropertyIds,sortStates
-						});
-			} catch (Exception e) {
-				throw new RuntimeException("Error instantiating query.");
-			}
-			        	
-        	return query;
-        }
+        return query;
+    }
 
 }
-

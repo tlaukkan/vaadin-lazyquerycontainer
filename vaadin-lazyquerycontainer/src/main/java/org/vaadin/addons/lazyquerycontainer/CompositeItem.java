@@ -28,74 +28,114 @@ import com.vaadin.data.util.PropertysetItem;
 
 /**
  * CompositeItem enables joining multiple items as single item. CompositeItem
- * contains PropertysetItem as default item to support adding and removing
- * of properties.
+ * contains PropertysetItem as default item to support adding and removing of
+ * properties.
  * 
  * @author Tommi Laukkanen
  */
-public class CompositeItem implements Item {
-	private static final long serialVersionUID = 1L;
-	
-	public static final String DEFAULT_ITEM_KEY="default-item"; 
-	private List<String> itemKeys;
-	private Map<String,Item> items;
-	private Item defaultItem;
-	
-	public CompositeItem() {
-		itemKeys=new ArrayList<String>();
-		items=new HashMap<String,Item>();
-		defaultItem=new PropertysetItem();
-		addItem(DEFAULT_ITEM_KEY,defaultItem);
-	}
-	
-	public void addItem(String key, Item item) {
-		itemKeys.add(key);
-		items.put(key, item);
-	}
-	
-	public void removeItem(String key) {
-		itemKeys.remove(key);
-		items.remove(key);
-	}
-		
-	public List<String> getItemKeys() {
-		return Collections.unmodifiableList(itemKeys);
-	}
-	
-	public Item getItem(String key) {
-		return items.get(key);
-	}
+public final class CompositeItem implements Item {
+    /** Serial version UID for this class. */
+    private static final long serialVersionUID = 1L;
+    /** Key for default item. */
+    public static final String DEFAULT_ITEM_KEY = "default-item";
+    /** List of item keys. */
+    private List<String> itemKeys = new ArrayList<String>();
+    /** Map of items. */
+    private Map<String, Item> items = new HashMap<String, Item>();
+    /** The default item. */
+    private Item defaultItem = new PropertysetItem();
 
-	public Collection<?> getItemPropertyIds() {
-		List<Object> itemPropertyIds=new ArrayList<Object>();
-		for(String itemKey : itemKeys) {
-			Item item=items.get(itemKey);
-			for(Object propertyId : item.getItemPropertyIds()) {
-				itemPropertyIds.add(propertyId);
-			}
-		}
-		return itemPropertyIds;
-	}
+    /**
+     * Default constructor initializes default Item.
+     */
+    public CompositeItem() {
+        addItem(DEFAULT_ITEM_KEY, defaultItem);
+    }
 
-	public Property getItemProperty(Object id) {
-		for(String itemKey : itemKeys) {
-			Item item=items.get(itemKey);
-			Property property=item.getItemProperty(id);
-			if(property!=null) {
-				return property;
-			}
-		}
-		return null;
-	}
+    /**
+     * Adds new Item.
+     * @param key Key of new Item.
+     * @param item Item to be added.
+     */
+    public void addItem(final String key, final Item item) {
+        itemKeys.add(key);
+        items.put(key, item);
+    }
 
-	public boolean addItemProperty(Object id, Property property)
-			throws UnsupportedOperationException {
-		return defaultItem.addItemProperty(id, property);
-	}
+    /**
+     * Removes item.
+     * @param key Key of the item to be removed.
+     */
+    public void removeItem(final String key) {
+        itemKeys.remove(key);
+        items.remove(key);
+    }
 
-	public boolean removeItemProperty(Object id)
-			throws UnsupportedOperationException {
-		return defaultItem.removeItemProperty(id);
-	}
+    /**
+     * Gets keys of Items.
+     * @return List of keys.
+     */
+    public List<String> getItemKeys() {
+        return Collections.unmodifiableList(itemKeys);
+    }
+
+    /**
+     * Gets Item identified by Key.
+     * @param key Key of the item to be retrieved.
+     * @return Item corresponding to the given key.
+     */
+    public Item getItem(final String key) {
+        return items.get(key);
+    }
+
+    /**
+     * Lists IDs of the properties in the item.
+     * @return Collection of property IDs.
+     */
+    public Collection<?> getItemPropertyIds() {
+        List<Object> itemPropertyIds = new ArrayList<Object>();
+        for (String itemKey : itemKeys) {
+            Item item = items.get(itemKey);
+            for (Object propertyId : item.getItemPropertyIds()) {
+                itemPropertyIds.add(propertyId);
+            }
+        }
+        return itemPropertyIds;
+    }
+
+    /**
+     * Gets Item property by Item id.
+     * @param id ID of the property to be retrieved.
+     * @return property corresponding to the given ID or null if no matching property is found.
+     */
+    public Property getItemProperty(final Object id) {
+        for (String itemKey : itemKeys) {
+            Item item = items.get(itemKey);
+            Property property = item.getItemProperty(id);
+            if (property != null) {
+                return property;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Adds property to default Item.
+     * @param id ID of the property to be added.
+     * @param property Property to be added.
+     * @return true if Property was added successfully.
+     */
+    public boolean addItemProperty(final Object id, final Property property) {
+        return defaultItem.addItemProperty(id, property);
+    }
+
+    /**
+     * Removes item from default Item.
+     * @param id ID of the property to be removed.
+     * @return true if Property was removed successfully.
+     */
+    public boolean removeItemProperty(final Object id) {
+        return defaultItem.removeItemProperty(id);
+    }
 
 }

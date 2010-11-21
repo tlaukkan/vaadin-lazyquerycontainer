@@ -35,7 +35,7 @@ public class MockBeanQuery extends AbstractBeanQuery<MockBean> {
 
 	protected MockBean constructBean() {
 		MockBean mockBean=new MockBean();
-		mockBean.setDescription((String)queryConfiguration.get("description"));
+		mockBean.setDescription((String)getQueryConfiguration().get("description"));
 		return mockBean;
 	}
 

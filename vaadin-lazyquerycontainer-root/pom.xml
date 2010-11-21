@@ -10,6 +10,15 @@
   <packaging>pom</packaging>
   <name>vaadin-lazyquerycontainer-root</name>
 
+  <build>
+  	<plugins>
+  		<plugin>
+  			<groupId>org.apache.maven.plugins</groupId>
+  			<artifactId>maven-checkstyle-plugin</artifactId>
+  			<version>2.6</version>
+  		</plugin>
+  	</plugins>
+  </build>
   <modules>
     <module>../vaadin-lazyquerycontainer</module>
     <module>../vaadin-lazyquerycontainer-jpa-example</module>

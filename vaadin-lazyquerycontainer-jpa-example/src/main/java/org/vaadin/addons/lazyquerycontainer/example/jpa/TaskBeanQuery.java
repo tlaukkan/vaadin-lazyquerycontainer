@@ -21,19 +21,19 @@ public class TaskBeanQuery extends AbstractBeanQuery<Task> {
 
 	@Override
 	public int size() {
-		TaskService taskService=(TaskService)queryConfiguration.get("taskService");		
+		TaskService taskService=(TaskService)getQueryConfiguration().get("taskService");		
 		return taskService.countTasks();
 	}
 
 	@Override
 	protected List<Task> loadBeans(int startIndex, int count) {
-		TaskService taskService=(TaskService)queryConfiguration.get("taskService");		
-		return taskService.loadTasks(startIndex, count, sortPropertyIds, sortStates);
+		TaskService taskService=(TaskService)getQueryConfiguration().get("taskService");		
+		return taskService.loadTasks(startIndex, count, getSortPropertyIds(), getSortStates());
 	}
 
 	@Override
 	protected void saveBeans(List<Task> addedTasks, List<Task> modifiedTasks, List<Task> removedTasks) {
-		TaskService taskService=(TaskService)queryConfiguration.get("taskService");
+		TaskService taskService=(TaskService)getQueryConfiguration().get("taskService");
 		taskService.saveTasks(addedTasks, modifiedTasks, removedTasks);
 	}
 

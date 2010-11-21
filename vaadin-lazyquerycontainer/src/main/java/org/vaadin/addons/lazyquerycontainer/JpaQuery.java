@@ -32,151 +32,150 @@ import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.ObjectProperty;
 
 /**
- * Simple JPA query implementation which dynamically injects 
- * missing query definition properties to CompositeItems.
+ * Simple JPA query implementation which dynamically injects missing query
+ * definition properties to CompositeItems.
+ * 
  * @author Tommi S.E. Laukkanen
- * @param <T> Bean class
+ * @param <T>
+ *            Bean class
  */
 public class JpaQuery<T extends Object> implements Query {
 
-        private EntityManager entityManager;
-        private QueryDefinition definition;
-        private String jpaSelectQuery;
-        private String jpaSelectCountQuery;
-        private String criteria;
-        private Class<T> beanClass;
-        private boolean transactionManagement;
-        
-        public JpaQuery(Class<T> beanClass, EntityManager entityManager, 
-        		String jpaSelectQuery, String jpaSelectCountQuery, QueryDefinition definition, 
-        		Object[] nativeSortPropertyIds, boolean[] nativeSortStates, 
-        		Object[] sortPropertyIds, boolean[] sortStates, boolean transactionManagement) {
-                
-                this.entityManager = entityManager;
-                this.definition = definition;
-                this.beanClass=beanClass;
-                this.jpaSelectCountQuery=jpaSelectCountQuery;
-                this.transactionManagement=transactionManagement;
+    private EntityManager entityManager;
+    private QueryDefinition definition;
+    private String jpaSelectQuery;
+    private String jpaSelectCountQuery;
+    private String criteria;
+    private Class<T> beanClass;
+    private boolean transactionManagement;
 
-                if(nativeSortPropertyIds.length==0) {
-            		throw new RuntimeException("Native sort is mandatory. Define at least one native sort property id and corresponding native sort state.");
-            	}
-                
-                if(sortPropertyIds.length>0) {
-	                for(int i=0;i<sortPropertyIds.length;i++) {
-	                        if(i==0) {
-	                                criteria=" ORDER BY";
-	                        } else {
-	                                criteria+=",";
-	                        }
-	                        criteria+=" t."+sortPropertyIds[i];
-	                        if(sortStates[i]) {
-	                                criteria+=" ASC";
-	                        }
-	                        else {
-	                                criteria+=" DESC";                              
-	                        }
-	                }
+    public JpaQuery(Class<T> beanClass, EntityManager entityManager, String jpaSelectQuery, String jpaSelectCountQuery,
+            QueryDefinition definition, Object[] nativeSortPropertyIds, boolean[] nativeSortStates,
+            Object[] sortPropertyIds, boolean[] sortStates, boolean transactionManagement) {
+
+        this.entityManager = entityManager;
+        this.definition = definition;
+        this.beanClass = beanClass;
+        this.jpaSelectCountQuery = jpaSelectCountQuery;
+        this.transactionManagement = transactionManagement;
+
+        if (nativeSortPropertyIds.length == 0) {
+            throw new RuntimeException(
+                    "Native sort is mandatory. Define at least one native sort property id and corresponding native sort state.");
+        }
+
+        if (sortPropertyIds.length > 0) {
+            for (int i = 0; i < sortPropertyIds.length; i++) {
+                if (i == 0) {
+                    criteria = " ORDER BY";
                 } else {
-	                for(int i=0;i<nativeSortPropertyIds.length;i++) {
-                        if(i==0) {
-                                criteria=" ORDER BY";
-                        } else {
-                                criteria+=",";
-                        }
-                        criteria+=" t."+nativeSortPropertyIds[i];
-                        if(nativeSortStates[i]) {
-                                criteria+=" ASC";
-                        }
-                        else {
-                                criteria+=" DESC";                              
-                        }
-	                }                	
+                    criteria += ",";
                 }
-                
-                this.jpaSelectQuery=jpaSelectQuery+criteria;
-        }
-
-        public Item constructItem() {
-        	try {
-            	T bean=beanClass.newInstance();
-	        	BeanInfo info = Introspector.getBeanInfo( beanClass );
-	            for ( PropertyDescriptor pd : info.getPropertyDescriptors() ) {
-	            	for(Object propertyId : definition.getPropertyIds()) {               
-	            		if(pd.getName().equals(propertyId)) {
-	            			pd.getWriteMethod().invoke(bean, definition.getPropertyDefaultValue(propertyId));
-	            		}
-	            	}
-	            }
-	            return toItem(bean);
-        	} catch(Exception e) {
-        		throw new RuntimeException("Error in bean construction or property population with default values.");
-        	}
-        }
-        
-        public int size() {
-                javax.persistence.Query query = entityManager.createQuery(jpaSelectCountQuery);           
-                return (int)((Long) query.getSingleResult()).longValue();
-        }
-
-        public List<Item> loadItems(int startIndex, int count) {
-                javax.persistence.Query query = entityManager.createQuery(jpaSelectQuery);
-                query.setFirstResult(startIndex);
-                query.setMaxResults(count);
-                
-                @SuppressWarnings("unchecked")
-				List<T> beans=query.getResultList();
-                List<Item> items=new ArrayList<Item>();
-                for(T bean : beans) {
-                        items.add(toItem(bean));
+                criteria += " t." + sortPropertyIds[i];
+                if (sortStates[i]) {
+                    criteria += " ASC";
+                } else {
+                    criteria += " DESC";
                 }
-                
-                return items;
-        }
-
-        public void saveItems(List<Item> addedItems, List<Item> modifiedItems,
-                        List<Item> removedItems) {
-        		if(transactionManagement) {
-        			entityManager.getTransaction().begin();
-        		}
-                for(Item item : addedItems) {
-                	entityManager.persist(fromItem(item));
-                }
-                for(Item item : modifiedItems) {
-                	entityManager.persist(fromItem(item));
-                }
-                for(Item item : removedItems) {
-                    entityManager.remove(fromItem(item));
-                }
-        		if(transactionManagement) {
-        			entityManager.getTransaction().commit();
-        		}
-        }
-        
-        public boolean deleteAllItems() {
-                throw new UnsupportedOperationException();
-        }
-        
-        private Item toItem(T bean) {
-            BeanItem<T> beanItem= new BeanItem<T>(bean);
-            
-            CompositeItem compositeItem=new CompositeItem();            
-            compositeItem.addItem("bean", beanItem);
-            
-            for(Object propertyId : definition.getPropertyIds()) {               
-            	if(compositeItem.getItemProperty(propertyId)==null) {
-            		compositeItem.addItemProperty(propertyId,new ObjectProperty(
-            				definition.getPropertyDefaultValue(propertyId),
-            				definition.getPropertyType(propertyId),
-            				definition.isPropertyReadOnly(propertyId)));
-            	}
             }
-            
-            return compositeItem;
+        } else {
+            for (int i = 0; i < nativeSortPropertyIds.length; i++) {
+                if (i == 0) {
+                    criteria = " ORDER BY";
+                } else {
+                    criteria += ",";
+                }
+                criteria += " t." + nativeSortPropertyIds[i];
+                if (nativeSortStates[i]) {
+                    criteria += " ASC";
+                } else {
+                    criteria += " DESC";
+                }
+            }
         }
 
-        @SuppressWarnings({ "unchecked", "rawtypes" })
-		private T fromItem(Item item) {
-        	return (T)((BeanItem)(((CompositeItem)item).getItem("bean"))).getBean();
+        this.jpaSelectQuery = jpaSelectQuery + criteria;
+    }
+
+    public Item constructItem() {
+        try {
+            T bean = beanClass.newInstance();
+            BeanInfo info = Introspector.getBeanInfo(beanClass);
+            for (PropertyDescriptor pd : info.getPropertyDescriptors()) {
+                for (Object propertyId : definition.getPropertyIds()) {
+                    if (pd.getName().equals(propertyId)) {
+                        pd.getWriteMethod().invoke(bean, definition.getPropertyDefaultValue(propertyId));
+                    }
+                }
+            }
+            return toItem(bean);
+        } catch (Exception e) {
+            throw new RuntimeException("Error in bean construction or property population with default values.");
         }
+    }
+
+    public int size() {
+        javax.persistence.Query query = entityManager.createQuery(jpaSelectCountQuery);
+        return (int) ((Long) query.getSingleResult()).longValue();
+    }
+
+    public List<Item> loadItems(int startIndex, int count) {
+        javax.persistence.Query query = entityManager.createQuery(jpaSelectQuery);
+        query.setFirstResult(startIndex);
+        query.setMaxResults(count);
+
+        @SuppressWarnings("unchecked")
+        List<T> beans = query.getResultList();
+        List<Item> items = new ArrayList<Item>();
+        for (T bean : beans) {
+            items.add(toItem(bean));
+        }
+
+        return items;
+    }
+
+    public void saveItems(List<Item> addedItems, List<Item> modifiedItems, List<Item> removedItems) {
+        if (transactionManagement) {
+            entityManager.getTransaction().begin();
+        }
+        for (Item item : addedItems) {
+            entityManager.persist(fromItem(item));
+        }
+        for (Item item : modifiedItems) {
+            entityManager.persist(fromItem(item));
+        }
+        for (Item item : removedItems) {
+            entityManager.remove(fromItem(item));
+        }
+        if (transactionManagement) {
+            entityManager.getTransaction().commit();
+        }
+    }
+
+    public boolean deleteAllItems() {
+        throw new UnsupportedOperationException();
+    }
+
+    private Item toItem(T bean) {
+        BeanItem<T> beanItem = new BeanItem<T>(bean);
+
+        CompositeItem compositeItem = new CompositeItem();
+        compositeItem.addItem("bean", beanItem);
+
+        for (Object propertyId : definition.getPropertyIds()) {
+            if (compositeItem.getItemProperty(propertyId) == null) {
+                compositeItem.addItemProperty(
+                        propertyId,
+                        new ObjectProperty(definition.getPropertyDefaultValue(propertyId), definition
+                                .getPropertyType(propertyId), definition.isPropertyReadOnly(propertyId)));
+            }
+        }
+
+        return compositeItem;
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private T fromItem(Item item) {
+        return (T) ((BeanItem) (((CompositeItem) item).getItem("bean"))).getBean();
+    }
 }

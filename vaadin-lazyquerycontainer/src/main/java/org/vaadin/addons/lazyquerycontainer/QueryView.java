@@ -26,54 +26,54 @@ public interface QueryView {
 	 * Returns the definition of properties provided by this view.
 	 * @return the query definition
 	 */
-	public QueryDefinition getDefinition();
+	QueryDefinition getDefinition();
 	/**
 	 * Sorts the items according to the provided sort state.
 	 * @param sortPropertyIds Properties participating in the sorting.
 	 * @param ascendingStates List of sort order for the properties.
 	 */
-	public void sort(Object[] sortPropertyIds, boolean[] ascendingStates);
+	void sort(Object[] sortPropertyIds, boolean[] ascendingStates);
 	/**
 	 * Refreshes data from business service and notifies listeners of changed
 	 * item set.
 	 */
-	public void refresh();
+	void refresh();
 	/**
 	 * Returns the number of items currently available through the view.
 	 * @return Number of items available.
 	 */
-	public int size();
+	int size();
 	/**
 	 * Gets item at the given index.
 	 * @param index The index of the item.
 	 * @return The item identified by the index.
 	 */
-	public Item getItem(int index);
+	Item getItem(int index);
 	/**
 	 * Adds a new item to the end of the query result set.
 	 * @return The index of the new item.
 	 */
-	public int addItem();
+	int addItem();
 	/**
 	 * Removes item at given index.
 	 * @param index Index of the Item to be removed.
 	 */
-	public void removeItem(int index);
+	void removeItem(int index);
 	/**
 	 * Removes all items.
 	 */
-	public void removeAllItems();
+	void removeAllItems();
 	/**
 	 * Check if query view contains modifications.
-	 * @return
+	 * @return true if query has been modified.
 	 */
-	public boolean isModified();
+	boolean isModified();
 	/**
 	 * Saves changes. Refresh has to be invoked after this method to clear the cache.
 	 */
-	public void commit();
+	void commit();
 	/**
 	 * Cancels changes. Refresh has to be invoked after this method to clear the cache.
 	 */
-	public void discard();
+	void discard();
 }
