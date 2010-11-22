@@ -28,8 +28,8 @@ public interface QueryFactory {
 	/**
 	 * Constructs a new query according to the given sort state.
 	 * @param sortPropertyIds Properties participating in the sorting.
-	 * @param ascendingStates List of sort order for the properties.
+	 * @param sortStates List of sort order for the properties. True corresponds ascending and false descending.
 	 * @return A new query constructed according to the given sort state.
 	 */
-	Query constructQuery(Object[] sortPropertyIds, boolean[] ascendingStates);
+	Query constructQuery(Object[] sortPropertyIds, boolean[] sortStates);
 }

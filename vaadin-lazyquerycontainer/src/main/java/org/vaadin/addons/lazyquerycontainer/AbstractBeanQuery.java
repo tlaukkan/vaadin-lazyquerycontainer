@@ -36,7 +36,7 @@ import com.vaadin.data.util.ObjectProperty;
  */
 public abstract class AbstractBeanQuery<T extends Object> implements Query {
 
-	/** QueryDefinition contains the query properties. */
+	/** QueryDefinition contains definition of the query properties. */
 	private QueryDefinition queryDefinition;
 	/** Query configuration contains implementation specific configuration. */
 	private Map<String, Object> queryConfiguration;
