@@ -31,7 +31,7 @@ import com.vaadin.data.Property;
  * JUnit test for testing LazyQueryView implementation.
  * @author Tommi S.E. Laukkanen
  */
-public class LazyQueryViewTest extends TestCase {
+public class LazyQueryViewWithoutStatusColumnTest extends TestCase {
 
     private final int viewSize = 100;
     private LazyQueryView view;
@@ -44,10 +44,6 @@ public class LazyQueryViewTest extends TestCase {
         definition.addProperty("Index", Integer.class, 0, true, true);
         definition.addProperty("Reverse Index", Integer.class, 0, true, false);
         definition.addProperty("Editable", String.class, "", false, false);
-        definition.addProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS, QueryItemStatus.class, QueryItemStatus.None, true, false);
-        definition.addProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_INDEX, Integer.class, 0, true, false);
-        definition.addProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_QUERY_TIME, Long.class, 0, true, false);
-        definition.addProperty(LazyQueryView.DEBUG_PROPERTY_ID_QUERY_INDEX, Integer.class, 0, true, false);
 
         MockQueryFactory factory = new MockQueryFactory(viewSize, 0, 0);
         factory.setQueryDefinition(definition);
@@ -60,10 +56,6 @@ public class LazyQueryViewTest extends TestCase {
         definition.removeProperty("Index");
         definition.removeProperty("Reverse Index");
         definition.removeProperty("Editable");
-        definition.removeProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS);
-        definition.removeProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_INDEX);
-        definition.removeProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_QUERY_TIME);
-        definition.removeProperty(LazyQueryView.DEBUG_PROPERTY_ID_QUERY_INDEX);
         Assert.assertEquals(0, definition.getPropertyIds().size());
     }
 
@@ -114,14 +106,10 @@ public class LazyQueryViewTest extends TestCase {
         int addIndex = view.addItem();
         assertEquals("Item must be added at the beginning", addIndex, 0);
         assertEquals(originalViewSize + 1, view.size());
-        assertEquals(QueryItemStatus.Added,
-                view.getItem(addIndex).getItemProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());
         assertTrue(view.isModified());
         view.commit();
         view.refresh();
         assertFalse(view.isModified());
-        assertEquals(QueryItemStatus.None, view.getItem(addIndex)
-                .getItemProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());
     }
 
     public void testAddTwiceCommitItem() {
@@ -131,21 +119,15 @@ public class LazyQueryViewTest extends TestCase {
         int addIndex = (Integer) view.addItem();
         assertEquals("Item must be added at the beginning.", addIndex, 0);
         assertEquals(originalViewSize + 1, view.size());
-        assertEquals(QueryItemStatus.Added,
-                view.getItem(addIndex).getItemProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());
         assertTrue(view.isModified());
         // Add a second Item
         addIndex = (Integer) view.addItem();
         assertEquals("Second item must be added at the beginning as well.", addIndex, 0);
         assertEquals(originalViewSize + 2, view.size());
-        assertEquals(QueryItemStatus.Added,
-                view.getItem(addIndex).getItemProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());
         assertTrue(view.isModified());
         view.commit();
         view.refresh();
         assertFalse(view.isModified());
-        assertEquals(QueryItemStatus.None, view.getItem(addIndex)
-                .getItemProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());
     }
 
     public void testAddDiscardItem() {
@@ -154,8 +136,6 @@ public class LazyQueryViewTest extends TestCase {
         int addIndex = view.addItem();
         assertEquals("Item must be added at the beginning", addIndex, 0);
         assertEquals(originalViewSize + 1, view.size());
-        assertEquals(QueryItemStatus.Added,
-                view.getItem(addIndex).getItemProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());
         assertTrue(view.isModified());
         view.discard();
         view.refresh();
@@ -192,8 +172,6 @@ public class LazyQueryViewTest extends TestCase {
         assertFalse(view.getItem(removeIndex).getItemProperty("Editable").isReadOnly());
         view.removeItem(removeIndex);
         assertEquals(originalViewSize, view.size());
-        assertEquals(QueryItemStatus.Removed,
-                view.getItem(removeIndex).getItemProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());
         assertTrue(view.getItem(removeIndex).getItemProperty("Editable").isReadOnly());
         assertTrue(view.isModified());
         view.commit();
@@ -210,8 +188,6 @@ public class LazyQueryViewTest extends TestCase {
         assertFalse(view.getItem(removeIndex).getItemProperty("Editable").isReadOnly());
         view.removeItem(removeIndex);
         assertEquals(originalViewSize, view.size());
-        assertEquals(QueryItemStatus.Removed,
-                view.getItem(removeIndex).getItemProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());
         assertTrue(view.getItem(removeIndex).getItemProperty("Editable").isReadOnly());
         assertTrue(view.isModified());
         view.discard();

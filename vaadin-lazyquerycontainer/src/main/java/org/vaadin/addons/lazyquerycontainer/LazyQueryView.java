@@ -62,7 +62,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
     /** QueryDefinition containing query properties and batch size. */
     private QueryDefinition queryDefinition;
     /** QueryFactory for constructing new queries when sort state changes. */
-    private QueryFactory queryFactor;
+    private QueryFactory queryFactory;
     /** Currenct query used by view. */
     private Query query;
 
@@ -113,8 +113,8 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
      */
     private void initialize(final QueryDefinition queryDefinition, final QueryFactory queryFactory) {
         this.queryDefinition = queryDefinition;
-        this.queryFactor = queryFactory;
-        this.queryFactor.setQueryDefinition(queryDefinition);
+        this.queryFactory = queryFactory;
+        this.queryFactory.setQueryDefinition(queryDefinition);
         this.sortPropertyIds = new Object[0];
         this.ascendingStates = new boolean[0];
     }
@@ -293,7 +293,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
      */
     private Query getQuery() {
         if (query == null) {
-            query = queryFactor.constructQuery(sortPropertyIds, ascendingStates);
+            query = queryFactory.constructQuery(sortPropertyIds, ascendingStates);
             queryCount++;
         }
         return query;

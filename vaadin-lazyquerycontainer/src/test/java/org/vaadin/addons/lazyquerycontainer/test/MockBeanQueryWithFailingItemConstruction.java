@@ -9,15 +9,13 @@ import junit.framework.Assert;
 import org.vaadin.addons.lazyquerycontainer.AbstractBeanQuery;
 import org.vaadin.addons.lazyquerycontainer.QueryDefinition;
 
-public class MockBeanQuery extends AbstractBeanQuery<MockBean> {
+public class MockBeanQueryWithFailingItemConstruction extends AbstractBeanQuery<MockBean> {
 
-	public MockBeanQuery(QueryDefinition definition,
+	public MockBeanQueryWithFailingItemConstruction(QueryDefinition definition,
 			Map<String, Object> queryConfiguration, Object[] sortPropertyIds,
 			boolean[] sortStates) {
 		super(definition, queryConfiguration, sortPropertyIds, sortStates);
 		Assert.assertEquals(definition, getQueryDefinition());
-        Assert.assertEquals(sortPropertyIds, getSortPropertyIds());
-        Assert.assertEquals(sortStates, getSortStates());
 	}
 
 	private static ArrayList<MockBean> beans=new ArrayList<MockBean>();
@@ -37,9 +35,7 @@ public class MockBeanQuery extends AbstractBeanQuery<MockBean> {
 	
 
 	protected MockBean constructBean() {
-		MockBean mockBean=new MockBean();
-		mockBean.setDescription((String)getQueryConfiguration().get("description"));
-		return mockBean;
+		throw new RuntimeException();
 	}
 
 
