@@ -15,6 +15,8 @@
  */
 package org.vaadin.addons.lazyquerycontainer;
 
+import java.io.Serializable;
+
 import javax.persistence.EntityManager;
 
 /**
@@ -24,7 +26,9 @@ import javax.persistence.EntityManager;
  * @param <T>
  *            The value bean class
  */
-public final class JpaQueryFactory<T> implements QueryFactory {
+public final class JpaQueryFactory<T> implements QueryFactory, Serializable {
+    /** Java serialization version UID. */
+    private static final long serialVersionUID = 1L;
     /** The JPA EntityManager. */
     private EntityManager entityManager;
     /** The JPA bean class. */

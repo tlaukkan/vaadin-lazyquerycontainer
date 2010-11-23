@@ -18,6 +18,7 @@ package org.vaadin.addons.lazyquerycontainer;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +34,9 @@ import com.vaadin.data.util.ObjectProperty;
  * @author Tommi S.E. Laukkanen
  * @param <T> Bean class
  */
-public final class JpaQuery<T extends Object> implements Query {
+public final class JpaQuery<T extends Object> implements Query, Serializable {
+    /** Java serialization version UID. */
+    private static final long serialVersionUID = 1L;
     /** The JPA EntityManager. */
     private EntityManager entityManager;
     /** QueryDefinition contains definition of the query properties and batch size. */

@@ -15,6 +15,7 @@
  */
 package org.vaadin.addons.lazyquerycontainer;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,7 +30,9 @@ import java.util.TreeMap;
  * 
  * @author Tommi S.E. Laukkanen
  */
-public final class DefaultQueryDefinition implements QueryDefinition {
+public final class DefaultQueryDefinition implements QueryDefinition, Serializable {
+    /** Java serialization version UID. */
+    private static final long serialVersionUID = 1L;
     /** Lust of property IDs included in this QueryDefinition. */
     private List<Object> propertIds = new ArrayList<Object>();
     /** Map of types of the properties. */

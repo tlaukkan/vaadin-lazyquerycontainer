@@ -15,6 +15,7 @@
  */
 package org.vaadin.addons.lazyquerycontainer;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -26,7 +27,9 @@ import java.util.Map;
  *            The BeanQuery implementation class
  */
 @SuppressWarnings("rawtypes")
-public final class BeanQueryFactory<Q extends AbstractBeanQuery> implements QueryFactory {
+public final class BeanQueryFactory<Q extends AbstractBeanQuery> implements QueryFactory, Serializable {
+    /** Java serialization version UID. */
+    private static final long serialVersionUID = 1L;
     /** QueryDefinition contains definition of the query properties. */
     private QueryDefinition queryDefinition;
     /** Query configuration contains implementation specific configuration. */
