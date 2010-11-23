@@ -141,7 +141,7 @@ public final class JpaQuery<T extends Object> implements Query, Serializable {
      */
     public int size() {
         javax.persistence.Query query = entityManager.createQuery(jpaSelectCountQuery);
-        return (int) ((Long) query.getSingleResult()).longValue();
+        return (int) ((Number) query.getSingleResult()).longValue();
     }
 
     /**
