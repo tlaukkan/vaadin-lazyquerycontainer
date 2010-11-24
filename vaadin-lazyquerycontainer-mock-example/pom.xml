@@ -5,19 +5,12 @@
 	<groupId>org.vaadin.addons.lazyquerycontainer</groupId>
 	<artifactId>vaadin-lazyquerycontainer-mock-example</artifactId>
 	<packaging>war</packaging>
-	<version>1.0</version>
+	<version>1.1.9</version>
 	<name>vaadin-lazyquerycontainer-mock-example</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-
-	<parent>
-		<groupId>org.vaadin.addons.lazyquerycontainer</groupId>
-		<artifactId>vaadin-lazyquerycontainer-root</artifactId>
-		<version>1.0</version>
-		<relativePath>../vaadin-lazyquerycontainer-root</relativePath>
-	</parent>
 
 	<build>
 		<plugins>
@@ -67,6 +60,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<finalName>vaadin-lazyquerycontainer-mock-example</finalName>
 	</build>
 
 	<repositories>

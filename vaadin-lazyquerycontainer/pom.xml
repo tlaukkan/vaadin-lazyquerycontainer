@@ -5,15 +5,8 @@
 	<groupId>org.vaadin.addons.lazyquerycontainer</groupId>
 	<artifactId>vaadin-lazyquerycontainer</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0</version>
+	<version>1.1.9</version>
 	<name>vaadin-lazyquerycontainer</name>
-
-	<parent>
-		<groupId>org.vaadin.addons.lazyquerycontainer</groupId>
-		<artifactId>vaadin-lazyquerycontainer-root</artifactId>
-		<version>1.0</version>
-		<relativePath>../vaadin-lazyquerycontainer-root</relativePath>
-	</parent>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
