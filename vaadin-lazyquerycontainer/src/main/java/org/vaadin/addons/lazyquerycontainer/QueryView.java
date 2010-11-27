@@ -26,7 +26,7 @@ public interface QueryView {
 	 * Returns the definition of properties provided by this view.
 	 * @return the query definition
 	 */
-	QueryDefinition getDefinition();
+	QueryDefinition getQueryDefinition();
 	/**
 	 * Sorts the items according to the provided sort state.
 	 * @param sortPropertyIds Properties participating in the sorting.

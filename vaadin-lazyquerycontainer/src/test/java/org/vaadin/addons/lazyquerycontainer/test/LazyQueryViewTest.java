@@ -17,7 +17,7 @@ package org.vaadin.addons.lazyquerycontainer.test;
 
 import java.util.Collection;
 
-import org.vaadin.addons.lazyquerycontainer.DefaultQueryDefinition;
+import org.vaadin.addons.lazyquerycontainer.LazyQueryDefinition;
 import org.vaadin.addons.lazyquerycontainer.LazyQueryView;
 import org.vaadin.addons.lazyquerycontainer.QueryItemStatus;
 
@@ -35,12 +35,12 @@ public class LazyQueryViewTest extends TestCase {
 
     private final int viewSize = 100;
     private LazyQueryView view;
-    private DefaultQueryDefinition definition;
+    private LazyQueryDefinition definition;
 
     protected void setUp() throws Exception {
         super.setUp();
 
-        definition = new DefaultQueryDefinition(this.viewSize);
+        definition = new LazyQueryDefinition(this.viewSize);
         definition.addProperty("Index", Integer.class, 0, true, true);
         definition.addProperty("Reverse Index", Integer.class, 0, true, false);
         definition.addProperty("Editable", String.class, "", false, false);
@@ -103,7 +103,7 @@ public class LazyQueryViewTest extends TestCase {
     }
 
     public void testGetSortablePropertyIds() {
-        Collection<?> sortablePropertyIds = view.getDefinition().getSortablePropertyIds();
+        Collection<?> sortablePropertyIds = view.getQueryDefinition().getSortablePropertyIds();
         assertEquals(1, sortablePropertyIds.size());
         assertEquals("Index", sortablePropertyIds.iterator().next());
     }

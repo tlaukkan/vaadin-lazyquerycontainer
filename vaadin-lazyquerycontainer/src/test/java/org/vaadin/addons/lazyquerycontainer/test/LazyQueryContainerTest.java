@@ -18,7 +18,7 @@ package org.vaadin.addons.lazyquerycontainer.test;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.vaadin.addons.lazyquerycontainer.DefaultQueryDefinition;
+import org.vaadin.addons.lazyquerycontainer.LazyQueryDefinition;
 import org.vaadin.addons.lazyquerycontainer.LazyQueryContainer;
 import org.vaadin.addons.lazyquerycontainer.LazyQueryView;
 import org.vaadin.addons.lazyquerycontainer.QueryItemStatus;
@@ -48,7 +48,7 @@ public class LazyQueryContainerTest extends TestCase implements ItemSetChangeLis
     protected void setUp() throws Exception {
         super.setUp();
 
-        DefaultQueryDefinition definition = new DefaultQueryDefinition(this.viewSize);
+        LazyQueryDefinition definition = new LazyQueryDefinition(this.viewSize);
         definition.addProperty("Index", Integer.class, 0, true, true);
         definition.addProperty("Reverse Index", Integer.class, 0, true, false);
         definition.addProperty("Editable", String.class, "", false, false);

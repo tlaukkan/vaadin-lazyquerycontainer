@@ -36,7 +36,7 @@ import com.vaadin.data.Property;
  * 
  * @author Tommi S.E. Laukkanen
  */
-public final class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotifier, PropertySetChangeNotifier,
+public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotifier, PropertySetChangeNotifier,
         Buffered {
     /** Java serialization UID. */
     private static final long serialVersionUID = 1L;
@@ -76,11 +76,11 @@ public final class LazyQueryContainer implements Indexed, Sortable, ItemSetChang
     }
 
     /**
-     * Sets new sort state and refreshes view.
+     * Sets new sort state and refreshes container.
      * @param sortPropertyIds The IDs of the properties participating in sort.
      * @param ascendingStates The sort state of the properties participating in sort. True means ascending.
      */
-    public void sort(final Object[] sortPropertyIds, final boolean[] ascendingStates) {
+    public final void sort(final Object[] sortPropertyIds, final boolean[] ascendingStates) {
         queryView.sort(sortPropertyIds, ascendingStates);
     }
 
@@ -88,16 +88,16 @@ public final class LazyQueryContainer implements Indexed, Sortable, ItemSetChang
      * Lists of the property IDs queried.
      * @return A list of property IDs queried.
      */
-    public Collection<?> getContainerPropertyIds() {
-        return queryView.getDefinition().getPropertyIds();
+    public final Collection<?> getContainerPropertyIds() {
+        return queryView.getQueryDefinition().getPropertyIds();
     }
 
     /**
      * List of the property IDs which can be sorted.
      * @return A list of the property IDs which can be sorted.
      */
-    public Collection<?> getSortableContainerPropertyIds() {
-        return queryView.getDefinition().getSortablePropertyIds();
+    public final Collection<?> getSortableContainerPropertyIds() {
+        return queryView.getQueryDefinition().getSortablePropertyIds();
     }
 
     /**
@@ -105,8 +105,8 @@ public final class LazyQueryContainer implements Indexed, Sortable, ItemSetChang
      * @param propertyId If of the property of interest.
      * @return The value class of the given property.
      */
-    public Class<?> getType(final Object propertyId) {
-        return queryView.getDefinition().getPropertyType(propertyId);
+    public final Class<?> getType(final Object propertyId) {
+        return queryView.getQueryDefinition().getPropertyType(propertyId);
     }
 
     /**
@@ -116,8 +116,8 @@ public final class LazyQueryContainer implements Indexed, Sortable, ItemSetChang
      * @param defaultValue Default value of the property.
      * @return always true.
      */
-    public boolean addContainerProperty(final Object propertyId, final Class<?> type, final Object defaultValue) {
-        queryView.getDefinition().addProperty(propertyId, type, defaultValue, true, false);
+    public final boolean addContainerProperty(final Object propertyId, final Class<?> type, final Object defaultValue) {
+        queryView.getQueryDefinition().addProperty(propertyId, type, defaultValue, true, false);
         notifyPropertySetChanged();
         return true;
     }
@@ -131,9 +131,9 @@ public final class LazyQueryContainer implements Indexed, Sortable, ItemSetChang
      * @param sortable Sortable state of the property.
      * @return always true.
      */
-    public boolean addContainerProperty(final Object propertyId, final Class<?> type, final Object defaultValue,
+    public final boolean addContainerProperty(final Object propertyId, final Class<?> type, final Object defaultValue,
             final boolean readOnly, final boolean sortable) {
-        queryView.getDefinition().addProperty(propertyId, type, defaultValue, readOnly, sortable);
+        queryView.getQueryDefinition().addProperty(propertyId, type, defaultValue, readOnly, sortable);
         notifyPropertySetChanged();
         return true;
     }
@@ -143,8 +143,8 @@ public final class LazyQueryContainer implements Indexed, Sortable, ItemSetChang
      * @param propertyId If of the property to be removed.
      * @return always true.
      */
-    public boolean removeContainerProperty(final Object propertyId) {
-        queryView.getDefinition().removeProperty(propertyId);
+    public final boolean removeContainerProperty(final Object propertyId) {
+        queryView.getQueryDefinition().removeProperty(propertyId);
         notifyPropertySetChanged();
         return true;
     }
@@ -153,7 +153,7 @@ public final class LazyQueryContainer implements Indexed, Sortable, ItemSetChang
      * Number of items in the container.
      * @return number of items.
      */
-    public int size() {
+    public final int size() {
         return queryView.size();
     }
 
@@ -161,7 +161,7 @@ public final class LazyQueryContainer implements Indexed, Sortable, ItemSetChang
      * Gets list of item indexes in the container.
      * @return Collection of Integers.
      */
-    public Collection<?> getItemIds() {
+    public final Collection<?> getItemIds() {
         ArrayList<Integer> ids = new ArrayList<Integer>(size());
         for (int i = 0; i < size(); i++) {
             ids.add(i);
@@ -174,7 +174,7 @@ public final class LazyQueryContainer implements Indexed, Sortable, ItemSetChang
      * @param itemId index of the item.
      * @return Item at the given index.
      */
-    public Item getItem(final Object itemId) {
+    public final Item getItem(final Object itemId) {
         return queryView.getItem((Integer) itemId);
     }
 
@@ -184,7 +184,7 @@ public final class LazyQueryContainer implements Indexed, Sortable, ItemSetChang
      * @param propertyId ID of the property.
      * @return the property corresponding to given IDs.
      */
-    public Property getContainerProperty(final Object itemId, final Object propertyId) {
+    public final Property getContainerProperty(final Object itemId, final Object propertyId) {
         return getItem(itemId).getItemProperty(propertyId);
     }
 
@@ -194,7 +194,7 @@ public final class LazyQueryContainer implements Indexed, Sortable, ItemSetChang
      * @param index The index of the item.
      * @return the object ID i.e. index.
      */
-    public Object getIdByIndex(final int index) {
+    public final Object getIdByIndex(final int index) {
         return index;
     }
 
@@ -204,7 +204,7 @@ public final class LazyQueryContainer implements Indexed, Sortable, ItemSetChang
      * @param itemId the item ID.
      * @return the index.
      */
-    public int indexOfId(final Object itemId) {
+    public final int indexOfId(final Object itemId) {
         return (Integer) itemId;
     }
 
@@ -213,7 +213,7 @@ public final class LazyQueryContainer implements Indexed, Sortable, ItemSetChang
      * @param itemId Item index.
      * @return true if container contains the given index.
      */
-    public boolean containsId(final Object itemId) {
+    public final boolean containsId(final Object itemId) {
         if (itemId.getClass() == Integer.class) {
             return size() > (Integer) itemId && (Integer) itemId >= 0;
         } else {
@@ -226,7 +226,7 @@ public final class LazyQueryContainer implements Indexed, Sortable, ItemSetChang
      * @param itemId the object index.
      * @return true if index is 0.
      */
-    public boolean isFirstId(final Object itemId) {
+    public final boolean isFirstId(final Object itemId) {
         if (itemId.getClass() == Integer.class) {
             return (Integer) itemId == 0;
         } else {
@@ -239,7 +239,7 @@ public final class LazyQueryContainer implements Indexed, Sortable, ItemSetChang
      * @param itemId the object index.
      * @return true if index is size() - 1.
      */
-    public boolean isLastId(final Object itemId) {
+    public final boolean isLastId(final Object itemId) {
         if (itemId.getClass() == Integer.class) {
             return (Integer) itemId == size() - 1;
         } else {
@@ -250,14 +250,14 @@ public final class LazyQueryContainer implements Indexed, Sortable, ItemSetChang
     /**
      * @return first item ID i.e. 0.
      */
-    public Object firstItemId() {
+    public final Object firstItemId() {
         return 0;
     }
 
     /**
      * @return last item ID i.e. size() - 1
      */
-    public Object lastItemId() {
+    public final Object lastItemId() {
         return size() - 1;
     }
 
@@ -265,7 +265,7 @@ public final class LazyQueryContainer implements Indexed, Sortable, ItemSetChang
      * @param itemId the item index
      * @return itemId + 1
      */
-    public Object nextItemId(final Object itemId) {
+    public final Object nextItemId(final Object itemId) {
         return (Integer) itemId + 1;
     }
 
@@ -273,7 +273,7 @@ public final class LazyQueryContainer implements Indexed, Sortable, ItemSetChang
      * @param itemId the item index
      * @return itemId - 1
      */
-    public Object prevItemId(final Object itemId) {
+    public final Object prevItemId(final Object itemId) {
         return (Integer) itemId - 1;
     }
 
@@ -282,7 +282,7 @@ public final class LazyQueryContainer implements Indexed, Sortable, ItemSetChang
      * @param index item index
      * @return new item ID.
      */
-    public Object addItemAt(final int index) {
+    public final Object addItemAt(final int index) {
         throw new UnsupportedOperationException();
     }
 
@@ -291,7 +291,7 @@ public final class LazyQueryContainer implements Indexed, Sortable, ItemSetChang
      * @param previousItemId ID of previous item.
      * @return new item ID.
      */
-    public Object addItemAfter(final Object previousItemId) {
+    public final Object addItemAfter(final Object previousItemId) {
         throw new UnsupportedOperationException();
     }
 
@@ -301,7 +301,7 @@ public final class LazyQueryContainer implements Indexed, Sortable, ItemSetChang
      * @param newItemId ID of new item
      * @return new Item
      */
-    public Item addItemAt(final int index, final Object newItemId) {
+    public final Item addItemAt(final int index, final Object newItemId) {
         throw new UnsupportedOperationException();
     }
 
@@ -311,7 +311,7 @@ public final class LazyQueryContainer implements Indexed, Sortable, ItemSetChang
      * @param newItemId ID of new item
      * @return new Item
      */
-    public Item addItemAfter(final Object previousItemId, final Object newItemId) {
+    public final Item addItemAfter(final Object previousItemId, final Object newItemId) {
         throw new UnsupportedOperationException();
     }
 
@@ -320,7 +320,7 @@ public final class LazyQueryContainer implements Indexed, Sortable, ItemSetChang
      * @param itemId itemId
      * @return new Item
      */
-    public Item addItem(final Object itemId) {
+    public final Item addItem(final Object itemId) {
         throw new UnsupportedOperationException();
     }
 
@@ -328,7 +328,7 @@ public final class LazyQueryContainer implements Indexed, Sortable, ItemSetChang
      * Constructs and adds new item.
      * @return item index.
      */
-    public Object addItem() {
+    public final Object addItem() {
         Object itemId = queryView.addItem();
         notifyItemSetChanged();
         return itemId;
@@ -339,7 +339,7 @@ public final class LazyQueryContainer implements Indexed, Sortable, ItemSetChang
      * @param itemId Item index.
      * @return always true.
      */
-    public boolean removeItem(final Object itemId) {
+    public final boolean removeItem(final Object itemId) {
         queryView.removeItem((Integer) itemId);
         notifyItemSetChanged();
         return true;
@@ -349,7 +349,7 @@ public final class LazyQueryContainer implements Indexed, Sortable, ItemSetChang
      * Removes all items.
      * @return always true.
      */
-    public boolean removeAllItems() {
+    public final boolean removeAllItems() {
         queryView.removeAllItems();
         refresh();
         return true;
@@ -359,7 +359,7 @@ public final class LazyQueryContainer implements Indexed, Sortable, ItemSetChang
      * Adds ItemSetChangeListener.
      * @param listener ItemSetChangeListener to be added.
      */
-    public void addListener(final ItemSetChangeListener listener) {
+    public final void addListener(final ItemSetChangeListener listener) {
         itemSetChangeListeners.add(listener);
     }
 
@@ -367,14 +367,14 @@ public final class LazyQueryContainer implements Indexed, Sortable, ItemSetChang
      * Removes ItemSetChangeListener.
      * @param listener ItemSetChangeListener to be removed.
      */
-    public void removeListener(final ItemSetChangeListener listener) {
+    public final void removeListener(final ItemSetChangeListener listener) {
         itemSetChangeListeners.remove(listener);
     }
 
     /**
      * Refreshes container.
      */
-    public void refresh() {
+    public final void refresh() {
         queryView.refresh();
         notifyItemSetChanged();
     }
@@ -393,7 +393,7 @@ public final class LazyQueryContainer implements Indexed, Sortable, ItemSetChang
      * Adds PropertySetChangeListener.
      * @param listener PropertySetChangeListener to be added.
      */    
-    public void addListener(final PropertySetChangeListener listener) {
+    public final void addListener(final PropertySetChangeListener listener) {
         propertySetChangeListeners.add(listener);
     }
 
@@ -401,7 +401,7 @@ public final class LazyQueryContainer implements Indexed, Sortable, ItemSetChang
      * Removes PropertySetChangeListener.
      * @param listener PropertySetChangeListener to be removed.
      */    
-    public void removeListener(final PropertySetChangeListener listener) {
+    public final void removeListener(final PropertySetChangeListener listener) {
         propertySetChangeListeners.remove(listener);
     }
 
@@ -472,17 +472,17 @@ public final class LazyQueryContainer implements Indexed, Sortable, ItemSetChang
     }
 
     /**
-     * Commits changed.
+     * Commits changed and refreshes container.
      */
-    public void commit() {
+    public final void commit() {
         queryView.commit();
         refresh();
     }
 
     /**
-     * Discards changes.
+     * Discards changes and refreshes container.
      */
-    public void discard() {
+    public final void discard() {
         queryView.discard();
         refresh();
     }
@@ -490,7 +490,7 @@ public final class LazyQueryContainer implements Indexed, Sortable, ItemSetChang
     /**
      * @return true if container contains uncommited modifications.
      */
-    public boolean isModified() {
+    public final boolean isModified() {
         return queryView.isModified();
     }
 
@@ -498,7 +498,7 @@ public final class LazyQueryContainer implements Indexed, Sortable, ItemSetChang
      * Is container in read through mode.
      * @return always false.
      */
-    public boolean isReadThrough() {
+    public final boolean isReadThrough() {
         return false;
     }
 
@@ -506,7 +506,7 @@ public final class LazyQueryContainer implements Indexed, Sortable, ItemSetChang
      * Is container in write through mode.
      * @return always false.
      */
-    public boolean isWriteThrough() {
+    public final boolean isWriteThrough() {
         return false;
     }
 
@@ -514,7 +514,7 @@ public final class LazyQueryContainer implements Indexed, Sortable, ItemSetChang
      * Not supported.
      * @param readThrough is container in read through mode.
      */
-    public void setReadThrough(final boolean readThrough) {
+    public final void setReadThrough(final boolean readThrough) {
         throw new UnsupportedOperationException();
     }
 
@@ -522,7 +522,15 @@ public final class LazyQueryContainer implements Indexed, Sortable, ItemSetChang
      * Not supported.
      * @param writeThrough is container in write through mode.
      */
-    public void setWriteThrough(final boolean writeThrough) {
+    public final void setWriteThrough(final boolean writeThrough) {
         throw new UnsupportedOperationException();
     }
+
+    /**
+     * @return the queryView
+     */
+    protected final QueryView getQueryView() {
+        return queryView;
+    }
+
 }

@@ -21,10 +21,9 @@ import javax.persistence.EntityManager;
 
 /**
  * Query factory implementation for JpaQuery.
- * 
  * @author Tommi Laukkanen
- * @param <T>
- *            The value bean class
+ * @param <T> The value bean class
+ * @deprecated JPA Query is deprecated. Please use EntityContainer instead.
  */
 public final class JpaQueryFactory<T> implements QueryFactory, Serializable {
     /** Java serialization version UID. */

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.vaadin.addons.lazyquerycontainer.example.jpa;
+package org.vaadin.addons.lazyquerycontainer.test;
 
 import java.io.Serializable;
 import javax.persistence.Entity;

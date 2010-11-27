@@ -53,12 +53,14 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
     /** Item status property ID. */
     public static final String PROPERTY_ID_ITEM_STATUS = "PROPERTY_ID_ITEM_STATUS";
     /** Initial maximum cache size. */
-    private static final int INITIAL_MAX_CACHE_SIZE = 1000;
+    private static final int DEFAULT_MAX_CACHE_SIZE = 1000;
 
     /** Maximum items in cache before old ones are evicted. */
-    private int maxCacheSize = INITIAL_MAX_CACHE_SIZE;
+    private int maxCacheSize = DEFAULT_MAX_CACHE_SIZE;
     /** Number of query executions. */
     private int queryCount = 0;
+    /** Number of batches read. */
+    private int batchCount = 0;    
     /** QueryDefinition containing query properties and batch size. */
     private QueryDefinition queryDefinition;
     /** QueryFactory for constructing new queries when sort state changes. */
@@ -92,7 +94,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
      * @param batchSize The batch size to be used when loading data.
      */
     public LazyQueryView(final QueryFactory queryFactory, final int batchSize) {
-        initialize(new DefaultQueryDefinition(batchSize), queryFactory);
+        initialize(new LazyQueryDefinition(batchSize), queryFactory);
     }
 
     /**
@@ -123,7 +125,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
      * Gets the QueryDefinition.
      * @return the QueryDefinition
      */
-    public QueryDefinition getDefinition() {
+    public QueryDefinition getQueryDefinition() {
         return queryDefinition;
     }
 
@@ -152,6 +154,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
         }
 
         query = null;
+        batchCount = 0;
         itemCache.clear();
         itemCacheAccessLog.clear();
         propertyItemMapCache.clear();
@@ -227,7 +230,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
 
             if (item.getItemProperty(DEBUG_PROPERTY_ID_BATCH_INDEX) != null) {
                 item.getItemProperty(DEBUG_PROPERTY_ID_BATCH_INDEX).setReadOnly(false);
-                item.getItemProperty(DEBUG_PROPERTY_ID_BATCH_INDEX).setValue(startIndex / batchSize);
+                item.getItemProperty(DEBUG_PROPERTY_ID_BATCH_INDEX).setValue(batchCount);
                 item.getItemProperty(DEBUG_PROPERTY_ID_BATCH_INDEX).setReadOnly(true);
             }
             if (item.getItemProperty(DEBUG_PROPERTY_ID_QUERY_INDEX) != null) {
@@ -252,6 +255,9 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
 
         }
 
+        // Increase batch count.
+        batchCount++;
+        
         // Evict items from cache if cache size exceeds max cache size
         int counter = 0;
         while (itemCache.size() > maxCacheSize) {
@@ -261,7 +267,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
             // Remove oldest item in cache access log if it is not modified or
             // removed.
             if (!modifiedItems.contains(firstItem) && !removedItems.contains(firstItem)) {
-                itemCacheAccessLog.remove(new Integer(firstIndex));
+                itemCacheAccessLog.removeFirst();
                 itemCache.remove(firstIndex);
 
                 for (Object propertyId : firstItem.getItemPropertyIds()) {
@@ -274,7 +280,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
                 }
 
             } else {
-                itemCacheAccessLog.remove(firstIndex);
+                itemCacheAccessLog.removeFirst();
                 itemCacheAccessLog.addLast(firstIndex);
             }
 

@@ -31,8 +31,7 @@ import com.vaadin.data.util.ObjectProperty;
  * query definition properties to CompositeItems.
  * 
  * @author Tommi S.E. Laukkanen
- * @param <T>
- *            Bean class
+ * @param <T> Bean class.
  */
 public abstract class AbstractBeanQuery<T extends Object> implements Query {
 

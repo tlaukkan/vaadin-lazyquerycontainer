@@ -21,6 +21,7 @@ import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 
@@ -29,90 +30,43 @@ import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.ObjectProperty;
 
 /**
- * Simple JPA query implementation which dynamically injects missing query
+ * Entity query implementation which dynamically injects missing query
  * definition properties to CompositeItems.
  * @author Tommi S.E. Laukkanen
- * @param <T> Bean class
- * @deprecated JPA Query is deprecated. Please use EntityContainer instead.
  */
-public final class JpaQuery<T extends Object> implements Query, Serializable {
+public final class EntityQuery implements Query, Serializable {
     /** Java serialization version UID. */
     private static final long serialVersionUID = 1L;
     /** The JPA EntityManager. */
     private EntityManager entityManager;
+    /** Flag reflecting whether application manages transactions. */
+    private boolean applicationTransactionManagement;
+    /** The JPA entity class. */
+    private Class<?> entityClass;
+    /** The JPA select query. */
+    private String selectPsql;
+    /** The JPA select count query. */
+    private String selectCountPsql;
+    /** The parameters to set to JPA query. */
+    private Map<String, Object> selectParameters;
     /** QueryDefinition contains definition of the query properties and batch size. */
     private QueryDefinition queryDefinition;
-    /** The JPA select query. */
-    private String jpaSelectQuery;
-    /** The JPA select count query. */
-    private String jpaSelectCountQuery;
-    /** The sort criteria. */
-    private String sortCriteria;
-    /** The JPA bean class. */
-    private Class<T> beanClass;
-    /** Flag reflecting whether application manages transactions. */
-    private boolean transactionManagement;
 
     /**
      * Constructor for configuring the query.
-     * @param beanClass The JPA bean class.
-     * @param entityManager The JPA EntityManager.
-     * @param jpaSelectQuery The JPA select query.
-     * @param jpaSelectCountQuery The JPA select count query.
-     * @param queryDefinition QueryDefinition contains definition of the query properties and batch size.
-     * @param nativeSortPropertyIds The native sort property IDs.
-     * @param nativeSortStates The native sort ascending and descending states.
-     * @param sortPropertyIds The sort property IDs.
-     * @param sortStates The sort ascending and descending states.
-     * @param transactionManagement Flag reflecting whether application manages transactions.
+     * @param entityQueryDefinition The entity query definition.
      */
-    public JpaQuery(final Class<T> beanClass, final EntityManager entityManager, final String jpaSelectQuery, 
-            final String jpaSelectCountQuery, final QueryDefinition queryDefinition,
-            final Object[] nativeSortPropertyIds, final boolean[] nativeSortStates,
-            final Object[] sortPropertyIds, final boolean[] sortStates, final boolean transactionManagement) {
+    public EntityQuery(final EntityQueryDefinition entityQueryDefinition) {
 
-        this.entityManager = entityManager;
-        this.queryDefinition = queryDefinition;
-        this.beanClass = beanClass;
-        this.jpaSelectCountQuery = jpaSelectCountQuery;
-        this.transactionManagement = transactionManagement;
-
-        if (nativeSortPropertyIds.length == 0) {
-            throw new RuntimeException("Native sort is mandatory."
-                    + " Define at least one native sort property id and corresponding native sort state.");
-        }
-
-        if (sortPropertyIds.length > 0) {
-            for (int i = 0; i < sortPropertyIds.length; i++) {
-                if (i == 0) {
-                    sortCriteria = " ORDER BY";
-                } else {
-                    sortCriteria += ",";
-                }
-                sortCriteria += " t." + sortPropertyIds[i];
-                if (sortStates[i]) {
-                    sortCriteria += " ASC";
-                } else {
-                    sortCriteria += " DESC";
-                }
-            }
-        } else {
-            for (int i = 0; i < nativeSortPropertyIds.length; i++) {
-                if (i == 0) {
-                    sortCriteria = " ORDER BY";
-                } else {
-                    sortCriteria += ",";
-                }
-                sortCriteria += " t." + nativeSortPropertyIds[i];
-                if (nativeSortStates[i]) {
-                    sortCriteria += " ASC";
-                } else {
-                    sortCriteria += " DESC";
-                }
-            }
-        }
-
-        this.jpaSelectQuery = jpaSelectQuery + sortCriteria;
+        this.entityManager = entityQueryDefinition.getEntityManager();
+        this.queryDefinition = entityQueryDefinition;
+        this.entityClass = entityQueryDefinition.getEntityClass();
+        final EntityQueryDefinition.EntitySelectDefinition selectDefinition =
+            entityQueryDefinition.getEntitySelectDefinition();
+        this.selectPsql = selectDefinition.getSelectPsql();
+        this.selectCountPsql = selectDefinition.getSelectCountPsql();
+        this.selectParameters = entityQueryDefinition.getWhereParameters();
+        this.applicationTransactionManagement = entityQueryDefinition.isApplicationManagedTransactions();
     }
 
     /**
@@ -121,16 +75,16 @@ public final class JpaQuery<T extends Object> implements Query, Serializable {
      */
     public Item constructItem() {
         try {
-            T bean = beanClass.newInstance();
-            BeanInfo info = Introspector.getBeanInfo(beanClass);
+            Object entity = entityClass.newInstance();
+            BeanInfo info = Introspector.getBeanInfo(entityClass);
             for (PropertyDescriptor pd : info.getPropertyDescriptors()) {
                 for (Object propertyId : queryDefinition.getPropertyIds()) {
                     if (pd.getName().equals(propertyId)) {
-                        pd.getWriteMethod().invoke(bean, queryDefinition.getPropertyDefaultValue(propertyId));
+                        pd.getWriteMethod().invoke(entity, queryDefinition.getPropertyDefaultValue(propertyId));
                     }
                 }
             }
-            return toItem(bean);
+            return toItem(entity);
         } catch (Exception e) {
             throw new RuntimeException("Error in bean construction or property population with default values.", e);
         }
@@ -141,7 +95,12 @@ public final class JpaQuery<T extends Object> implements Query, Serializable {
      * @return number of beans.
      */
     public int size() {
-        javax.persistence.Query query = entityManager.createQuery(jpaSelectCountQuery);
+        javax.persistence.Query query = entityManager.createQuery(selectCountPsql);
+        if (selectParameters != null) {
+            for (String parameterKey : selectParameters.keySet()) {
+                query.setParameter(parameterKey, selectParameters.get(parameterKey));
+            }
+        } 
         return (int) ((Number) query.getSingleResult()).longValue();
     }
 
@@ -152,15 +111,19 @@ public final class JpaQuery<T extends Object> implements Query, Serializable {
      * @return List of items.
      */
     public List<Item> loadItems(final int startIndex, final int count) {
-        javax.persistence.Query query = entityManager.createQuery(jpaSelectQuery);
+        javax.persistence.Query query = entityManager.createQuery(selectPsql);
+        if (selectParameters != null) {
+            for (String parameterKey : selectParameters.keySet()) {
+                query.setParameter(parameterKey, selectParameters.get(parameterKey));
+            }
+        } 
         query.setFirstResult(startIndex);
         query.setMaxResults(count);
 
-        @SuppressWarnings("unchecked")
-        List<T> beans = query.getResultList();
+        List<?> entities = query.getResultList();
         List<Item> items = new ArrayList<Item>();
-        for (T bean : beans) {
-            items.add(toItem(bean));
+        for (Object entity : entities) {
+            items.add(toItem(entity));
         }
 
         return items;
@@ -176,7 +139,7 @@ public final class JpaQuery<T extends Object> implements Query, Serializable {
      * @param removedItems Items to be deleted.
      */
     public void saveItems(final List<Item> addedItems, final List<Item> modifiedItems, final List<Item> removedItems) {
-        if (transactionManagement) {
+        if (applicationTransactionManagement) {
             entityManager.getTransaction().begin();
         }
         for (Item item : addedItems) {
@@ -188,7 +151,7 @@ public final class JpaQuery<T extends Object> implements Query, Serializable {
         for (Item item : removedItems) {
             entityManager.remove(fromItem(item));
         }
-        if (transactionManagement) {
+        if (applicationTransactionManagement) {
             entityManager.getTransaction().commit();
         }
     }
@@ -205,11 +168,11 @@ public final class JpaQuery<T extends Object> implements Query, Serializable {
     /**
      * Converts bean to Item. Implemented by encapsulating the Bean
      * first to BeanItem and then to CompositeItem.
-     * @param bean bean to be converted.
+     * @param entity bean to be converted.
      * @return item converted from bean.
      */
-    private Item toItem(final T bean) {
-        BeanItem<T> beanItem = new BeanItem<T>(bean);
+    private Item toItem(final Object entity) {
+        BeanItem<?> beanItem = new BeanItem<Object>(entity);
 
         CompositeItem compositeItem = new CompositeItem();
         compositeItem.addItem("bean", beanItem);
@@ -231,8 +194,8 @@ public final class JpaQuery<T extends Object> implements Query, Serializable {
      * @param item Item to be converted to bean.
      * @return Resulting bean.
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    private T fromItem(final Item item) {
-        return (T) ((BeanItem) (((CompositeItem) item).getItem("bean"))).getBean();
+    @SuppressWarnings({ "rawtypes" })
+    private Object fromItem(final Item item) {
+        return (Object) ((BeanItem) (((CompositeItem) item).getItem("bean"))).getBean();
     }
 }

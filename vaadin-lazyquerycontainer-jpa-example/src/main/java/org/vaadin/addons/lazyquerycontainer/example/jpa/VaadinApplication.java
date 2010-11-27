@@ -2,15 +2,12 @@ package org.vaadin.addons.lazyquerycontainer.example.jpa;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-import org.vaadin.addons.lazyquerycontainer.BeanQueryFactory;
-import org.vaadin.addons.lazyquerycontainer.JpaQueryFactory;
+import org.vaadin.addons.lazyquerycontainer.EntityContainer;
 import org.vaadin.addons.lazyquerycontainer.LazyQueryContainer;
 import org.vaadin.addons.lazyquerycontainer.LazyQueryView;
 import org.vaadin.addons.lazyquerycontainer.QueryItemStatus;
@@ -34,314 +31,206 @@ import com.vaadin.ui.themes.Runo;
  */
 @SuppressWarnings("rawtypes")
 public class VaadinApplication extends Application implements ClickListener {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public static final String PERSISTENCE_UNIT="vaadin-lazyquerycontainer-example";
-	
-	private Button refreshButton;
-	private Button editButton;
-	private Button saveButton;
-	private Button cancelButton;
-	private Button addItemButton;
-	private Button removeItemButton;
+    public static final String PERSISTENCE_UNIT = "vaadin-lazyquerycontainer-example";
 
-	private Table tableOne;
-	private LazyQueryContainer containerOne;
+    private Button refreshButton;
+    private Button editButton;
+    private Button saveButton;
+    private Button cancelButton;
+    private Button addItemButton;
+    private Button removeItemButton;
 
-	private Table tableTwo;
-	private LazyQueryContainer containerTwo;
+    private Table table;
+    private EntityContainer<Task> entityContainer;
 
-	
-	private ArrayList<Object> visibleColumnIds=new ArrayList<Object>();
-	private ArrayList<String> visibleColumnLabels=new ArrayList<String>();
-	
-	
-	@Override
-	public void init() {
-		
-		Window mainWindow = new Window("Lazycontainer Application");
-		
-		VerticalLayout mainLayout=new VerticalLayout();
-		mainLayout.setMargin(true);
-		mainLayout.setSpacing(true);
-		mainWindow.setContent(mainLayout);
-						
-		Panel buttonPanel=new Panel();
-		buttonPanel.addStyleName(Runo.PANEL_LIGHT);
-		HorizontalLayout buttonLayout=new HorizontalLayout();
-		buttonLayout.setMargin(false);
-		buttonLayout.setSpacing(true);
-		buttonPanel.setContent(buttonLayout);		
-		mainWindow.addComponent(buttonPanel);
+    private ArrayList<Object> visibleColumnIds = new ArrayList<Object>();
+    private ArrayList<String> visibleColumnLabels = new ArrayList<String>();
 
-		Panel buttonPanel2=new Panel();
-		buttonPanel2.addStyleName(Runo.PANEL_LIGHT);
-		HorizontalLayout buttonLayout2=new HorizontalLayout();
-		buttonLayout2.setMargin(false);
-		buttonLayout2.setSpacing(true);
-		buttonPanel2.setContent(buttonLayout2);		
-		mainWindow.addComponent(buttonPanel2);
+    @Override
+    public void init() {
 
-		
-		refreshButton=new Button("Refresh");
-		refreshButton.addListener(this);
-		buttonPanel.addComponent(refreshButton);
-		
-		editButton=new Button("Edit");
-		editButton.addListener(this);
-		buttonPanel.addComponent(editButton);
-		
-		saveButton=new Button("Save");
-		saveButton.addListener(this);
-		saveButton.setEnabled(false);
-		buttonPanel2.addComponent(saveButton);
+        Window mainWindow = new Window("Lazycontainer Application");
 
-		cancelButton=new Button("Cancel");
-		cancelButton.addListener(this);
-		cancelButton.setEnabled(false);
-		buttonPanel2.addComponent(cancelButton);
+        VerticalLayout mainLayout = new VerticalLayout();
+        mainLayout.setMargin(true);
+        mainLayout.setSpacing(true);
+        mainWindow.setContent(mainLayout);
 
-		addItemButton=new Button("Add Row");
-		addItemButton.addListener(this);
-		addItemButton.setEnabled(false);
-		buttonPanel2.addComponent(addItemButton);
+        Panel buttonPanel = new Panel();
+        buttonPanel.addStyleName(Runo.PANEL_LIGHT);
+        HorizontalLayout buttonLayout = new HorizontalLayout();
+        buttonLayout.setMargin(false);
+        buttonLayout.setSpacing(true);
+        buttonPanel.setContent(buttonLayout);
+        mainWindow.addComponent(buttonPanel);
 
-		removeItemButton=new Button("Remove Row");
-		removeItemButton.addListener(this);
-		removeItemButton.setEnabled(false);
-		buttonPanel2.addComponent(removeItemButton);
-						
-		visibleColumnIds.add(LazyQueryView.PROPERTY_ID_ITEM_STATUS);
-		visibleColumnIds.add("name");
-		visibleColumnIds.add("reporter");
-		visibleColumnIds.add("assignee");
-		visibleColumnIds.add(LazyQueryView.DEBUG_PROPERTY_ID_QUERY_INDEX);
-		visibleColumnIds.add(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_INDEX);
-		visibleColumnIds.add(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_QUERY_TIME);
+        Panel buttonPanel2 = new Panel();
+        buttonPanel2.addStyleName(Runo.PANEL_LIGHT);
+        HorizontalLayout buttonLayout2 = new HorizontalLayout();
+        buttonLayout2.setMargin(false);
+        buttonLayout2.setSpacing(true);
+        buttonPanel2.setContent(buttonLayout2);
+        mainWindow.addComponent(buttonPanel2);
 
-		visibleColumnLabels.add("");
-		visibleColumnLabels.add("Name");
-		visibleColumnLabels.add("Reporter");
-		visibleColumnLabels.add("Assignee");
-		visibleColumnLabels.add("Query");
-		visibleColumnLabels.add("Batch");
-		visibleColumnLabels.add("Time [ms]");
+        refreshButton = new Button("Refresh");
+        refreshButton.addListener(this);
+        buttonPanel.addComponent(refreshButton);
 
-		
-		EntityManagerFactory entityManagerFactory = Persistence
-		.createEntityManagerFactory(PERSISTENCE_UNIT);
-		EntityManager entityManager = entityManagerFactory
-		.createEntityManager();
+        editButton = new Button("Edit");
+        editButton.addListener(this);
+        buttonPanel.addComponent(editButton);
 
-		{
-			tableOne = new Table();
+        saveButton = new Button("Save");
+        saveButton.addListener(this);
+        saveButton.setEnabled(false);
+        buttonPanel2.addComponent(saveButton);
 
-			tableOne.setCaption("JpaQuery");
-			tableOne.setPageLength(10);
+        cancelButton = new Button("Cancel");
+        cancelButton.addListener(this);
+        cancelButton.setEnabled(false);
+        buttonPanel2.addComponent(cancelButton);
 
-			JpaQueryFactory<Task> queryFactory = new JpaQueryFactory<Task>(
-					entityManager, Task.class, "SELECT t from Task as t",
-					"SELECT count(t) from Task as t", new Object[] { "name" },
-					new boolean[] { true }, true);
-			containerOne = new LazyQueryContainer(queryFactory, 50);
+        addItemButton = new Button("Add Row");
+        addItemButton.addListener(this);
+        addItemButton.setEnabled(false);
+        buttonPanel2.addComponent(addItemButton);
 
-			containerOne.addContainerProperty(
-					LazyQueryView.PROPERTY_ID_ITEM_STATUS,
-					QueryItemStatus.class, QueryItemStatus.None, true, false);
+        removeItemButton = new Button("Remove Row");
+        removeItemButton.addListener(this);
+        removeItemButton.setEnabled(false);
+        buttonPanel2.addComponent(removeItemButton);
 
-			containerOne.addContainerProperty("name", String.class, "", true,
-					true);
-			containerOne.addContainerProperty("reporter", String.class, "",
-					true, true);
-			containerOne.addContainerProperty("assignee", String.class, "",
-					true, true);
+        visibleColumnIds.add(LazyQueryView.PROPERTY_ID_ITEM_STATUS);
+        visibleColumnIds.add("name");
+        visibleColumnIds.add("reporter");
+        visibleColumnIds.add("assignee");
+        visibleColumnIds.add(LazyQueryView.DEBUG_PROPERTY_ID_QUERY_INDEX);
+        visibleColumnIds.add(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_INDEX);
+        visibleColumnIds.add(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_QUERY_TIME);
 
-			containerOne.addContainerProperty(
-					LazyQueryView.DEBUG_PROPERTY_ID_QUERY_INDEX, Integer.class,
-					0, true, false);
-			containerOne.addContainerProperty(
-					LazyQueryView.DEBUG_PROPERTY_ID_BATCH_INDEX, Integer.class,
-					0, true, false);
-			containerOne.addContainerProperty(
-					LazyQueryView.DEBUG_PROPERTY_ID_BATCH_QUERY_TIME,
-					Integer.class, 0, true, false);
+        visibleColumnLabels.add("");
+        visibleColumnLabels.add("Name");
+        visibleColumnLabels.add("Reporter");
+        visibleColumnLabels.add("Assignee");
+        visibleColumnLabels.add("Query");
+        visibleColumnLabels.add("Batch");
+        visibleColumnLabels.add("Time [ms]");
 
-			tableOne.setContainerDataSource(containerOne);
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT);
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
 
-			tableOne.setColumnWidth("name", 135);
-			tableOne.setColumnWidth("reporter", 135);
-			tableOne.setColumnWidth("assignee", 135);
+        entityContainer = new EntityContainer<Task>(entityManager, true, Task.class, 100, new Object[] { "name" },
+                new boolean[] { true });
+        entityContainer.addContainerProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS, QueryItemStatus.class,
+                QueryItemStatus.None, true, false);
+        entityContainer.addContainerProperty("name", String.class, "", true, true);
+        entityContainer.addContainerProperty("reporter", String.class, "", true, true);
+        entityContainer.addContainerProperty("assignee", String.class, "", true, true);
+        entityContainer.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_QUERY_INDEX, Integer.class, 0, true, false);
+        entityContainer.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_INDEX, Integer.class, 0, true, false);
+        entityContainer.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_QUERY_TIME, Integer.class, 0, true,
+                false);
 
-			tableOne.setVisibleColumns(visibleColumnIds.toArray());
-			tableOne.setColumnHeaders(visibleColumnLabels
-					.toArray(new String[0]));
+        
+        for (int i=0; i<10000; i++) {
+            Task entity = entityContainer.addEntity();
+            entity.setName("task-"+Integer.toString(i));
+            entity.setAssignee("assignee-"+Integer.toString(i));
+            entity.setReporter("reporter-"+Integer.toString(i));
+        }
+        
+        entityContainer.commit();
+        
+        table = new Table();
 
-			tableOne.setColumnWidth(LazyQueryView.PROPERTY_ID_ITEM_STATUS, 16);
-			tableOne.addGeneratedColumn(LazyQueryView.PROPERTY_ID_ITEM_STATUS,
-					new QueryItemStatusColumnGenerator(this));
+        table.setCaption("JpaQuery");
+        table.setPageLength(25);
 
-			tableOne.setEditable(false);
-			tableOne.setMultiSelect(true);
-			tableOne.setMultiSelectMode(MultiSelectMode.DEFAULT);
-			tableOne.setSelectable(true);
-			tableOne.setWriteThrough(true);
+        table.setContainerDataSource(entityContainer);
 
-			mainWindow.addComponent(tableOne);
-		}
-		
-		{
-			tableTwo = new Table();
+        table.setColumnWidth("name", 135);
+        table.setColumnWidth("reporter", 135);
+        table.setColumnWidth("assignee", 135);
 
-			tableTwo.setCaption("BeanQuery with JPA Backend");
-			tableTwo.setPageLength(10);
-			
-			TaskService taskService=new TaskService(entityManager);
-			
-			BeanQueryFactory<TaskBeanQuery> queryFactory = new BeanQueryFactory<TaskBeanQuery>(TaskBeanQuery.class);
+        table.setVisibleColumns(visibleColumnIds.toArray());
+        table.setColumnHeaders(visibleColumnLabels.toArray(new String[0]));
 
-			Map<String,Object> queryConfiguration=new HashMap<String,Object>();
-			queryConfiguration.put("taskService",taskService);
-			
-			queryFactory.setQueryConfiguration(queryConfiguration);
-			
-			
-			containerTwo = new LazyQueryContainer(queryFactory, 50);
+        table.setColumnWidth(LazyQueryView.PROPERTY_ID_ITEM_STATUS, 16);
+        table.addGeneratedColumn(LazyQueryView.PROPERTY_ID_ITEM_STATUS, new QueryItemStatusColumnGenerator(this));
 
-			containerTwo.addContainerProperty(
-					LazyQueryView.PROPERTY_ID_ITEM_STATUS,
-					QueryItemStatus.class, QueryItemStatus.None, true, false);
+        table.setEditable(false);
+        table.setMultiSelect(true);
+        table.setMultiSelectMode(MultiSelectMode.DEFAULT);
+        table.setSelectable(true);
+        table.setWriteThrough(true);
 
-			containerTwo.addContainerProperty("name", String.class, "", true,
-					true);
-			containerTwo.addContainerProperty("reporter", String.class, "",
-					true, true);
-			containerTwo.addContainerProperty("assignee", String.class, "",
-					true, true);
+        mainWindow.addComponent(table);
 
-			containerTwo.addContainerProperty(
-					LazyQueryView.DEBUG_PROPERTY_ID_QUERY_INDEX, Integer.class,
-					0, true, false);
-			containerTwo.addContainerProperty(
-					LazyQueryView.DEBUG_PROPERTY_ID_BATCH_INDEX, Integer.class,
-					0, true, false);
-			containerTwo.addContainerProperty(
-					LazyQueryView.DEBUG_PROPERTY_ID_BATCH_QUERY_TIME,
-					Integer.class, 0, true, false);
+        setMainWindow(mainWindow);
+    }
 
-			tableTwo.setContainerDataSource(containerTwo);
+    private void setEditMode(boolean editMode) {
+        if (editMode) {
+            table.setEditable(true);
+            table.setSortDisabled(true);
+            refreshButton.setEnabled(false);
+            editButton.setEnabled(false);
+            saveButton.setEnabled(true);
+            cancelButton.setEnabled(true);
+            addItemButton.setEnabled(true);
+            removeItemButton.setEnabled(true);
+        } else {
+            table.setEditable(false);
+            table.setSortDisabled(false);
+            refreshButton.setEnabled(true);
+            editButton.setEnabled(true);
+            saveButton.setEnabled(false);
+            cancelButton.setEnabled(false);
+            addItemButton.setEnabled(false);
+            removeItemButton.setEnabled(false);
+        }
+    }
 
-			tableTwo.setColumnWidth("name", 135);
-			tableTwo.setColumnWidth("reporter", 135);
-			tableTwo.setColumnWidth("assignee", 135);
-
-			tableTwo.setVisibleColumns(visibleColumnIds.toArray());
-			tableTwo.setColumnHeaders(visibleColumnLabels
-					.toArray(new String[0]));
-
-			tableTwo.setColumnWidth(LazyQueryView.PROPERTY_ID_ITEM_STATUS, 16);
-			tableTwo.addGeneratedColumn(LazyQueryView.PROPERTY_ID_ITEM_STATUS,
-					new QueryItemStatusColumnGenerator(this));
-
-			tableTwo.setEditable(false);
-			tableTwo.setMultiSelect(true);
-			tableTwo.setMultiSelectMode(MultiSelectMode.DEFAULT);
-			tableTwo.setSelectable(true);
-			tableTwo.setWriteThrough(true);
-
-			mainWindow.addComponent(tableTwo);
-		}
-
-		setMainWindow(mainWindow);
-	}
-
-	private void setEditMode(boolean editMode) {
-		if(editMode) {
-			tableOne.setEditable(true);
-			tableOne.setSortDisabled(true);
-			tableTwo.setEditable(true);
-			tableTwo.setSortDisabled(true);
-			refreshButton.setEnabled(false);
-			editButton.setEnabled(false);
-			saveButton.setEnabled(true);
-			cancelButton.setEnabled(true);
-			addItemButton.setEnabled(true);
-			removeItemButton.setEnabled(true);
-		} else {
-			tableOne.setEditable(false);
-			tableOne.setSortDisabled(false);
-			tableTwo.setEditable(false);
-			tableTwo.setSortDisabled(false);
-			refreshButton.setEnabled(true);
-			editButton.setEnabled(true);
-			saveButton.setEnabled(false);
-			cancelButton.setEnabled(false);
-			addItemButton.setEnabled(false);
-			removeItemButton.setEnabled(false);
-		}
-	}
-	
-	public void buttonClick(ClickEvent event) {
-		if(event.getButton()==refreshButton) {
-			containerOne.refresh();
-			containerTwo.refresh();
-		}
-		if(event.getButton()==editButton) {
-			setEditMode(true);
-		}
-		if(event.getButton()==saveButton) {
-			containerOne.commit();
-			containerTwo.commit();
-			containerOne.refresh();
-			setEditMode(false);
-		}
-		if(event.getButton()==cancelButton) {
-			containerOne.discard();
-			containerTwo.discard();
-			containerOne.refresh();
-			setEditMode(false);
-		}
-		if(event.getButton()==addItemButton) {
-			containerOne.addItem();
-			containerTwo.addItem();
-		}
-		if(event.getButton()==removeItemButton) {
-			{
-				Object selection = tableOne.getValue();
-				if (selection == null) {
-					return;
-				}
-				if (selection instanceof Integer) {
-					Integer selectedIndex = (Integer) selection;
-					if (selectedIndex != null) {
-						containerOne.removeItem(selectedIndex);
-					}
-				}
-				if (selection instanceof Collection) {
-					Collection selectionIndexes = (Collection) selection;
-					for (Object selectedIndex : selectionIndexes) {
-						containerOne.removeItem((Integer) selectedIndex);
-					}
-				}
-			}
-			{
-				Object selection = tableTwo.getValue();
-				if (selection == null) {
-					return;
-				}
-				if (selection instanceof Integer) {
-					Integer selectedIndex = (Integer) selection;
-					if (selectedIndex != null) {
-						containerTwo.removeItem(selectedIndex);
-					}
-				}
-				if (selection instanceof Collection) {
-					Collection selectionIndexes = (Collection) selection;
-					for (Object selectedIndex : selectionIndexes) {
-						containerTwo.removeItem((Integer) selectedIndex);
-					}
-				}
-			}
-		}
-	}
+    public void buttonClick(ClickEvent event) {
+        if (event.getButton() == refreshButton) {
+            entityContainer.refresh();
+        }
+        if (event.getButton() == editButton) {
+            setEditMode(true);
+        }
+        if (event.getButton() == saveButton) {
+            entityContainer.commit();
+            entityContainer.refresh();
+            setEditMode(false);
+        }
+        if (event.getButton() == cancelButton) {
+            entityContainer.discard();
+            entityContainer.refresh();
+            setEditMode(false);
+        }
+        if (event.getButton() == addItemButton) {
+            entityContainer.addItem();
+        }
+        if (event.getButton() == removeItemButton) {
+            Object selection = table.getValue();
+            if (selection == null) {
+                return;
+            }
+            if (selection instanceof Integer) {
+                Integer selectedIndex = (Integer) selection;
+                if (selectedIndex != null) {
+                    entityContainer.removeItem(selectedIndex);
+                }
+            }
+            if (selection instanceof Collection) {
+                Collection selectionIndexes = (Collection) selection;
+                for (Object selectedIndex : selectionIndexes) {
+                    entityContainer.removeItem((Integer) selectedIndex);
+                }
+            }
+        }
+    }
 
 }
