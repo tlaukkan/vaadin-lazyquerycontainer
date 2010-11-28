@@ -36,6 +36,10 @@ public class VaadinApplication extends Application implements ClickListener {
     private static final long serialVersionUID = 1L;
 
     public static final String PERSISTENCE_UNIT = "vaadin-lazyquerycontainer-example";
+    private static final EntityManagerFactory ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT);
+    private EntityManager entityManager;
+
+    private TextField nameFilterField;
 
     private Button refreshButton;
     private Button editButton;
@@ -49,8 +53,6 @@ public class VaadinApplication extends Application implements ClickListener {
 
     private ArrayList<Object> visibleColumnIds = new ArrayList<Object>();
     private ArrayList<String> visibleColumnLabels = new ArrayList<String>();
-
-    private TextField nameFilterField;
 
     @Override
     public void init() {
@@ -133,8 +135,7 @@ public class VaadinApplication extends Application implements ClickListener {
         visibleColumnLabels.add("Batch");
         visibleColumnLabels.add("Time [ms]");
 
-        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT);
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
 
         entityContainer = new EntityContainer<Task>(entityManager, true, Task.class, 100, new Object[] { "name" },
                 new boolean[] { true });
