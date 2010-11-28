@@ -2,13 +2,14 @@ package org.vaadin.addons.lazyquerycontainer.example.jpa;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 import org.vaadin.addons.lazyquerycontainer.EntityContainer;
-import org.vaadin.addons.lazyquerycontainer.LazyQueryContainer;
 import org.vaadin.addons.lazyquerycontainer.LazyQueryView;
 import org.vaadin.addons.lazyquerycontainer.QueryItemStatus;
 import org.vaadin.addons.lazyquerycontainer.QueryItemStatusColumnGenerator;
@@ -21,6 +22,7 @@ import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.Runo;
@@ -48,6 +50,8 @@ public class VaadinApplication extends Application implements ClickListener {
     private ArrayList<Object> visibleColumnIds = new ArrayList<Object>();
     private ArrayList<String> visibleColumnLabels = new ArrayList<String>();
 
+    private TextField nameFilterField;
+
     @Override
     public void init() {
 
@@ -57,6 +61,14 @@ public class VaadinApplication extends Application implements ClickListener {
         mainLayout.setMargin(true);
         mainLayout.setSpacing(true);
         mainWindow.setContent(mainLayout);
+        
+        Panel filterPanel = new Panel();
+        filterPanel.addStyleName(Runo.PANEL_LIGHT);
+        HorizontalLayout filterLayout = new HorizontalLayout();
+        filterLayout.setMargin(false);
+        filterLayout.setSpacing(true);
+        filterPanel.setContent(filterLayout);
+        mainWindow.addComponent(filterPanel);
 
         Panel buttonPanel = new Panel();
         buttonPanel.addStyleName(Runo.PANEL_LIGHT);
@@ -74,6 +86,9 @@ public class VaadinApplication extends Application implements ClickListener {
         buttonPanel2.setContent(buttonLayout2);
         mainWindow.addComponent(buttonPanel2);
 
+        nameFilterField = new TextField("Name");
+        filterPanel.addComponent(nameFilterField);
+        
         refreshButton = new Button("Refresh");
         refreshButton.addListener(this);
         buttonPanel.addComponent(refreshButton);
@@ -133,7 +148,6 @@ public class VaadinApplication extends Application implements ClickListener {
         entityContainer.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_QUERY_TIME, Integer.class, 0, true,
                 false);
 
-        
         for (int i=0; i<10000; i++) {
             Task entity = entityContainer.addEntity();
             entity.setName("task-"+Integer.toString(i));
@@ -181,6 +195,7 @@ public class VaadinApplication extends Application implements ClickListener {
             cancelButton.setEnabled(true);
             addItemButton.setEnabled(true);
             removeItemButton.setEnabled(true);
+            nameFilterField.setEnabled(false);
         } else {
             table.setEditable(false);
             table.setSortDisabled(false);
@@ -190,12 +205,20 @@ public class VaadinApplication extends Application implements ClickListener {
             cancelButton.setEnabled(false);
             addItemButton.setEnabled(false);
             removeItemButton.setEnabled(false);
+            nameFilterField.setEnabled(true);
         }
     }
 
     public void buttonClick(ClickEvent event) {
         if (event.getButton() == refreshButton) {
-            entityContainer.refresh();
+            final String nameFilter = (String) nameFilterField.getValue();
+            if (nameFilter != null && nameFilter.length() != 0) {
+                final Map<String, Object> whereParameters = new HashMap<String, Object>();
+                whereParameters.put("name", nameFilter);
+                entityContainer.filter("e.name=:name", whereParameters);
+            } else {
+                entityContainer.filter(null, null);               
+            }
         }
         if (event.getButton() == editButton) {
             setEditMode(true);
