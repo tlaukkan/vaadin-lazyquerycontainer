@@ -52,6 +52,8 @@ public final class JpaQuery<T extends Object> implements Query, Serializable {
     private Class<T> beanClass;
     /** Flag reflecting whether application manages transactions. */
     private boolean transactionManagement;
+    /** The size of the query. */
+    private int querySize = -1;
 
     /**
      * Constructor for configuring the query.
@@ -141,8 +143,11 @@ public final class JpaQuery<T extends Object> implements Query, Serializable {
      * @return number of beans.
      */
     public int size() {
-        javax.persistence.Query query = entityManager.createQuery(jpaSelectCountQuery);
-        return (int) ((Number) query.getSingleResult()).longValue();
+        if (querySize == -1) {
+            javax.persistence.Query query = entityManager.createQuery(jpaSelectCountQuery);
+            querySize = ((Number) query.getSingleResult()).intValue();
+        }
+        return querySize;
     }
 
     /**

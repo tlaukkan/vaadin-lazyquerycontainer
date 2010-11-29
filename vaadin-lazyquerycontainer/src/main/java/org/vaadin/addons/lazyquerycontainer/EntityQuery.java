@@ -51,18 +51,19 @@ public final class EntityQuery implements Query, Serializable {
     private Map<String, Object> selectParameters;
     /** QueryDefinition contains definition of the query properties and batch size. */
     private QueryDefinition queryDefinition;
+    /** The size of the query. */
+    private int querySize = -1;
 
     /**
      * Constructor for configuring the query.
      * @param entityQueryDefinition The entity query definition.
      */
     public EntityQuery(final EntityQueryDefinition entityQueryDefinition) {
-
+        final EntityQueryDefinition.EntitySelectDefinition selectDefinition =
+            entityQueryDefinition.getEntitySelectDefinition();
         this.entityManager = entityQueryDefinition.getEntityManager();
         this.queryDefinition = entityQueryDefinition;
         this.entityClass = entityQueryDefinition.getEntityClass();
-        final EntityQueryDefinition.EntitySelectDefinition selectDefinition =
-            entityQueryDefinition.getEntitySelectDefinition();
         this.selectPsql = selectDefinition.getSelectPsql();
         this.selectCountPsql = selectDefinition.getSelectCountPsql();
         this.selectParameters = entityQueryDefinition.getWhereParameters();
@@ -95,13 +96,16 @@ public final class EntityQuery implements Query, Serializable {
      * @return number of beans.
      */
     public int size() {
-        javax.persistence.Query query = entityManager.createQuery(selectCountPsql);
-        if (selectParameters != null) {
-            for (String parameterKey : selectParameters.keySet()) {
-                query.setParameter(parameterKey, selectParameters.get(parameterKey));
+        if (querySize == -1) {
+            javax.persistence.Query query = entityManager.createQuery(selectCountPsql);
+            if (selectParameters != null) {
+                for (String parameterKey : selectParameters.keySet()) {
+                    query.setParameter(parameterKey, selectParameters.get(parameterKey));
+                }
             }
-        } 
-        return (int) ((Number) query.getSingleResult()).longValue();
+            querySize = ((Number) query.getSingleResult()).intValue();
+        }
+        return querySize;
     }
 
     /**

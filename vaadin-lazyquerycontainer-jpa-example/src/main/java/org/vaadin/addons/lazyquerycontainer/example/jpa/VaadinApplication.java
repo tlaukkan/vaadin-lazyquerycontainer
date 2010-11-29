@@ -120,17 +120,27 @@ public class VaadinApplication extends Application implements ClickListener {
         buttonPanel2.addComponent(removeItemButton);
 
         visibleColumnIds.add(LazyQueryView.PROPERTY_ID_ITEM_STATUS);
+        visibleColumnIds.add("taskId");
         visibleColumnIds.add("name");
         visibleColumnIds.add("reporter");
         visibleColumnIds.add("assignee");
+        visibleColumnIds.add("alpha");
+        visibleColumnIds.add("beta");
+        visibleColumnIds.add("gamma");
+        visibleColumnIds.add("delta");
         visibleColumnIds.add(LazyQueryView.DEBUG_PROPERTY_ID_QUERY_INDEX);
         visibleColumnIds.add(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_INDEX);
         visibleColumnIds.add(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_QUERY_TIME);
 
         visibleColumnLabels.add("");
+        visibleColumnLabels.add("Task ID");
         visibleColumnLabels.add("Name");
         visibleColumnLabels.add("Reporter");
         visibleColumnLabels.add("Assignee");
+        visibleColumnLabels.add("Alpha");
+        visibleColumnLabels.add("Beta");
+        visibleColumnLabels.add("Gamma");
+        visibleColumnLabels.add("Delta");
         visibleColumnLabels.add("Query");
         visibleColumnLabels.add("Batch");
         visibleColumnLabels.add("Time [ms]");
@@ -141,9 +151,14 @@ public class VaadinApplication extends Application implements ClickListener {
                 new boolean[] { true });
         entityContainer.addContainerProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS, QueryItemStatus.class,
                 QueryItemStatus.None, true, false);
+        entityContainer.addContainerProperty("taskId", Long.class, new Long(0), true, true);
         entityContainer.addContainerProperty("name", String.class, "", true, true);
         entityContainer.addContainerProperty("reporter", String.class, "", true, true);
         entityContainer.addContainerProperty("assignee", String.class, "", true, true);
+        entityContainer.addContainerProperty("alpha", String.class, "", false, true);
+        entityContainer.addContainerProperty("beta", String.class, "", false, true);
+        entityContainer.addContainerProperty("gamma", String.class, "", false, true);
+        entityContainer.addContainerProperty("delta", String.class, "", false, true);
         entityContainer.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_QUERY_INDEX, Integer.class, 0, true, false);
         entityContainer.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_INDEX, Integer.class, 0, true, false);
         entityContainer.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_QUERY_TIME, Integer.class, 0, true,
@@ -154,14 +169,18 @@ public class VaadinApplication extends Application implements ClickListener {
             entity.setName("task-"+Integer.toString(i));
             entity.setAssignee("assignee-"+Integer.toString(i));
             entity.setReporter("reporter-"+Integer.toString(i));
+            entity.setAlpha(Integer.toString(i));
+            entity.setBeta(Integer.toString(i));
+            entity.setGamma(Integer.toString(i));
+            entity.setDelta(Integer.toString(i));
         }
         
         entityContainer.commit();
-        
+         
         table = new Table();
 
         table.setCaption("JpaQuery");
-        table.setPageLength(25);
+        table.setPageLength(40);
 
         table.setContainerDataSource(entityContainer);
 
@@ -175,6 +194,7 @@ public class VaadinApplication extends Application implements ClickListener {
         table.setColumnWidth(LazyQueryView.PROPERTY_ID_ITEM_STATUS, 16);
         table.addGeneratedColumn(LazyQueryView.PROPERTY_ID_ITEM_STATUS, new QueryItemStatusColumnGenerator(this));
 
+        table.setImmediate(true);
         table.setEditable(false);
         table.setMultiSelect(true);
         table.setMultiSelectMode(MultiSelectMode.DEFAULT);
