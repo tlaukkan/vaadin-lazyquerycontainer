@@ -222,6 +222,9 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
             Item item = items.get(i);
 
             itemCache.put(itemIndex, item);
+            if (itemCacheAccessLog.contains(itemIndex)) {
+                itemCacheAccessLog.remove((Object) itemIndex);
+            }
             itemCacheAccessLog.addLast(itemIndex);
         }
 

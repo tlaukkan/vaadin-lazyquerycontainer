@@ -34,7 +34,7 @@ public class LazyQueryDefinition implements QueryDefinition, Serializable {
     /** Java serialization version UID. */
     private static final long serialVersionUID = 1L;
     /** Lust of property IDs included in this QueryDefinition. */
-    private List<Object> propertIds = new ArrayList<Object>();
+    private List<Object> propertyIds = new ArrayList<Object>();
     /** Map of types of the properties. */
     private Map<Object, Object> propertyTypes = new TreeMap<Object, Object>();
     /** Default values for the properties. */
@@ -58,7 +58,7 @@ public class LazyQueryDefinition implements QueryDefinition, Serializable {
      * @return the propertyIds
      */
     public final Collection<?> getPropertyIds() {
-        return Collections.unmodifiableCollection(propertIds);
+        return Collections.unmodifiableCollection(propertyIds);
     }
 
     /**
@@ -67,7 +67,7 @@ public class LazyQueryDefinition implements QueryDefinition, Serializable {
      */
     public final Collection<?> getSortablePropertyIds() {
         List<Object> sortablePropertyIds = new ArrayList<Object>();
-        for (Object propertyId : propertIds) {
+        for (Object propertyId : propertyIds) {
             if (isPropertySortable(propertyId)) {
                 sortablePropertyIds.add(propertyId);
             }
@@ -121,7 +121,7 @@ public class LazyQueryDefinition implements QueryDefinition, Serializable {
      */
     public final void addProperty(final Object propertyId, final Class<?> type, final Object defaultValue,
             final boolean readOnly, final boolean sortable) {
-        propertIds.add(propertyId);
+        propertyIds.add(propertyId);
         propertyTypes.put(propertyId, type);
         defaultValues.put(propertyId, defaultValue);
         readOnlyStates.put(propertyId, readOnly);
@@ -133,7 +133,7 @@ public class LazyQueryDefinition implements QueryDefinition, Serializable {
      * @param propertyId ID identifying the property.
      */
     public final void removeProperty(final Object propertyId) {
-        propertIds.remove(propertyId);
+        propertyIds.remove(propertyId);
         propertyTypes.remove(propertyId);
         defaultValues.remove(propertyId);
         readOnlyStates.remove(propertyId);
