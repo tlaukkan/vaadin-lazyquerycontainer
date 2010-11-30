@@ -162,11 +162,7 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
      * @return Collection of Integers.
      */
     public final Collection<?> getItemIds() {
-        ArrayList<Integer> ids = new ArrayList<Integer>(size());
-        for (int i = 0; i < size(); i++) {
-            ids.add(i);
-        }
-        return ids;
+        throw new UnsupportedOperationException();
     }
 
     /**

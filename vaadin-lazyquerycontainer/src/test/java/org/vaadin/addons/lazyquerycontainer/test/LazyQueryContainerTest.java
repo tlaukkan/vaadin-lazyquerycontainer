@@ -16,22 +16,22 @@
 package org.vaadin.addons.lazyquerycontainer.test;
 
 import java.util.Collection;
-import java.util.Iterator;
 
-import org.vaadin.addons.lazyquerycontainer.LazyQueryDefinition;
+import junit.framework.TestCase;
+
+import org.junit.Test;
 import org.vaadin.addons.lazyquerycontainer.LazyQueryContainer;
+import org.vaadin.addons.lazyquerycontainer.LazyQueryDefinition;
 import org.vaadin.addons.lazyquerycontainer.LazyQueryView;
 import org.vaadin.addons.lazyquerycontainer.QueryItemStatus;
 import org.vaadin.addons.lazyquerycontainer.QueryView;
 
-import junit.framework.TestCase;
-
-import com.vaadin.data.Item;
-import com.vaadin.data.Property;
 import com.vaadin.data.Container.ItemSetChangeEvent;
 import com.vaadin.data.Container.ItemSetChangeListener;
 import com.vaadin.data.Container.PropertySetChangeEvent;
 import com.vaadin.data.Container.PropertySetChangeListener;
+import com.vaadin.data.Item;
+import com.vaadin.data.Property;
 
 /**
  * JUnit test for testing LazyQueryContainer implementation.
@@ -68,14 +68,6 @@ public class LazyQueryContainerTest extends TestCase implements ItemSetChangeLis
 
     public void testSize() {
         assertEquals(viewSize, container.size());
-    }
-
-    public void testGetItemIds() {
-        Collection<?> ids = container.getItemIds();
-        Iterator<?> idIterator = ids.iterator();
-        for (int i = 0; i < viewSize; i++) {
-            assertEquals(i, idIterator.next());
-        }
     }
 
     public void testGetItem() {
