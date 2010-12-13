@@ -5,7 +5,7 @@
 	<groupId>org.vaadin.addons.lazyquerycontainer</groupId>
 	<artifactId>vaadin-lazyquerycontainer-jpa-example</artifactId>
 	<packaging>war</packaging>
-	<version>1.2.2</version>
+	<version>1.2.3</version>
 	<name>vaadin-lazyquerycontainer-jpa-example</name>
 
 	<properties>

@@ -16,10 +16,10 @@
 package org.vaadin.addons.lazyquerycontainer.test;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 import junit.framework.TestCase;
 
-import org.junit.Test;
 import org.vaadin.addons.lazyquerycontainer.LazyQueryContainer;
 import org.vaadin.addons.lazyquerycontainer.LazyQueryDefinition;
 import org.vaadin.addons.lazyquerycontainer.LazyQueryView;
@@ -70,6 +70,14 @@ public class LazyQueryContainerTest extends TestCase implements ItemSetChangeLis
         assertEquals(viewSize, container.size());
     }
 
+    public void testGetItemIds() {
+        Collection<?> ids = container.getItemIds();
+        Iterator<?> idIterator = ids.iterator();
+        for (int i = 0; i < viewSize; i++) {
+            assertEquals(i, idIterator.next());
+        }
+    }
+    
     public void testGetItem() {
         for (int i = 0; i < viewSize; i++) {
             Item item = container.getItem(i);

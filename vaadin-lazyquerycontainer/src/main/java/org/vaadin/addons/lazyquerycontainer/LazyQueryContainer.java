@@ -162,7 +162,7 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
      * @return Collection of Integers.
      */
     public final Collection<?> getItemIds() {
-        throw new UnsupportedOperationException();
+        return new NaturalNumbersList(size());
     }
 
     /**
