@@ -525,7 +525,7 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
     /**
      * @return the queryView
      */
-    protected final QueryView getQueryView() {
+    public final QueryView getQueryView() {
         return queryView;
     }
 

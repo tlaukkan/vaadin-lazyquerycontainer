@@ -179,6 +179,20 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
     }
 
     /**
+     * @return the maxCacheSize
+     */
+    public int getMaxCacheSize() {
+        return maxCacheSize;
+    }
+
+    /**
+     * @param maxCacheSize the maxCacheSize to set
+     */
+    public void setMaxCacheSize(final int maxCacheSize) {
+        this.maxCacheSize = maxCacheSize;
+    }
+
+    /**
      * Gets item at given index from addedItems, cache and loads new batch on demand
      * if required.
      * @param index The item index.

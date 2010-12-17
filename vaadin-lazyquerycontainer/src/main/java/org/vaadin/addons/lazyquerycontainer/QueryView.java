@@ -27,6 +27,14 @@ public interface QueryView {
 	 * @return the query definition
 	 */
 	QueryDefinition getQueryDefinition();
+    /**
+     * @return the maxCacheSize
+     */
+    int getMaxCacheSize();
+    /**
+     * @param maxCacheSize the maxCacheSize to set
+     */
+    void setMaxCacheSize(int maxCacheSize);
 	/**
 	 * Sorts the items according to the provided sort state.
 	 * @param sortPropertyIds Properties participating in the sorting.
