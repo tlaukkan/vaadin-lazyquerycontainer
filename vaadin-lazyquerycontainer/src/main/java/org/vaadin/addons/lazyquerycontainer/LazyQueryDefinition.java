@@ -44,7 +44,7 @@ public class LazyQueryDefinition implements QueryDefinition, Serializable {
     /** The sort states of the properties. */
     private Map<Object, Boolean> sortableStates = new HashMap<Object, Boolean>();
     /** Batch size of the query. */
-    private final int batchSize;
+    private int batchSize;
 
     /**
      * Constructor which sets the batch size.
@@ -145,6 +145,14 @@ public class LazyQueryDefinition implements QueryDefinition, Serializable {
      */
     public final int getBatchSize() {
         return batchSize;
+    }
+
+    /**
+     * After this method has been called the Query has to be discarded immediately.
+     * @param batchSize the batchSize to set
+     */
+    public final void setBatchSize(final int batchSize) {
+        this.batchSize = batchSize;
     }
 
 }

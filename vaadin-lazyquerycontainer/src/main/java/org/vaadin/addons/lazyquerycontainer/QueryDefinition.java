@@ -75,4 +75,10 @@ public interface QueryDefinition {
 	 * @return the batch size
 	 */
 	int getBatchSize();
+    /**
+     * Sets the query batch size.
+     * After this method has been called the Query has to be discarded immediately.
+     * @param batchSize the batchSize to set
+     */
+    void setBatchSize(final int batchSize);
 }
