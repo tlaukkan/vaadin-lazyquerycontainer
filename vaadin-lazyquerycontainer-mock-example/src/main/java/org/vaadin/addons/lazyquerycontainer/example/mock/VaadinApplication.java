@@ -133,6 +133,7 @@ public class VaadinApplication extends Application implements ClickListener {
 		buttonPanel2.addComponent(removeItemButton);
 				
 		table=new Table();
+        mainWindow.addComponent(table);
 		
 		table.setPageLength(20);
 				
@@ -171,7 +172,7 @@ public class VaadinApplication extends Application implements ClickListener {
 		table.setColumnHeaders(visibleColumnLabels.toArray(new String[0]));
 		
 		table.setColumnWidth(LazyQueryView.PROPERTY_ID_ITEM_STATUS, 16);
-		table.addGeneratedColumn(LazyQueryView.PROPERTY_ID_ITEM_STATUS, new QueryItemStatusColumnGenerator(this));
+		table.addGeneratedColumn(LazyQueryView.PROPERTY_ID_ITEM_STATUS, new QueryItemStatusColumnGenerator());
 
 		table.setEditable(false);
 		table.setMultiSelect(true);
@@ -179,8 +180,6 @@ public class VaadinApplication extends Application implements ClickListener {
 		table.setSelectable(true);
 		table.setWriteThrough(true);
 				
-		mainWindow.addComponent(table);
-
 		setMainWindow(mainWindow);
 	}
 

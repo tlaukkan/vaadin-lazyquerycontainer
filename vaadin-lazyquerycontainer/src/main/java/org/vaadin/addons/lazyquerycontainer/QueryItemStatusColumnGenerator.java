@@ -15,7 +15,6 @@
  */
 package org.vaadin.addons.lazyquerycontainer;
 
-import com.vaadin.Application;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
@@ -35,8 +34,6 @@ import com.vaadin.ui.Table.ColumnGenerator;
 public final class QueryItemStatusColumnGenerator implements ColumnGenerator, ValueChangeListener {
     /** Serial version UID of this class. */
     private static final long serialVersionUID = 1L;
-    /** The Vaadin application this instance is part of. */
-    private Application application;
     /** Icon resource for none state. */
     private Resource noneIconResource;
     /** Icon resource for added state. */
@@ -50,12 +47,8 @@ public final class QueryItemStatusColumnGenerator implements ColumnGenerator, Va
 
     /**
      * Construct which sets the application instance.
-     * 
-     * @param application
-     *            The application to be set.
      */
-    public QueryItemStatusColumnGenerator(final Application application) {
-        this.application = application;
+    public QueryItemStatusColumnGenerator() {
     }
 
     /**
@@ -69,13 +62,13 @@ public final class QueryItemStatusColumnGenerator implements ColumnGenerator, Va
         Property statusProperty = source.getItem(itemId).getItemProperty(columnId);
 
         noneIconResource = new ClassResource(QueryItemStatusColumnGenerator.class, "images/textfield.png",
-                this.application);
+                source.getApplication());
         addedIconResource = new ClassResource(QueryItemStatusColumnGenerator.class, "images/textfield_add.png",
-                this.application);
+                source.getApplication());
         modifiedIconResource = new ClassResource(QueryItemStatusColumnGenerator.class, "images/textfield_rename.png",
-                this.application);
+                source.getApplication());
         removedIconResource = new ClassResource(QueryItemStatusColumnGenerator.class, "images/textfield_delete.png",
-                this.application);
+                source.getApplication());
 
         statusIcon = new Embedded(null, noneIconResource);
         statusIcon.setHeight("16px");

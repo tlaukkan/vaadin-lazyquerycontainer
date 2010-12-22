@@ -178,6 +178,7 @@ public class VaadinApplication extends Application implements ClickListener {
         entityContainer.commit();
          
         table = new Table();
+        mainWindow.addComponent(table);
 
         table.setCaption("JpaQuery");
         table.setPageLength(40);
@@ -192,7 +193,7 @@ public class VaadinApplication extends Application implements ClickListener {
         table.setColumnHeaders(visibleColumnLabels.toArray(new String[0]));
 
         table.setColumnWidth(LazyQueryView.PROPERTY_ID_ITEM_STATUS, 16);
-        table.addGeneratedColumn(LazyQueryView.PROPERTY_ID_ITEM_STATUS, new QueryItemStatusColumnGenerator(this));
+        table.addGeneratedColumn(LazyQueryView.PROPERTY_ID_ITEM_STATUS, new QueryItemStatusColumnGenerator());
 
         table.setImmediate(true);
         table.setEditable(false);
@@ -200,8 +201,6 @@ public class VaadinApplication extends Application implements ClickListener {
         table.setMultiSelectMode(MultiSelectMode.DEFAULT);
         table.setSelectable(true);
         table.setWriteThrough(true);
-
-        mainWindow.addComponent(table);
 
         setMainWindow(mainWindow);
     }
