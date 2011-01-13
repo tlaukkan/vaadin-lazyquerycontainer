@@ -211,6 +211,7 @@ public final class EntityQuery implements Query, Serializable {
      * @param entity bean to be converted.
      * @return item converted from bean.
      */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private Item toItem(final Object entity) {
         BeanItem<?> beanItem = new BeanItem<Object>(entity);
 

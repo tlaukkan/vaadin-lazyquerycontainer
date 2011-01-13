@@ -194,7 +194,8 @@ public abstract class AbstractBeanQuery<T extends Object> implements Query {
 	 * @param bean bean to be converted.
 	 * @return item converted from bean.
 	 */
-	private Item toItem(final T bean) {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+    private Item toItem(final T bean) {
 		BeanItem<T> beanItem = new BeanItem<T>(bean);
 
 		CompositeItem compositeItem = new CompositeItem();

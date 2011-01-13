@@ -213,6 +213,7 @@ public final class JpaQuery<T extends Object> implements Query, Serializable {
      * @param bean bean to be converted.
      * @return item converted from bean.
      */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private Item toItem(final T bean) {
         BeanItem<T> beanItem = new BeanItem<T>(bean);
 
