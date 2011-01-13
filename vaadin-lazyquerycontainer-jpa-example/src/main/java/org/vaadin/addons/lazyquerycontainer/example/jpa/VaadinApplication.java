@@ -58,6 +58,7 @@ public class VaadinApplication extends Application implements ClickListener {
     public void init() {
 
         Window mainWindow = new Window("Lazycontainer Application");
+        setMainWindow(mainWindow);
 
         VerticalLayout mainLayout = new VerticalLayout();
         mainLayout.setMargin(true);
@@ -202,7 +203,6 @@ public class VaadinApplication extends Application implements ClickListener {
         table.setSelectable(true);
         table.setWriteThrough(true);
 
-        setMainWindow(mainWindow);
     }
 
     private void setEditMode(boolean editMode) {

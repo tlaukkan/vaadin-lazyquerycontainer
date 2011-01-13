@@ -91,7 +91,7 @@
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin</artifactId>
-			<version>6.4.8</version>
+			<version>6.5-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.vaadin.addons.lazyquerycontainer</groupId>
