@@ -34,7 +34,6 @@ import com.vaadin.data.util.ObjectProperty;
  * @param <T> Bean class.
  */
 public abstract class AbstractBeanQuery<T extends Object> implements Query {
-
 	/** QueryDefinition contains definition of the query properties. */
 	private QueryDefinition queryDefinition;
 	/** Query configuration contains implementation specific configuration. */
@@ -44,6 +43,12 @@ public abstract class AbstractBeanQuery<T extends Object> implements Query {
 	/** The ascending or descending state of sort properties. */
 	private boolean[] sortStates;
 
+	/**
+	 * Default constructor for serialization.
+	 */
+	public AbstractBeanQuery() {
+	}
+	
 	/**
 	 * The constructor for parameterizing the query.
 	 * @param queryDefinition QueryDefinition contains the query properties.

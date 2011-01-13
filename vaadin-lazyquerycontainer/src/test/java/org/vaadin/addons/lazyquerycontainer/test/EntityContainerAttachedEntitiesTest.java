@@ -25,6 +25,8 @@ import javax.persistence.Persistence;
 
 import junit.framework.Assert;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.vaadin.addons.lazyquerycontainer.EntityContainer;
 import org.vaadin.addons.lazyquerycontainer.LazyQueryView;
@@ -36,29 +38,45 @@ import com.vaadin.data.Item;
  * @author Tommi Laukkanen
  *
  */
-public class EntityContainerTest {
+public class EntityContainerAttachedEntitiesTest {
 
-    /**
-     * 
-     */
+    /** Query cache size.  */
     private static final int QUERY_CACHE_SIZE = 1000;
-    /**
-     * 
-     */
+    /** Item count for cache test. */
     private static final int ITEM_COUNT_FOR_CACHE_TEST = 2000;
     /** Batch size for entity container. */
     private static final int ENTITY_CONTAINER_BATCH_SIZE = 100;
+    /** The JPA EntityManagerFactory. */
+    private static EntityManagerFactory entityManagerFactory =
+        Persistence .createEntityManagerFactory("vaadin-lazyquerycontainer-test");
+    /** The JPA EntityManager. */
+    private EntityManager entityManager;
 
+    /** 
+     * Unit test setup.
+     */
+    @Before
+    public void before() {
+        entityManager = entityManagerFactory
+        .createEntityManager();
+        entityManager.getTransaction().begin();
+        entityManager.createQuery("delete from Task").executeUpdate();
+        entityManager.getTransaction().commit();
+    }
+
+    /** 
+     * Unit test teardown.
+     */
+    @After
+    public void after() {
+    }
+    
     /**
      * Test for entity container functionality.
      */
     @Test
     public final void testEntityContainer() {
-        final EntityManagerFactory entityManagerFactory = Persistence
-            .createEntityManagerFactory("vaadin-lazyquerycontainer-test");
-        final EntityManager entityManager = entityManagerFactory
-            .createEntityManager();
-        final EntityContainer<Task> entityContainer = new EntityContainer<Task>(entityManager, true, Task.class, 
+        final EntityContainer<Task> entityContainer = new EntityContainer<Task>(entityManager, true, false, Task.class, 
                 ENTITY_CONTAINER_BATCH_SIZE, new String[] {"name"}, new boolean[] {true});
 
         final Task taskAlpha = entityContainer.addEntity();
@@ -129,6 +147,9 @@ public class EntityContainerTest {
         Assert.assertNotNull("Verify new property exists.", betaItem.getItemProperty("description"));
         Assert.assertEquals("Verify new property has correct default value.",
                 "", betaItem.getItemProperty("description").getValue());
+
+        entityContainer.removeAllItems();
+        Assert.assertEquals("Verify container is empty after remove all.", 0, entityContainer.size());
     }
 
     /**
@@ -140,7 +161,7 @@ public class EntityContainerTest {
             .createEntityManagerFactory("vaadin-lazyquerycontainer-test");
         final EntityManager entityManager = entityManagerFactory
             .createEntityManager();
-        new EntityContainer<Task>(entityManager, true, Task.class, ENTITY_CONTAINER_BATCH_SIZE,
+        new EntityContainer<Task>(entityManager, true, false, Task.class, ENTITY_CONTAINER_BATCH_SIZE,
                 new String[] {}, new boolean[] {});
     }
 
@@ -153,23 +174,8 @@ public class EntityContainerTest {
             .createEntityManagerFactory("vaadin-lazyquerycontainer-test");
         final EntityManager entityManager = entityManagerFactory
             .createEntityManager();
-        new EntityContainer<Task>(entityManager, true, Task.class, ENTITY_CONTAINER_BATCH_SIZE,
+        new EntityContainer<Task>(entityManager, true, false, Task.class, ENTITY_CONTAINER_BATCH_SIZE,
                 new String[] {"name"}, new boolean[] {});
-    }
-
-    /**
-     * Test remove all items.
-     */
-    @Test(expected = UnsupportedOperationException.class)
-    public final void testRemoveAllItems() {
-        final EntityManagerFactory entityManagerFactory = Persistence
-            .createEntityManagerFactory("vaadin-lazyquerycontainer-test");
-        final EntityManager entityManager = entityManagerFactory
-            .createEntityManager();
-        final EntityContainer<Task> entityContainer =
-            new EntityContainer<Task>(entityManager, true, Task.class, ENTITY_CONTAINER_BATCH_SIZE,
-                new String[] {"name"}, new boolean[] {true});
-        entityContainer.removeAllItems();
     }
 
     /**
@@ -182,7 +188,7 @@ public class EntityContainerTest {
         final EntityManager entityManager = entityManagerFactory
             .createEntityManager();
         final EntityContainer<Task> entityContainer =
-            new EntityContainer<Task>(entityManager, true, Task.class, ENTITY_CONTAINER_BATCH_SIZE,
+            new EntityContainer<Task>(entityManager, true, false, Task.class, ENTITY_CONTAINER_BATCH_SIZE,
                 new String[] {"name"}, new boolean[] {true});
 
         entityContainer.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_INDEX, 

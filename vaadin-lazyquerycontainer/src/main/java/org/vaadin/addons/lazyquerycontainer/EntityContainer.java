@@ -35,15 +35,16 @@ public final class EntityContainer<T extends Object> extends LazyQueryContainer 
      * Constructor which configures query definition for accessing JPA entities.
      * @param entityManager The JPA EntityManager.
      * @param applicationManagedTransactions True if application manages transactions instead of container.
+     * @param detachedEntities Whether entities are detached from PersistenceContext.
      * @param entityClass The entity class.
      * @param batchSize The batch size.
      * @param nativeSortPropertyIds Properties participating in the native sort.
      * @param nativeSortPropertyAscendingStates List of property sort directions for the native sort.
      */
     public EntityContainer(final EntityManager entityManager, final boolean applicationManagedTransactions,
-            final Class<?> entityClass, final int batchSize,
+            final boolean detachedEntities, final Class<?> entityClass, final int batchSize,
             final Object[] nativeSortPropertyIds, final boolean[] nativeSortPropertyAscendingStates) {
-        super(new EntityQueryDefinition(entityManager, applicationManagedTransactions,
+        super(new EntityQueryDefinition(entityManager, applicationManagedTransactions, detachedEntities, 
                 entityClass, batchSize, nativeSortPropertyIds, nativeSortPropertyAscendingStates),
                 new EntityQueryFactory());
     }

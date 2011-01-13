@@ -47,10 +47,12 @@ public final class EntityQuery implements Query, Serializable {
     private String selectPsql;
     /** The JPA select count query. */
     private String selectCountPsql;
+    /** The PSQL for deleting entities. */
+    private String deletePsql;
     /** The parameters to set to JPA query. */
     private Map<String, Object> selectParameters;
     /** QueryDefinition contains definition of the query properties and batch size. */
-    private QueryDefinition queryDefinition;
+    private EntityQueryDefinition queryDefinition;
     /** The size of the query. */
     private int querySize = -1;
 
@@ -59,13 +61,14 @@ public final class EntityQuery implements Query, Serializable {
      * @param entityQueryDefinition The entity query definition.
      */
     public EntityQuery(final EntityQueryDefinition entityQueryDefinition) {
-        final EntityQueryDefinition.EntitySelectDefinition selectDefinition =
-            entityQueryDefinition.getEntitySelectDefinition();
+        final EntityQueryDefinition.EntityPsqlDefinition entityPsqlDefinition =
+            entityQueryDefinition.getEntityPsqlDefinition();
         this.entityManager = entityQueryDefinition.getEntityManager();
         this.queryDefinition = entityQueryDefinition;
         this.entityClass = entityQueryDefinition.getEntityClass();
-        this.selectPsql = selectDefinition.getSelectPsql();
-        this.selectCountPsql = selectDefinition.getSelectCountPsql();
+        this.selectPsql = entityPsqlDefinition.getSelectPsql();
+        this.selectCountPsql = entityPsqlDefinition.getSelectCountPsql();
+        this.deletePsql = entityPsqlDefinition.getDeletePsql();
         this.selectParameters = entityQueryDefinition.getWhereParameters();
         this.applicationTransactionManagement = entityQueryDefinition.isApplicationManagedTransactions();
     }
@@ -127,6 +130,9 @@ public final class EntityQuery implements Query, Serializable {
         List<?> entities = query.getResultList();
         List<Item> items = new ArrayList<Item>();
         for (Object entity : entities) {
+            if (queryDefinition.isDetachedEntities()) {
+                entityManager.detach(entity);
+            }
             items.add(toItem(entity));
         }
 
@@ -146,17 +152,34 @@ public final class EntityQuery implements Query, Serializable {
         if (applicationTransactionManagement) {
             entityManager.getTransaction().begin();
         }
-        for (Item item : addedItems) {
-            entityManager.persist(fromItem(item));
-        }
-        for (Item item : modifiedItems) {
-            entityManager.persist(fromItem(item));
-        }
-        for (Item item : removedItems) {
-            entityManager.remove(fromItem(item));
-        }
-        if (applicationTransactionManagement) {
-            entityManager.getTransaction().commit();
+        try {
+            for (Item item : addedItems) {
+                entityManager.persist(fromItem(item));
+            }
+            for (Item item : modifiedItems) {
+                Object entity = fromItem(item);
+                if (queryDefinition.isDetachedEntities()) {
+                    entity = entityManager.merge(entity);
+                }
+                entityManager.persist(entity);
+            }
+            for (Item item : removedItems) {
+                Object entity = fromItem(item);
+                if (queryDefinition.isDetachedEntities()) {
+                    entity = entityManager.merge(entity);
+                }
+                entityManager.remove(entity);
+            }
+            if (applicationTransactionManagement) {
+                entityManager.getTransaction().commit();
+            }
+        } catch (Exception e) {
+            if (applicationTransactionManagement) {
+                if (entityManager.getTransaction().isActive()) {
+                    entityManager.getTransaction().rollback();
+                }
+            }
+            throw new RuntimeException(e);            
         }
     }
 
@@ -166,7 +189,20 @@ public final class EntityQuery implements Query, Serializable {
      * @return true if the operation succeeded or false in case of a failure.
      */
     public boolean deleteAllItems() {
-        throw new UnsupportedOperationException();
+        if (applicationTransactionManagement) {
+            entityManager.getTransaction().begin();
+        }
+        try {
+            entityManager.createQuery(deletePsql).executeUpdate();
+        } catch (Exception e) {
+            if (applicationTransactionManagement) {
+                if (entityManager.getTransaction().isActive()) {
+                    entityManager.getTransaction().rollback();
+                }
+            }
+            throw new RuntimeException(e);            
+        }
+        return true;
     }
 
     /**

@@ -45,18 +45,21 @@ public class EntityQueryDefinition extends LazyQueryDefinition {
     private Object[] sortPropertyIds;
     /** The sort ascending and descending states. */
     private boolean[] sortPropertyAscendingStates;
+    /** Whether entities are detached from PersistenceContext. */
+    private boolean detachedEntities;
     
     /**
      * Constructor for configuring query definition.
      * @param entityManager The JPA EntityManager.
      * @param applicationManagedTransactions True if application manages transactions instead of container.
+     * @param detachedEntities Whether entities are detached from PersistenceContext.
      * @param entityClass The entity class.
      * @param batchSize The batch size.
      * @param nativeSortPropertyIds Properties participating in the native sort.
      * @param nativeSortPropertyAscendingStates List of property sort directions for the native sort.
      */
     public EntityQueryDefinition(final EntityManager entityManager, final boolean applicationManagedTransactions,
-            final Class<?> entityClass, final int batchSize,
+            final boolean detachedEntities, final Class<?> entityClass, final int batchSize,
             final Object[] nativeSortPropertyIds, final boolean[] nativeSortPropertyAscendingStates) {
         super(batchSize);
         this.entityManager = entityManager;
@@ -64,6 +67,7 @@ public class EntityQueryDefinition extends LazyQueryDefinition {
         this.entityClass = entityClass;
         this.nativeSortPropertyIds = nativeSortPropertyIds;
         this.nativeSortPropertyAscendingStates = nativeSortPropertyAscendingStates;
+        this.detachedEntities = detachedEntities;
         if (nativeSortPropertyIds.length == 0) {
             throw new InvalidParameterException("Native sort order is mandatory.");
         }
@@ -108,6 +112,13 @@ public class EntityQueryDefinition extends LazyQueryDefinition {
     }
 
     /**
+     * @return the detachedEntities
+     */
+    public final boolean isDetachedEntities() {
+        return detachedEntities;
+    }
+
+    /**
      * Gets class of the persistent entity type.
      * @return the entityClass
      */
@@ -116,11 +127,11 @@ public class EntityQueryDefinition extends LazyQueryDefinition {
     }
     
     /**
-     * Method which generates and returns entity select definition based
+     * Method which generates and returns entity PSQLs based
      * on query definition parameters.
      * @return the generated EntitySelectDefinition.
      */
-    public final EntitySelectDefinition getEntitySelectDefinition() {
+    public final EntityPsqlDefinition getEntityPsqlDefinition() {
         final StringBuilder fromBuilder = new StringBuilder(" from ");
         fromBuilder.append(entityClass.getSimpleName());
         fromBuilder.append(" as e");
@@ -146,25 +157,32 @@ public class EntityQueryDefinition extends LazyQueryDefinition {
         
         final StringBuilder selectBuilder = new StringBuilder("select e");
         selectBuilder.append(fromBuilder.toString());
-        if (whereCriteria != null) {
+        if (whereCriteria != null && whereCriteria.length() != 0) {
             selectBuilder.append(whereBuilder.toString());
         }
         selectBuilder.append(orderByBuilder.toString());
         
         final StringBuilder selectCountBuilder = new StringBuilder("select count(e)");
         selectCountBuilder.append(fromBuilder.toString());
-        if (whereCriteria != null) {
+        if (whereCriteria != null && whereCriteria.length() != 0) {
             selectCountBuilder.append(whereBuilder.toString());
         }
+        
+        final StringBuilder deleteBuilder = new StringBuilder("delete");
+        deleteBuilder.append(fromBuilder.toString());
+        if (whereCriteria != null && whereCriteria.length() != 0) {
+            deleteBuilder.append(whereBuilder.toString());
+        }
 
-        return new EntitySelectDefinition(selectBuilder.toString(), selectCountBuilder.toString());
+        return new EntityPsqlDefinition(selectBuilder.toString(), selectCountBuilder.toString(),
+                deleteBuilder.toString());
     }
 
     /**
      * @return the whereParameters
      */
     public final Map<String, Object> getWhereParameters() {
-        if (whereCriteria != null) {
+        if (whereCriteria != null && whereCriteria.length() != 0) {
             return whereParameters;
         } else {
             return null;
@@ -172,23 +190,28 @@ public class EntityQueryDefinition extends LazyQueryDefinition {
     }
 
     /**
-     * Java bean which contains the entity select definition.
+     * Java bean which contains the entity select and delete PSQLs.
      * @author Tommi Laukkanen
      */
-    public final class EntitySelectDefinition {
+    public final class EntityPsqlDefinition {
         /** The PSQL for selecting entities. */
         private String selectPsql;
         /** The PSQL for selecting count of entities. */
         private String selectCountPsql;
+        /** The PSQL for deleting entities. */
+        private String deletePsql;
         /**
          * Constructor which initializes entity select definition.
          * @param selectPsql The PSQL for selecting entities.
          * @param selectCountPsql The PSQL for selecting count of entities.
+         * @param deletePsql The PSQL for deleting entities.
          */
-        public EntitySelectDefinition(final String selectPsql, final String selectCountPsql) {
+        public EntityPsqlDefinition(final String selectPsql, final String selectCountPsql,
+                final String deletePsql) {
             super();
             this.selectPsql = selectPsql;
             this.selectCountPsql = selectCountPsql;
+            this.deletePsql = deletePsql;
         }
         /**
          * @return the selectPsql
@@ -201,6 +224,12 @@ public class EntityQueryDefinition extends LazyQueryDefinition {
          */
         public String getSelectCountPsql() {
             return selectCountPsql;
-        }   
+        }
+        /**
+         * @return the deletePsql
+         */
+        public String getDeletePsql() {
+            return deletePsql;
+        }
     }
 }
