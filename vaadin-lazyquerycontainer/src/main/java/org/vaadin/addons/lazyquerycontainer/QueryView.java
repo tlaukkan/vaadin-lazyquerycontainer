@@ -15,6 +15,8 @@
  */
 package org.vaadin.addons.lazyquerycontainer;
 
+import java.util.List;
+
 import com.vaadin.data.Item;
 
 /**
@@ -84,4 +86,19 @@ public interface QueryView {
 	 * Cancels changes. Refresh has to be invoked after this method to clear the cache.
 	 */
 	void discard();
+    /**
+     * Get list of added buffered items.
+     * @return list of added buffered items
+     */
+    List<Item> getAddedItems();
+    /**
+     * Get list of modified buffered items.
+     * @return list of modified buffered items
+     */
+    List<Item> getModifiedItems();
+    /**
+     * Get list of removed buffered items.
+     * @return list of removed buffered items
+     */
+    List<Item> getRemovedItems();
 }

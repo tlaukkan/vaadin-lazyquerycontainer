@@ -117,7 +117,9 @@ public class LazyQueryViewTest extends TestCase {
         assertEquals(QueryItemStatus.Added,
                 view.getItem(addIndex).getItemProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());
         assertTrue(view.isModified());
+        assertEquals(1, view.getAddedItems().size());
         view.commit();
+        assertEquals(0, view.getAddedItems().size());
         view.refresh();
         assertFalse(view.isModified());
         assertEquals(QueryItemStatus.None, view.getItem(addIndex)
@@ -157,7 +159,9 @@ public class LazyQueryViewTest extends TestCase {
         assertEquals(QueryItemStatus.Added,
                 view.getItem(addIndex).getItemProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());
         assertTrue(view.isModified());
+        assertEquals(1, view.getAddedItems().size());
         view.discard();
+        assertEquals(0, view.getAddedItems().size());
         view.refresh();
         assertFalse(view.isModified());
         assertEquals(originalViewSize, view.size());
@@ -168,7 +172,9 @@ public class LazyQueryViewTest extends TestCase {
         assertFalse(view.isModified());
         view.getItem(modifyIndex).getItemProperty("Editable").setValue("test");
         assertTrue(view.isModified());
+        assertEquals(1, view.getModifiedItems().size());
         view.commit();
+        assertEquals(0, view.getModifiedItems().size());
         view.refresh();
         assertFalse(view.isModified());
         assertEquals("test", view.getItem(modifyIndex).getItemProperty("Editable").getValue());
@@ -179,7 +185,9 @@ public class LazyQueryViewTest extends TestCase {
         assertFalse(view.isModified());
         view.getItem(modifyIndex).getItemProperty("Editable").setValue("test");
         assertTrue(view.isModified());
+        assertEquals(1, view.getModifiedItems().size());
         view.discard();
+        assertEquals(0, view.getModifiedItems().size());
         view.refresh();
         assertFalse(view.isModified());
         assertEquals("", view.getItem(modifyIndex).getItemProperty("Editable").getValue());
@@ -196,7 +204,9 @@ public class LazyQueryViewTest extends TestCase {
                 view.getItem(removeIndex).getItemProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());
         assertTrue(view.getItem(removeIndex).getItemProperty("Editable").isReadOnly());
         assertTrue(view.isModified());
+        assertEquals(1, view.getRemovedItems().size());
         view.commit();
+        assertEquals(0, view.getRemovedItems().size());
         view.refresh();
         assertFalse(view.isModified());
         assertEquals(originalViewSize - 1, view.size());
@@ -214,7 +224,9 @@ public class LazyQueryViewTest extends TestCase {
                 view.getItem(removeIndex).getItemProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());
         assertTrue(view.getItem(removeIndex).getItemProperty("Editable").isReadOnly());
         assertTrue(view.isModified());
+        assertEquals(1, view.getRemovedItems().size());
         view.discard();
+        assertEquals(0, view.getRemovedItems().size());
         view.refresh();
         assertFalse(view.isModified());
         assertEquals(originalViewSize, view.size());

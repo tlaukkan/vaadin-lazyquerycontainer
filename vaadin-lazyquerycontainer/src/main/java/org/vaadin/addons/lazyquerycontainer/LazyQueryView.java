@@ -16,6 +16,7 @@
 package org.vaadin.addons.lazyquerycontainer;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -455,6 +456,27 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
         addedItems.clear();
         modifiedItems.clear();
         removedItems.clear();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<Item> getAddedItems() {
+        return Collections.<Item>unmodifiableList(addedItems);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public List<Item> getModifiedItems() {
+        return Collections.<Item>unmodifiableList(modifiedItems);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<Item> getRemovedItems() {
+        return Collections.<Item>unmodifiableList(removedItems);
     }
 
 }
