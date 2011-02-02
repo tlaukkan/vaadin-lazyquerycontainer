@@ -92,10 +92,11 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
      * Constructs LazyQueryView with DefaultQueryDefinition and the given
      * QueryFactory.
      * @param queryFactory The QueryFactory to be used.
+     * @param compositeItems True if native items should be wrapped to CompositeItems.
      * @param batchSize The batch size to be used when loading data.
      */
-    public LazyQueryView(final QueryFactory queryFactory, final int batchSize) {
-        initialize(new LazyQueryDefinition(batchSize), queryFactory);
+    public LazyQueryView(final QueryFactory queryFactory, final boolean compositeItems, final int batchSize) {
+        initialize(new LazyQueryDefinition(compositeItems, batchSize), queryFactory);
     }
 
     /**
@@ -357,7 +358,9 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
             item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setValue(QueryItemStatus.Modified);
             item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(true);
         }
-        modifiedItems.add(item);
+        if (!addedItems.contains(item) && !modifiedItems.contains(item)) {
+            modifiedItems.add(item);
+        }
     }
 
     /**

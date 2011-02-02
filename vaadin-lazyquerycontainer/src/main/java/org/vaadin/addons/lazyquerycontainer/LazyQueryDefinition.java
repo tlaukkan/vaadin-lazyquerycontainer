@@ -45,12 +45,16 @@ public class LazyQueryDefinition implements QueryDefinition, Serializable {
     private Map<Object, Boolean> sortableStates = new HashMap<Object, Boolean>();
     /** Batch size of the query. */
     private int batchSize;
-
+    /** True if native items should be wrapped to CompositeItems. */
+    private boolean compositeItems;
+    
     /**
      * Constructor which sets the batch size.
+     * @param compositeItems True if native items should be wrapped to CompositeItems.
      * @param batchSize Value for batch size.
      */
-    public LazyQueryDefinition(final int batchSize) {
+    public LazyQueryDefinition(final boolean compositeItems, final int batchSize) {
+        this.compositeItems = compositeItems;
         this.batchSize = batchSize;
     }
 
@@ -140,6 +144,20 @@ public class LazyQueryDefinition implements QueryDefinition, Serializable {
         sortableStates.remove(propertyId);
     }
 
+    /**
+     * @return the compositeItems
+     */
+    public final boolean isCompositeItems() {
+        return compositeItems;
+    }
+
+    /**
+     * @param compositeItems the compositeItems to set
+     */
+    public final void setCompositeItems(final boolean compositeItems) {
+        this.compositeItems = compositeItems;
+    }
+    
     /**
      * @return the batchSize.
      */

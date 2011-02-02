@@ -154,21 +154,27 @@ public final class EntityQuery implements Query, Serializable {
         }
         try {
             for (Item item : addedItems) {
-                entityManager.persist(fromItem(item));
+                if (!removedItems.contains(item)) {
+                    entityManager.persist(fromItem(item));
+                }
             }
             for (Item item : modifiedItems) {
-                Object entity = fromItem(item);
-                if (queryDefinition.isDetachedEntities()) {
-                    entity = entityManager.merge(entity);
+                if (!removedItems.contains(item)) {
+                    Object entity = fromItem(item);
+                    if (queryDefinition.isDetachedEntities()) {
+                        entity = entityManager.merge(entity);
+                    }
+                    entityManager.persist(entity);
                 }
-                entityManager.persist(entity);
             }
             for (Item item : removedItems) {
-                Object entity = fromItem(item);
-                if (queryDefinition.isDetachedEntities()) {
-                    entity = entityManager.merge(entity);
+                if (!addedItems.contains(item)) {
+                    Object entity = fromItem(item);
+                    if (queryDefinition.isDetachedEntities()) {
+                        entity = entityManager.merge(entity);
+                    }
+                    entityManager.remove(entity);
                 }
-                entityManager.remove(entity);
             }
             if (applicationTransactionManagement) {
                 entityManager.getTransaction().commit();
@@ -194,6 +200,9 @@ public final class EntityQuery implements Query, Serializable {
         }
         try {
             entityManager.createQuery(deletePsql).executeUpdate();
+            if (applicationTransactionManagement) {
+                entityManager.getTransaction().commit();
+            }
         } catch (Exception e) {
             if (applicationTransactionManagement) {
                 if (entityManager.getTransaction().isActive()) {
@@ -213,21 +222,25 @@ public final class EntityQuery implements Query, Serializable {
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private Item toItem(final Object entity) {
-        BeanItem<?> beanItem = new BeanItem<Object>(entity);
-
-        CompositeItem compositeItem = new CompositeItem();
-        compositeItem.addItem("bean", beanItem);
-
-        for (Object propertyId : queryDefinition.getPropertyIds()) {
-            if (compositeItem.getItemProperty(propertyId) == null) {
-                compositeItem.addItemProperty(
-                        propertyId,
-                        new ObjectProperty(queryDefinition.getPropertyDefaultValue(propertyId), queryDefinition
-                                .getPropertyType(propertyId), queryDefinition.isPropertyReadOnly(propertyId)));
+        if (queryDefinition.isCompositeItems()) {
+            BeanItem<?> beanItem = new BeanItem<Object>(entity);
+    
+            CompositeItem compositeItem = new CompositeItem();
+            compositeItem.addItem("bean", beanItem);
+    
+            for (Object propertyId : queryDefinition.getPropertyIds()) {
+                if (compositeItem.getItemProperty(propertyId) == null) {
+                    compositeItem.addItemProperty(
+                            propertyId,
+                            new ObjectProperty(queryDefinition.getPropertyDefaultValue(propertyId), queryDefinition
+                                    .getPropertyType(propertyId), queryDefinition.isPropertyReadOnly(propertyId)));
+                }
             }
+    
+            return compositeItem;
+        } else {
+            return new BeanItem<Object>(entity);
         }
-
-        return compositeItem;
     }
 
     /**
@@ -235,8 +248,11 @@ public final class EntityQuery implements Query, Serializable {
      * @param item Item to be converted to bean.
      * @return Resulting bean.
      */
-    @SuppressWarnings({ "rawtypes" })
     private Object fromItem(final Item item) {
-        return (Object) ((BeanItem) (((CompositeItem) item).getItem("bean"))).getBean();
+        if (queryDefinition.isCompositeItems()) {
+            return (Object) ((BeanItem<?>) (((CompositeItem) item).getItem("bean"))).getBean();
+        } else {
+            return ((BeanItem<?>) item).getBean();
+        }
     }
 }

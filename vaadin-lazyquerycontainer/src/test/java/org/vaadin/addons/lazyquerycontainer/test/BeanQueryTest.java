@@ -23,7 +23,7 @@ public class BeanQueryTest {
     
     @Test
     public void testLoadItems() {
-        LazyQueryDefinition queryDefinition = new LazyQueryDefinition(50);
+        LazyQueryDefinition queryDefinition = new LazyQueryDefinition(true, 50);
         queryDefinition.addProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS, QueryItemStatus.class, QueryItemStatus.None,
                 true, false);
         queryDefinition.addProperty("name", String.class, "test-bean-2", true, false);
@@ -46,7 +46,7 @@ public class BeanQueryTest {
     @Test
     public void testSaveItems() {
         BeanQueryFactory<MockBeanQuery> factory = new BeanQueryFactory<MockBeanQuery>(MockBeanQuery.class);
-        LazyQueryView view = new LazyQueryView(factory, 50);
+        LazyQueryView view = new LazyQueryView(factory, true,  50);
         LazyQueryDefinition queryDefinition = (LazyQueryDefinition) view.getQueryDefinition();
         queryDefinition.addProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS, QueryItemStatus.class, QueryItemStatus.None,
                 true, false);
@@ -69,9 +69,33 @@ public class BeanQueryTest {
         Assert.assertTrue((Boolean) item.getItemProperty("saved").getValue());
     }
 
+    @Test
+    public void testSaveItemsWithoutCompositeItems() {
+        BeanQueryFactory<MockBeanQuery> factory = new BeanQueryFactory<MockBeanQuery>(MockBeanQuery.class);
+        LazyQueryView view = new LazyQueryView(factory, false,  50);
+        LazyQueryDefinition queryDefinition = (LazyQueryDefinition) view.getQueryDefinition();
+        queryDefinition.addProperty("name", String.class, "test-bean-2", true, false);
+
+        Map<String, Object> queryConfiguration = new HashMap<String, Object>();
+        queryConfiguration.put("description", "test-bean-description-2");
+
+        factory.setQueryConfiguration(queryConfiguration);
+        factory.setQueryDefinition(queryDefinition);
+
+        Assert.assertEquals(1, view.size());
+        int index = view.addItem();
+        Assert.assertEquals(2, view.size());
+        Item item = view.getItem(index);
+        Assert.assertEquals("test-bean-2", item.getItemProperty("name").getValue());
+        Assert.assertEquals("test-bean-description-2", item.getItemProperty("description").getValue());
+        Assert.assertFalse((Boolean) item.getItemProperty("saved").getValue());
+        view.commit();
+        Assert.assertTrue((Boolean) item.getItemProperty("saved").getValue());
+    }
+    
     @Test(expected = UnsupportedOperationException.class)
     public void testRemoveAllItems() {
-        LazyQueryDefinition queryDefinition = new LazyQueryDefinition(50);
+        LazyQueryDefinition queryDefinition = new LazyQueryDefinition(true, 50);
         queryDefinition.addProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS, QueryItemStatus.class, QueryItemStatus.None,
                 true, false);
         queryDefinition.addProperty("name", String.class, "test-bean-2", true, false);
@@ -95,7 +119,7 @@ public class BeanQueryTest {
 
     @Test(expected = RuntimeException.class)
     public void testFailingItemConstruction() {
-        LazyQueryDefinition queryDefinition = new LazyQueryDefinition(50);
+        LazyQueryDefinition queryDefinition = new LazyQueryDefinition(true, 50);
         queryDefinition.addProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS, QueryItemStatus.class, QueryItemStatus.None,
                 true, false);
         queryDefinition.addProperty("name", String.class, "test-bean-2", true, false);
@@ -111,4 +135,8 @@ public class BeanQueryTest {
         view.addItem();
     }
 
+    @Test
+    public void testAbstractBeanQueryDefaultConstructor() {
+        new MockBeanQuery();
+    }
 }

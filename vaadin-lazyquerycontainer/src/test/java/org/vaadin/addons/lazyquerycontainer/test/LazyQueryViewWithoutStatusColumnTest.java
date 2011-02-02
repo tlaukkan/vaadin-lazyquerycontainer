@@ -17,12 +17,11 @@ package org.vaadin.addons.lazyquerycontainer.test;
 
 import java.util.Collection;
 
-import org.vaadin.addons.lazyquerycontainer.LazyQueryDefinition;
-import org.vaadin.addons.lazyquerycontainer.LazyQueryView;
-import org.vaadin.addons.lazyquerycontainer.QueryItemStatus;
-
 import junit.framework.Assert;
 import junit.framework.TestCase;
+
+import org.vaadin.addons.lazyquerycontainer.LazyQueryDefinition;
+import org.vaadin.addons.lazyquerycontainer.LazyQueryView;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
@@ -40,7 +39,7 @@ public class LazyQueryViewWithoutStatusColumnTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        definition = new LazyQueryDefinition(this.viewSize);
+        definition = new LazyQueryDefinition(true, this.viewSize);
         definition.addProperty("Index", Integer.class, 0, true, true);
         definition.addProperty("Reverse Index", Integer.class, 0, true, false);
         definition.addProperty("Editable", String.class, "", false, false);

@@ -11,7 +11,12 @@ import org.vaadin.addons.lazyquerycontainer.QueryDefinition;
 
 public class MockBeanQuery extends AbstractBeanQuery<MockBean> {
 
-	public MockBeanQuery(QueryDefinition definition,
+    public MockBeanQuery() {
+        super();
+    }
+
+
+    public MockBeanQuery(QueryDefinition definition,
 			Map<String, Object> queryConfiguration, Object[] sortPropertyIds,
 			boolean[] sortStates) {
 		super(definition, queryConfiguration, sortPropertyIds, sortStates);

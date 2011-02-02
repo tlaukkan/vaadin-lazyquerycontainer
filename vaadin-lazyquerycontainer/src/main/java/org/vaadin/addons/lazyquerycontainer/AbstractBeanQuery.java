@@ -198,21 +198,25 @@ public abstract class AbstractBeanQuery<T extends Object> implements Query {
     private Item toItem(final T bean) {
 		BeanItem<T> beanItem = new BeanItem<T>(bean);
 
-		CompositeItem compositeItem = new CompositeItem();
-		compositeItem.addItem("bean", beanItem);
-
-		for (Object propertyId : queryDefinition.getPropertyIds()) {
-			if (compositeItem.getItemProperty(propertyId) == null) {
-				compositeItem.addItemProperty(
-						propertyId,
-						new ObjectProperty(queryDefinition
-								.getPropertyDefaultValue(propertyId),
-								queryDefinition.getPropertyType(propertyId),
-								queryDefinition.isPropertyReadOnly(propertyId)));
-			}
+		if (queryDefinition.isCompositeItems()) {
+    		CompositeItem compositeItem = new CompositeItem();
+    		compositeItem.addItem("bean", beanItem);
+    
+    		for (Object propertyId : queryDefinition.getPropertyIds()) {
+    			if (compositeItem.getItemProperty(propertyId) == null) {
+    				compositeItem.addItemProperty(
+    						propertyId,
+    						new ObjectProperty(queryDefinition
+    								.getPropertyDefaultValue(propertyId),
+    								queryDefinition.getPropertyType(propertyId),
+    								queryDefinition.isPropertyReadOnly(propertyId)));
+    			}
+    		}
+    
+    		return compositeItem;
+		} else {
+		    return beanItem;
 		}
-
-		return compositeItem;
 	}
 
 	/**
@@ -220,10 +224,14 @@ public abstract class AbstractBeanQuery<T extends Object> implements Query {
 	 * @param item Item to be converted to bean.
 	 * @return Resulting bean.
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private T fromItem(final Item item) {
-		return (T) ((BeanItem) (((CompositeItem) item).getItem("bean")))
+	@SuppressWarnings("unchecked")
+    private T fromItem(final Item item) {
+       if (queryDefinition.isCompositeItems()) {
+        return ((BeanItem<T>) (((CompositeItem) item).getItem("bean")))
 				.getBean();
+       } else {
+           return ((BeanItem<T>) item).getBean();
+       }
 	}
 
 	/**

@@ -81,4 +81,15 @@ public interface QueryDefinition {
      * @param batchSize the batchSize to set
      */
     void setBatchSize(final int batchSize);
+    /**
+     * True if query wraps items to CompositeItems.
+     * @return the compositeItems
+     */
+    boolean isCompositeItems();
+    /**
+     * Sets whether query wraps items to CompositeItems.
+     * After this method has been called the Query has to be discarded immediately.
+     * @param compositeItems the compositeItems to set
+     */
+    void setCompositeItems(final boolean compositeItems);
 }

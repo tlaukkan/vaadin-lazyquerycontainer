@@ -76,7 +76,7 @@ public class EntityContainerDetachedEntitiesTest {
      */
     @Test
     public final void testEntityContainer() {
-        final EntityContainer<Task> entityContainer = new EntityContainer<Task>(entityManager, true, true, Task.class, 
+        final EntityContainer<Task> entityContainer = new EntityContainer<Task>(entityManager, true, true, true, Task.class, 
                 ENTITY_CONTAINER_BATCH_SIZE, new String[] {"name"}, new boolean[] {true});
 
         final Task taskAlpha = entityContainer.addEntity();
@@ -171,7 +171,7 @@ public class EntityContainerDetachedEntitiesTest {
             .createEntityManagerFactory("vaadin-lazyquerycontainer-test");
         final EntityManager entityManager = entityManagerFactory
             .createEntityManager();
-        new EntityContainer<Task>(entityManager, true, true, Task.class, ENTITY_CONTAINER_BATCH_SIZE,
+        new EntityContainer<Task>(entityManager, true, true, true, Task.class, ENTITY_CONTAINER_BATCH_SIZE,
                 new String[] {}, new boolean[] {});
     }
 
@@ -184,7 +184,7 @@ public class EntityContainerDetachedEntitiesTest {
             .createEntityManagerFactory("vaadin-lazyquerycontainer-test");
         final EntityManager entityManager = entityManagerFactory
             .createEntityManager();
-        new EntityContainer<Task>(entityManager, true, true, Task.class, ENTITY_CONTAINER_BATCH_SIZE,
+        new EntityContainer<Task>(entityManager, true, true, true, Task.class, ENTITY_CONTAINER_BATCH_SIZE,
                 new String[] {"name"}, new boolean[] {});
     }
 
@@ -198,7 +198,7 @@ public class EntityContainerDetachedEntitiesTest {
         final EntityManager entityManager = entityManagerFactory
             .createEntityManager();
         final EntityContainer<Task> entityContainer =
-            new EntityContainer<Task>(entityManager, true, true, Task.class, ENTITY_CONTAINER_BATCH_SIZE,
+            new EntityContainer<Task>(entityManager, true, true, true, Task.class, ENTITY_CONTAINER_BATCH_SIZE,
                 new String[] {"name"}, new boolean[] {true});
 
         entityContainer.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_INDEX, 

@@ -29,8 +29,6 @@ public class EntityQueryDefinition extends LazyQueryDefinition {
     private static final long serialVersionUID = 1L;
     /** The JPA EntityManager. */
     private final EntityManager entityManager;
-    /** applicationManagedTransactions True if application manages transactions instead of container. */
-    private boolean applicationManagedTransactions;
     /** Class of the persistent entity type. */
     private Class<?> entityClass;
     /** The where criteria excluding where keyword. */
@@ -45,23 +43,28 @@ public class EntityQueryDefinition extends LazyQueryDefinition {
     private Object[] sortPropertyIds;
     /** The sort ascending and descending states. */
     private boolean[] sortPropertyAscendingStates;
-    /** Whether entities are detached from PersistenceContext. */
+    /** True if entities are detached from PersistenceContext. */
     private boolean detachedEntities;
+    /** True if application manages transactions instead of container. */
+    private boolean applicationManagedTransactions;
+
     
     /**
      * Constructor for configuring query definition.
      * @param entityManager The JPA EntityManager.
      * @param applicationManagedTransactions True if application manages transactions instead of container.
-     * @param detachedEntities Whether entities are detached from PersistenceContext.
+     * @param detachedEntities True of entities are detached from PersistenceContext.
+     * @param compositeItems True f items are wrapped to CompositeItems.
      * @param entityClass The entity class.
      * @param batchSize The batch size.
      * @param nativeSortPropertyIds Properties participating in the native sort.
      * @param nativeSortPropertyAscendingStates List of property sort directions for the native sort.
      */
     public EntityQueryDefinition(final EntityManager entityManager, final boolean applicationManagedTransactions,
-            final boolean detachedEntities, final Class<?> entityClass, final int batchSize,
+            final boolean detachedEntities, final boolean compositeItems, 
+            final Class<?> entityClass, final int batchSize,
             final Object[] nativeSortPropertyIds, final boolean[] nativeSortPropertyAscendingStates) {
-        super(batchSize);
+        super(compositeItems, batchSize);
         this.entityManager = entityManager;
         this.applicationManagedTransactions = applicationManagedTransactions;
         this.entityClass = entityClass;

@@ -35,16 +35,19 @@ public final class EntityContainer<T extends Object> extends LazyQueryContainer 
      * Constructor which configures query definition for accessing JPA entities.
      * @param entityManager The JPA EntityManager.
      * @param applicationManagedTransactions True if application manages transactions instead of container.
-     * @param detachedEntities Whether entities are detached from PersistenceContext.
+     * @param detachedEntities True if entities are detached from PersistenceContext.
+     * @param compositeItems True f items are wrapped to CompositeItems.
      * @param entityClass The entity class.
      * @param batchSize The batch size.
      * @param nativeSortPropertyIds Properties participating in the native sort.
      * @param nativeSortPropertyAscendingStates List of property sort directions for the native sort.
      */
     public EntityContainer(final EntityManager entityManager, final boolean applicationManagedTransactions,
-            final boolean detachedEntities, final Class<?> entityClass, final int batchSize,
+            final boolean detachedEntities, final boolean compositeItems,
+            final Class<?> entityClass, final int batchSize,
             final Object[] nativeSortPropertyIds, final boolean[] nativeSortPropertyAscendingStates) {
-        super(new EntityQueryDefinition(entityManager, applicationManagedTransactions, detachedEntities, 
+        super(new EntityQueryDefinition(entityManager, applicationManagedTransactions,
+                detachedEntities, compositeItems, 
                 entityClass, batchSize, nativeSortPropertyIds, nativeSortPropertyAscendingStates),
                 new EntityQueryFactory());
     }
@@ -90,9 +93,13 @@ public final class EntityContainer<T extends Object> extends LazyQueryContainer 
      */
     @SuppressWarnings("unchecked")
     public T getEntity(final int index) {
-        final CompositeItem compositeItem = (CompositeItem) getItem(new Integer(index));
-        final BeanItem<T> beanItem = (BeanItem<T>) compositeItem.getItem("bean");
-        return beanItem.getBean();
+        if (getQueryView().getQueryDefinition().isCompositeItems()) {
+            final CompositeItem compositeItem = (CompositeItem) getItem(new Integer(index));
+            final BeanItem<T> beanItem = (BeanItem<T>) compositeItem.getItem("bean");
+            return beanItem.getBean();
+        } else { 
+            return ((BeanItem<T>) getItem(new Integer(index))).getBean();
+        }
     }
 
 }
