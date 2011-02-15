@@ -78,7 +78,7 @@ public final class BeanQueryFactory<Q extends AbstractBeanQuery> implements Quer
                     new Class[] { QueryDefinition.class, Map.class, Object[].class, boolean[].class }).newInstance(
                     new Object[] { queryDefinition, queryConfiguration, sortPropertyIds, sortStates });
         } catch (Exception e) {
-            throw new RuntimeException("Error instantiating query.");
+            throw new RuntimeException("Error instantiating query.", e);
         }
 
         return query;
