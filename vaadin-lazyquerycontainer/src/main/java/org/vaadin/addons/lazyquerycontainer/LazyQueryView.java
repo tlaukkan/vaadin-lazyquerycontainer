@@ -248,9 +248,21 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
 
         for (int i = 0; i < count; i++) {
             final int itemIndex = startIndex + i;
-            final Item item = items.get(i);
+
+            final Item item;
+
+            if (i >= items.size()) {
+                item = query.constructItem();
+            } else {
+                item = items.get(i);
+            }
 
             itemCache.put(itemIndex, item);
+
+            if (i >= items.size()) {
+                removeItem(itemIndex);
+            }
+
             if (itemCacheAccessLog.contains(itemIndex)) {
                 itemCacheAccessLog.remove((Object) itemIndex);
             }
@@ -258,7 +270,9 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
         }
 
         for (int i = 0; i < count; i++) {
-            final Item item = items.get(i);
+            final int itemIndex = startIndex + i;
+
+            final Item item = itemCache.get(itemIndex);
 
             if (item.getItemProperty(DEBUG_PROPERTY_ID_BATCH_INDEX) != null) {
                 item.getItemProperty(DEBUG_PROPERTY_ID_BATCH_INDEX).setReadOnly(false);

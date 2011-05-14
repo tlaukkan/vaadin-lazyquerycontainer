@@ -30,17 +30,18 @@ import org.junit.Before;
 import org.junit.Test;
 import org.vaadin.addons.lazyquerycontainer.EntityContainer;
 import org.vaadin.addons.lazyquerycontainer.LazyQueryView;
+import org.vaadin.addons.lazyquerycontainer.QueryItemStatus;
 
 import com.vaadin.data.Item;
 
 /**
  * Unit test for EntityContainer.
  * @author Tommi Laukkanen
- *
+ * 
  */
 public class EntityContainerDetachedEntitiesTest {
 
-    /** Query cache size.  */
+    /** Query cache size. */
     private static final int QUERY_CACHE_SIZE = 1000;
     /** Item count for cache test. */
     private static final int ITEM_COUNT_FOR_CACHE_TEST = 2000;
@@ -48,36 +49,36 @@ public class EntityContainerDetachedEntitiesTest {
     private static final int ENTITY_CONTAINER_BATCH_SIZE = 100;
     /** The JPA EntityManagerFactory. */
     private static EntityManagerFactory entityManagerFactory =
-        Persistence .createEntityManagerFactory("vaadin-lazyquerycontainer-test");
+            Persistence.createEntityManagerFactory("vaadin-lazyquerycontainer-test");
     /** The JPA EntityManager. */
     private EntityManager entityManager;
 
-    /** 
+    /**
      * Unit test setup.
      */
     @Before
     public void before() {
         entityManager = entityManagerFactory
-        .createEntityManager();
+                .createEntityManager();
         entityManager.getTransaction().begin();
         entityManager.createQuery("delete from Task").executeUpdate();
         entityManager.getTransaction().commit();
     }
 
-    /** 
+    /**
      * Unit test teardown.
      */
     @After
     public void after() {
     }
-    
+
     /**
      * Test for entity container functionality.
      */
     @Test
     public final void testEntityContainer() {
-        final EntityContainer<Task> entityContainer = new EntityContainer<Task>(entityManager, true, true, true, Task.class, 
-                ENTITY_CONTAINER_BATCH_SIZE, new String[] {"name"}, new boolean[] {true});
+        final EntityContainer<Task> entityContainer = new EntityContainer<Task>(entityManager, true, true, true, Task.class,
+                ENTITY_CONTAINER_BATCH_SIZE, new String[] { "name" }, new boolean[] { true });
 
         final Task taskAlpha = entityContainer.addEntity();
         taskAlpha.setName("alpha");
@@ -85,15 +86,15 @@ public class EntityContainerDetachedEntitiesTest {
         taskAlpha.setReporter("reporter-alpha");
 
         entityContainer.commit();
-                
+
         Assert.assertEquals("Verify entity alpha is in container", 1, entityContainer.size());
         Assert.assertEquals("Verify entity alpha is same", taskAlpha, entityContainer.getEntity(0));
-        
+
         final Task taskBeta = entityContainer.addEntity();
         taskBeta.setName("beta");
         taskBeta.setAssignee("assignee-beta");
         taskBeta.setReporter("reporter-beta");
-        
+
         entityContainer.commit();
 
         Assert.assertEquals("Verify entity alpha and beta are in container", 2, entityContainer.size());
@@ -101,7 +102,7 @@ public class EntityContainerDetachedEntitiesTest {
                 entityContainer.getEntity(0).getTaskId());
         Assert.assertEquals("Verify entity beta is same", taskBeta, entityContainer.getEntity(1));
 
-        entityContainer.sort(new String[] {"name", "assignee"}, new boolean[] {false, false});
+        entityContainer.sort(new String[] { "name", "assignee" }, new boolean[] { false, false });
 
         Assert.assertEquals("Verify entity alpha and beta are in container", 2, entityContainer.size());
         Assert.assertEquals("Verify entity alpha is same", taskAlpha.getTaskId(),
@@ -117,7 +118,7 @@ public class EntityContainerDetachedEntitiesTest {
         Assert.assertEquals("Verify entity alpha is in container", 1, entityContainer.size());
         Assert.assertEquals("Verify entity alpha is same", taskAlpha.getTaskId(),
                 entityContainer.getEntity(0).getTaskId());
-        
+
         entityContainer.filter(null, null);
 
         Assert.assertEquals("Verify entity alpha and beta are in container", 2, entityContainer.size());
@@ -138,22 +139,22 @@ public class EntityContainerDetachedEntitiesTest {
 
         final Task removedTask = entityContainer.removeEntity(0);
         Assert.assertEquals("Verify entity alpha was the removed entity", taskAlpha.getTaskId(),
-                removedTask.getTaskId());        
+                removedTask.getTaskId());
 
         entityContainer.commit();
-        
+
         Assert.assertEquals("Verify entity beta is in container", 1, entityContainer.size());
         Assert.assertEquals("Verify entity beta is same", taskBeta.getTaskId(),
                 entityContainer.getEntity(0).getTaskId());
 
-        Item betaItemBeforeRefresh = entityContainer.getItem(new Integer(0));
+        final Item betaItemBeforeRefresh = entityContainer.getItem(new Integer(0));
         Assert.assertNull("Verify new property does not exist before refresh.",
                 betaItemBeforeRefresh.getItemProperty("description"));
-        
+
         entityContainer.addContainerProperty("description", String.class, "");
         entityContainer.refresh();
 
-        Item betaItem = entityContainer.getItem(new Integer(0));
+        final Item betaItem = entityContainer.getItem(new Integer(0));
         Assert.assertNotNull("Verify new property exists.", betaItem.getItemProperty("description"));
         Assert.assertEquals("Verify new property has correct default value.",
                 "", betaItem.getItemProperty("description").getValue());
@@ -168,9 +169,9 @@ public class EntityContainerDetachedEntitiesTest {
     @Test(expected = InvalidParameterException.class)
     public final void testMissingNativeSort() {
         final EntityManagerFactory entityManagerFactory = Persistence
-            .createEntityManagerFactory("vaadin-lazyquerycontainer-test");
+                .createEntityManagerFactory("vaadin-lazyquerycontainer-test");
         final EntityManager entityManager = entityManagerFactory
-            .createEntityManager();
+                .createEntityManager();
         new EntityContainer<Task>(entityManager, true, true, true, Task.class, ENTITY_CONTAINER_BATCH_SIZE,
                 new String[] {}, new boolean[] {});
     }
@@ -181,11 +182,11 @@ public class EntityContainerDetachedEntitiesTest {
     @Test(expected = InvalidParameterException.class)
     public final void testInvalidNumberOfNativeSortStates() {
         final EntityManagerFactory entityManagerFactory = Persistence
-            .createEntityManagerFactory("vaadin-lazyquerycontainer-test");
+                .createEntityManagerFactory("vaadin-lazyquerycontainer-test");
         final EntityManager entityManager = entityManagerFactory
-            .createEntityManager();
+                .createEntityManager();
         new EntityContainer<Task>(entityManager, true, true, true, Task.class, ENTITY_CONTAINER_BATCH_SIZE,
-                new String[] {"name"}, new boolean[] {});
+                new String[] { "name" }, new boolean[] {});
     }
 
     /**
@@ -194,14 +195,14 @@ public class EntityContainerDetachedEntitiesTest {
     @Test
     public final void testCache() {
         final EntityManagerFactory entityManagerFactory = Persistence
-            .createEntityManagerFactory("vaadin-lazyquerycontainer-test");
+                .createEntityManagerFactory("vaadin-lazyquerycontainer-test");
         final EntityManager entityManager = entityManagerFactory
-            .createEntityManager();
+                .createEntityManager();
         final EntityContainer<Task> entityContainer =
-            new EntityContainer<Task>(entityManager, true, true, true, Task.class, ENTITY_CONTAINER_BATCH_SIZE,
-                new String[] {"name"}, new boolean[] {true});
+                new EntityContainer<Task>(entityManager, true, true, true, Task.class, ENTITY_CONTAINER_BATCH_SIZE,
+                        new String[] { "name" }, new boolean[] { true });
 
-        entityContainer.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_INDEX, 
+        entityContainer.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_INDEX,
                 Integer.class, new Integer(0));
 
         for (int i = 0; i < ITEM_COUNT_FOR_CACHE_TEST; i++) {
@@ -224,5 +225,45 @@ public class EntityContainerDetachedEntitiesTest {
                     + (QUERY_CACHE_SIZE - 1 - i) / ENTITY_CONTAINER_BATCH_SIZE,
                     item.getItemProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_INDEX).getValue());
         }
+    }
+
+    /**
+     * Test query with background deleted entities after initialization.
+     */
+    @Test
+    public final void testQueryWithBackgroudDeletedEntities() {
+        final EntityManagerFactory entityManagerFactory = Persistence
+                .createEntityManagerFactory("vaadin-lazyquerycontainer-test");
+        final EntityManager entityManager = entityManagerFactory
+                .createEntityManager();
+        final EntityContainer<Task> entityContainer =
+                new EntityContainer<Task>(entityManager, true, true, true, Task.class, 1,
+                        new String[] { "name" }, new boolean[] { true });
+        entityContainer.addContainerProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS,
+                QueryItemStatus.class, QueryItemStatus.None);
+
+        entityContainer.addEntity();
+        final Task taskTwo = entityContainer.addEntity();
+        entityContainer.commit();
+
+        Assert.assertEquals("Verify container size", 2, entityContainer.size());
+
+        entityManager.getTransaction().begin();
+        entityManager.remove(taskTwo);
+        entityManager.getTransaction().commit();
+
+        Assert.assertEquals("Verify container size", 2, entityContainer.size());
+
+        Assert.assertEquals("Verify that entity is deleted.",
+                QueryItemStatus.None,
+                entityContainer.getItem(0).getItemProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());
+
+        Assert.assertEquals("Verify that entity is deleted.",
+                QueryItemStatus.Removed,
+                entityContainer.getItem(1).getItemProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());
+
+        entityContainer.commit();
+
+        Assert.assertEquals("Verify container size", 1, entityContainer.size());
     }
 }
