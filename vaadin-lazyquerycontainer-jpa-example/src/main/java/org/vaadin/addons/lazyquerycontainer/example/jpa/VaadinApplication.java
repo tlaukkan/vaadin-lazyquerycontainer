@@ -51,39 +51,39 @@ public class VaadinApplication extends Application implements ClickListener {
     private Table table;
     private EntityContainer<Task> entityContainer;
 
-    private ArrayList<Object> visibleColumnIds = new ArrayList<Object>();
-    private ArrayList<String> visibleColumnLabels = new ArrayList<String>();
+    private final ArrayList<Object> visibleColumnIds = new ArrayList<Object>();
+    private final ArrayList<String> visibleColumnLabels = new ArrayList<String>();
 
     @Override
     public void init() {
 
-        Window mainWindow = new Window("Lazycontainer Application");
+        final Window mainWindow = new Window("Lazycontainer Application");
         setMainWindow(mainWindow);
 
-        VerticalLayout mainLayout = new VerticalLayout();
+        final VerticalLayout mainLayout = new VerticalLayout();
         mainLayout.setMargin(true);
         mainLayout.setSpacing(true);
         mainWindow.setContent(mainLayout);
-        
-        Panel filterPanel = new Panel();
+
+        final Panel filterPanel = new Panel();
         filterPanel.addStyleName(Runo.PANEL_LIGHT);
-        HorizontalLayout filterLayout = new HorizontalLayout();
+        final HorizontalLayout filterLayout = new HorizontalLayout();
         filterLayout.setMargin(false);
         filterLayout.setSpacing(true);
         filterPanel.setContent(filterLayout);
         mainWindow.addComponent(filterPanel);
 
-        Panel buttonPanel = new Panel();
+        final Panel buttonPanel = new Panel();
         buttonPanel.addStyleName(Runo.PANEL_LIGHT);
-        HorizontalLayout buttonLayout = new HorizontalLayout();
+        final HorizontalLayout buttonLayout = new HorizontalLayout();
         buttonLayout.setMargin(false);
         buttonLayout.setSpacing(true);
         buttonPanel.setContent(buttonLayout);
         mainWindow.addComponent(buttonPanel);
 
-        Panel buttonPanel2 = new Panel();
+        final Panel buttonPanel2 = new Panel();
         buttonPanel2.addStyleName(Runo.PANEL_LIGHT);
-        HorizontalLayout buttonLayout2 = new HorizontalLayout();
+        final HorizontalLayout buttonLayout2 = new HorizontalLayout();
         buttonLayout2.setMargin(false);
         buttonLayout2.setSpacing(true);
         buttonPanel2.setContent(buttonLayout2);
@@ -91,7 +91,7 @@ public class VaadinApplication extends Application implements ClickListener {
 
         nameFilterField = new TextField("Name");
         filterPanel.addComponent(nameFilterField);
-        
+
         refreshButton = new Button("Refresh");
         refreshButton.addListener(this);
         buttonPanel.addComponent(refreshButton);
@@ -165,19 +165,20 @@ public class VaadinApplication extends Application implements ClickListener {
         entityContainer.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_QUERY_TIME, Integer.class, 0, true,
                 false);
 
-        for (int i=0; i<10000; i++) {
-            Task entity = entityContainer.addEntity();
-            entity.setName("task-"+Integer.toString(i));
-            entity.setAssignee("assignee-"+Integer.toString(i));
-            entity.setReporter("reporter-"+Integer.toString(i));
+        Task entity = null;
+        for (int i = 0; i < 10000; i++) {
+            entity = entityContainer.addEntity();
+            entity.setName("task-" + Integer.toString(i));
+            entity.setAssignee("assignee-" + Integer.toString(i));
+            entity.setReporter("reporter-" + Integer.toString(i));
             entity.setAlpha(Integer.toString(i));
             entity.setBeta(Integer.toString(i));
             entity.setGamma(Integer.toString(i));
             entity.setDelta(Integer.toString(i));
         }
-        
+
         entityContainer.commit();
-         
+
         table = new Table();
         mainWindow.addComponent(table);
 
@@ -203,9 +204,12 @@ public class VaadinApplication extends Application implements ClickListener {
         table.setSelectable(true);
         table.setWriteThrough(true);
 
+        entityManager.getTransaction().begin();
+        entityManager.remove(entity);
+        entityManager.getTransaction().commit();
     }
 
-    private void setEditMode(boolean editMode) {
+    private void setEditMode(final boolean editMode) {
         if (editMode) {
             table.setEditable(true);
             table.setSortDisabled(true);
@@ -229,7 +233,8 @@ public class VaadinApplication extends Application implements ClickListener {
         }
     }
 
-    public void buttonClick(ClickEvent event) {
+    @Override
+    public void buttonClick(final ClickEvent event) {
         if (event.getButton() == refreshButton) {
             final String nameFilter = (String) nameFilterField.getValue();
             if (nameFilter != null && nameFilter.length() != 0) {
@@ -237,7 +242,7 @@ public class VaadinApplication extends Application implements ClickListener {
                 whereParameters.put("name", nameFilter);
                 entityContainer.filter("e.name=:name", whereParameters);
             } else {
-                entityContainer.filter(null, null);               
+                entityContainer.filter(null, null);
             }
         }
         if (event.getButton() == editButton) {
@@ -257,19 +262,19 @@ public class VaadinApplication extends Application implements ClickListener {
             entityContainer.addItem();
         }
         if (event.getButton() == removeItemButton) {
-            Object selection = table.getValue();
+            final Object selection = table.getValue();
             if (selection == null) {
                 return;
             }
             if (selection instanceof Integer) {
-                Integer selectedIndex = (Integer) selection;
+                final Integer selectedIndex = (Integer) selection;
                 if (selectedIndex != null) {
                     entityContainer.removeItem(selectedIndex);
                 }
             }
             if (selection instanceof Collection) {
-                Collection selectionIndexes = (Collection) selection;
-                for (Object selectedIndex : selectionIndexes) {
+                final Collection selectionIndexes = (Collection) selection;
+                for (final Object selectedIndex : selectionIndexes) {
                     entityContainer.removeItem((Integer) selectedIndex);
                 }
             }

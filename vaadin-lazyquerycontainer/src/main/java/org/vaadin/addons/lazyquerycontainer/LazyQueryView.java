@@ -460,7 +460,11 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
                 item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(true);
             }
         }
-        getQuery().saveItems(addedItems, modifiedItems, removedItems);
+
+        // Reverse added items so that they are saved in order of addition.
+        final List<Item> addedItemReversed = new ArrayList<Item>(addedItems);
+        Collections.reverse(addedItemReversed);
+        getQuery().saveItems(addedItemReversed, modifiedItems, removedItems);
         addedItems.clear();
         modifiedItems.clear();
         removedItems.clear();
