@@ -61,7 +61,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
     /** Number of query executions. */
     private int queryCount = 0;
     /** Number of batches read. */
-    private int batchCount = 0;    
+    private int batchCount = 0;
     /** QueryDefinition containing query properties and batch size. */
     private QueryDefinition queryDefinition;
     /** QueryFactory for constructing new queries when sort state changes. */
@@ -71,28 +71,32 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
 
     /** Property IDs participating in sort. */
     private Object[] sortPropertyIds;
-    /** Sort state of the properties participating in sort. If true then ascending else descending. */
+    /**
+     * Sort state of the properties participating in sort. If true then
+     * ascending else descending.
+     */
     private boolean[] ascendingStates;
 
     /** List of item indexes in cache in order of access. */
-    private LinkedList<Integer> itemCacheAccessLog = new LinkedList<Integer>();
+    private final LinkedList<Integer> itemCacheAccessLog = new LinkedList<Integer>();
     /** Map of items in cache. */
-    private Map<Integer, Item> itemCache = new HashMap<Integer, Item>();
+    private final Map<Integer, Item> itemCache = new HashMap<Integer, Item>();
     /** Map from properties to items for items which are in cache. */
     private Map<Property, Item> propertyItemMapCache = new HashMap<Property, Item>();
 
     /** List of added items since last commit/rollback. */
-    private List<Item> addedItems = new ArrayList<Item>();
+    private final List<Item> addedItems = new ArrayList<Item>();
     /** List of modified items since last commit/rollback. */
-    private List<Item> modifiedItems = new ArrayList<Item>();
+    private final List<Item> modifiedItems = new ArrayList<Item>();
     /** List of deleted items since last commit/rollback. */
-    private List<Item> removedItems = new ArrayList<Item>();
+    private final List<Item> removedItems = new ArrayList<Item>();
 
     /**
      * Constructs LazyQueryView with DefaultQueryDefinition and the given
      * QueryFactory.
      * @param queryFactory The QueryFactory to be used.
-     * @param compositeItems True if native items should be wrapped to CompositeItems.
+     * @param compositeItems True if native items should be wrapped to
+     *            CompositeItems.
      * @param batchSize The batch size to be used when loading data.
      */
     public LazyQueryView(final QueryFactory queryFactory, final boolean compositeItems, final int batchSize) {
@@ -127,6 +131,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
      * Gets the QueryDefinition.
      * @return the QueryDefinition
      */
+    @Override
     public QueryDefinition getQueryDefinition() {
         return queryDefinition;
     }
@@ -134,8 +139,10 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
     /**
      * Sets new sort state and refreshes view.
      * @param sortPropertyIds The IDs of the properties participating in sort.
-     * @param ascendingStates The sort state of the properties participating in sort. True means ascending.
+     * @param ascendingStates The sort state of the properties participating in
+     *            sort. True means ascending.
      */
+    @Override
     public void sort(final Object[] sortPropertyIds, final boolean[] ascendingStates) {
         this.sortPropertyIds = sortPropertyIds;
         this.ascendingStates = ascendingStates;
@@ -143,14 +150,15 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
     }
 
     /**
-     * Refreshes the view by clearing cache, discarding buffered changes and current query instance.
-     * New query is created on demand.
+     * Refreshes the view by clearing cache, discarding buffered changes and
+     * current query instance. New query is created on demand.
      */
+    @Override
     public void refresh() {
 
-        for (Property property : propertyItemMapCache.keySet()) {
+        for (final Property property : propertyItemMapCache.keySet()) {
             if (property instanceof ValueChangeNotifier) {
-                ValueChangeNotifier notifier = (ValueChangeNotifier) property;
+                final ValueChangeNotifier notifier = (ValueChangeNotifier) property;
                 notifier.removeListener(this);
             }
         }
@@ -168,12 +176,14 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
      * Returns the total size of query and added items since last commit.
      * @return total number of items in the view.
      */
+    @Override
     public int size() {
         return getQuery().size() + addedItems.size();
     }
 
     /**
-     * Gets the batch size i.e. how many items is fetched at a time from storage.
+     * Gets the batch size i.e. how many items is fetched at a time from
+     * storage.
      * @return the batch size.
      */
     public int getBatchSize() {
@@ -183,6 +193,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
     /**
      * @return the maxCacheSize
      */
+    @Override
     public int getMaxCacheSize() {
         return maxCacheSize;
     }
@@ -190,18 +201,20 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
     /**
      * @param maxCacheSize the maxCacheSize to set
      */
+    @Override
     public void setMaxCacheSize(final int maxCacheSize) {
         this.maxCacheSize = maxCacheSize;
     }
 
     /**
-     * Gets item at given index from addedItems, cache and loads new batch on demand
-     * if required.
+     * Gets item at given index from addedItems, cache and loads new batch on
+     * demand if required.
      * @param index The item index.
      * @return the item at given index.
      */
+    @Override
     public Item getItem(final int index) {
-        int addedItemCount = addedItems.size();
+        final int addedItemCount = addedItems.size();
         if (index < addedItemCount) {
             // an item from the addedItems was requested
             return addedItems.get(index);
@@ -224,18 +237,18 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
      * @param index The index of item requested to be queried.
      */
     private void queryItem(final int index) {
-        int batchSize = getBatchSize();
-        int startIndex = index - index % batchSize;
-        int count = Math.min(batchSize, getQuery().size() - startIndex);
+        final int batchSize = getBatchSize();
+        final int startIndex = index - index % batchSize;
+        final int count = Math.min(batchSize, getQuery().size() - startIndex);
 
-        long queryStartTime = System.currentTimeMillis();
+        final long queryStartTime = System.currentTimeMillis();
         // load more items
-        List<Item> items = getQuery().loadItems(startIndex, count);
-        long queryEndTime = System.currentTimeMillis();
+        final List<Item> items = getQuery().loadItems(startIndex, count);
+        final long queryEndTime = System.currentTimeMillis();
 
         for (int i = 0; i < count; i++) {
-            int itemIndex = startIndex + i;
-            Item item = items.get(i);
+            final int itemIndex = startIndex + i;
+            final Item item = items.get(i);
 
             itemCache.put(itemIndex, item);
             if (itemCacheAccessLog.contains(itemIndex)) {
@@ -245,7 +258,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
         }
 
         for (int i = 0; i < count; i++) {
-            Item item = items.get(i);
+            final Item item = items.get(i);
 
             if (item.getItemProperty(DEBUG_PROPERTY_ID_BATCH_INDEX) != null) {
                 item.getItemProperty(DEBUG_PROPERTY_ID_BATCH_INDEX).setReadOnly(false);
@@ -263,10 +276,10 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
                 item.getItemProperty(DEBUG_PROPERTY_ID_BATCH_QUERY_TIME).setReadOnly(true);
             }
 
-            for (Object propertyId : item.getItemPropertyIds()) {
-                Property property = item.getItemProperty(propertyId);
+            for (final Object propertyId : item.getItemPropertyIds()) {
+                final Property property = item.getItemProperty(propertyId);
                 if (property instanceof ValueChangeNotifier) {
-                    ValueChangeNotifier notifier = (ValueChangeNotifier) property;
+                    final ValueChangeNotifier notifier = (ValueChangeNotifier) property;
                     notifier.addListener(this);
                     propertyItemMapCache.put(property, item);
                 }
@@ -276,12 +289,12 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
 
         // Increase batch count.
         batchCount++;
-        
+
         // Evict items from cache if cache size exceeds max cache size
         int counter = 0;
         while (itemCache.size() > maxCacheSize) {
-            int firstIndex = itemCacheAccessLog.getFirst();
-            Item firstItem = itemCache.get(firstIndex);
+            final int firstIndex = itemCacheAccessLog.getFirst();
+            final Item firstItem = itemCache.get(firstIndex);
 
             // Remove oldest item in cache access log if it is not modified or
             // removed.
@@ -289,10 +302,10 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
                 itemCacheAccessLog.removeFirst();
                 itemCache.remove(firstIndex);
 
-                for (Object propertyId : firstItem.getItemPropertyIds()) {
-                    Property property = firstItem.getItemProperty(propertyId);
+                for (final Object propertyId : firstItem.getItemPropertyIds()) {
+                    final Property property = firstItem.getItemProperty(propertyId);
                     if (property instanceof ValueChangeNotifier) {
-                        ValueChangeNotifier notifier = (ValueChangeNotifier) property;
+                        final ValueChangeNotifier notifier = (ValueChangeNotifier) property;
                         notifier.removeListener(this);
                         propertyItemMapCache.remove(property);
                     }
@@ -325,12 +338,13 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
     }
 
     /**
-     * Constructs and adds item to added items and returns index.
-     * Change can be committed or discarded with respective methods.
+     * Constructs and adds item to added items and returns index. Change can be
+     * committed or discarded with respective methods.
      * @return index of the new item.
      */
+    @Override
     public int addItem() {
-        Item item = getQuery().constructItem();
+        final Item item = getQuery().constructItem();
         if (item.getItemProperty(PROPERTY_ID_ITEM_STATUS) != null) {
             item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(false);
             item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setValue(QueryItemStatus.Added);
@@ -341,13 +355,15 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
     }
 
     /**
-     * Event handler for value change events. Adds the item to modified list if value was actually changed.
-     * Change can be committed or discarded with respective methods.
+     * Event handler for value change events. Adds the item to modified list if
+     * value was actually changed. Change can be committed or discarded with
+     * respective methods.
      * @param event the ValueChangeEvent
      */
+    @Override
     public void valueChange(final ValueChangeEvent event) {
-        Property property = event.getProperty();
-        Item item = propertyItemMapCache.get(property);
+        final Property property = event.getProperty();
+        final Item item = propertyItemMapCache.get(property);
         if (property == item.getItemProperty(PROPERTY_ID_ITEM_STATUS)) {
             return;
         }
@@ -364,12 +380,13 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
     }
 
     /**
-     * Removes item at given index by adding it to the removed list.
-     * Change can be committed or discarded with respective methods.
+     * Removes item at given index by adding it to the removed list. Change can
+     * be committed or discarded with respective methods.
      * @param index of the item to be removed.
      */
+    @Override
     public void removeItem(final int index) {
-        Item item = getItem(index);
+        final Item item = getItem(index);
 
         if (item.getItemProperty(PROPERTY_ID_ITEM_STATUS) != null) {
             item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(false);
@@ -377,8 +394,8 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
             item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(true);
         }
 
-        for (Object propertyId : item.getItemPropertyIds()) {
-            Property property = item.getItemProperty(propertyId);
+        for (final Object propertyId : item.getItemPropertyIds()) {
+            final Property property = item.getItemProperty(propertyId);
             property.setReadOnly(true);
         }
 
@@ -386,8 +403,10 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
     }
 
     /**
-     * Removes all items in the view. This method is immediately commited to the storage.
+     * Removes all items in the view. This method is immediately commited to the
+     * storage.
      */
+    @Override
     public void removeAllItems() {
         getQuery().deleteAllItems();
     }
@@ -396,6 +415,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
      * Checks whether view has been modified.
      * @return True if view has been modified.
      */
+    @Override
     public boolean isModified() {
         return addedItems.size() != 0 || modifiedItems.size() != 0 || removedItems.size() != 0;
     }
@@ -403,22 +423,23 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
     /**
      * Commits changes in the view.
      */
+    @Override
     public void commit() {
-        for (Item item : addedItems) {
+        for (final Item item : addedItems) {
             if (item.getItemProperty(PROPERTY_ID_ITEM_STATUS) != null) {
                 item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(false);
                 item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setValue(QueryItemStatus.None);
                 item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(true);
             }
         }
-        for (Item item : modifiedItems) {
+        for (final Item item : modifiedItems) {
             if (item.getItemProperty(PROPERTY_ID_ITEM_STATUS) != null) {
                 item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(false);
                 item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setValue(QueryItemStatus.None);
                 item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(true);
             }
         }
-        for (Item item : removedItems) {
+        for (final Item item : removedItems) {
             if (item.getItemProperty(PROPERTY_ID_ITEM_STATUS) != null) {
                 item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(false);
                 item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setValue(QueryItemStatus.None);
@@ -434,22 +455,23 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
     /**
      * Discards changes in the view.
      */
+    @Override
     public void discard() {
-        for (Item item : addedItems) {
+        for (final Item item : addedItems) {
             if (item.getItemProperty(PROPERTY_ID_ITEM_STATUS) != null) {
                 item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(false);
                 item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setValue(QueryItemStatus.None);
                 item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(true);
             }
         }
-        for (Item item : modifiedItems) {
+        for (final Item item : modifiedItems) {
             if (item.getItemProperty(PROPERTY_ID_ITEM_STATUS) != null) {
                 item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(false);
                 item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setValue(QueryItemStatus.None);
                 item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(true);
             }
         }
-        for (Item item : removedItems) {
+        for (final Item item : removedItems) {
             if (item.getItemProperty(PROPERTY_ID_ITEM_STATUS) != null) {
                 item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(false);
                 item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setValue(QueryItemStatus.None);
@@ -464,22 +486,34 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<Item> getAddedItems() {
-        return Collections.<Item>unmodifiableList(addedItems);
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public List<Item> getModifiedItems() {
-        return Collections.<Item>unmodifiableList(modifiedItems);
+        return Collections.<Item> unmodifiableList(addedItems);
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
+    public List<Item> getModifiedItems() {
+        return Collections.<Item> unmodifiableList(modifiedItems);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public List<Item> getRemovedItems() {
-        return Collections.<Item>unmodifiableList(removedItems);
+        return Collections.<Item> unmodifiableList(removedItems);
+    }
+
+    /**
+     * Used to set implementation property item cache map.
+     * 
+     * @param propertyItemCacheMap the propertyItemMapCache to set
+     */
+    public void setPropertyItemCacheMap(final Map<Property, Item> propertyItemCacheMap) {
+        this.propertyItemMapCache = propertyItemCacheMap;
     }
 
 }
