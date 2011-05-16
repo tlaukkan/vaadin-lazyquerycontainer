@@ -34,35 +34,39 @@ import com.vaadin.data.util.ObjectProperty;
  * definition properties to CompositeItems.
  * @author Tommi S.E. Laukkanen
  */
-public final class EntityQuery implements Query, Serializable {
+public class EntityQuery implements Query, Serializable {
     /** Java serialization version UID. */
     private static final long serialVersionUID = 1L;
     /** The JPA EntityManager. */
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
     /** Flag reflecting whether application manages transactions. */
-    private boolean applicationTransactionManagement;
+    private final boolean applicationTransactionManagement;
     /** The JPA entity class. */
-    private Class<?> entityClass;
+    private final Class<?> entityClass;
     /** The JPA select query. */
-    private String selectPsql;
+    private final String selectPsql;
     /** The JPA select count query. */
-    private String selectCountPsql;
+    private final String selectCountPsql;
     /** The PSQL for deleting entities. */
-    private String deletePsql;
+    private final String deletePsql;
     /** The parameters to set to JPA query. */
-    private Map<String, Object> selectParameters;
-    /** QueryDefinition contains definition of the query properties and batch size. */
-    private EntityQueryDefinition queryDefinition;
+    private final Map<String, Object> selectParameters;
+    /**
+     * QueryDefinition contains definition of the query properties and batch
+     * size.
+     */
+    private final EntityQueryDefinition queryDefinition;
     /** The size of the query. */
     private int querySize = -1;
+    /** The entity PSQL definition. */
+    private final EntityQueryDefinition.EntityPsqlDefinition entityPsqlDefinition;
 
     /**
      * Constructor for configuring the query.
      * @param entityQueryDefinition The entity query definition.
      */
     public EntityQuery(final EntityQueryDefinition entityQueryDefinition) {
-        final EntityQueryDefinition.EntityPsqlDefinition entityPsqlDefinition =
-            entityQueryDefinition.getEntityPsqlDefinition();
+        this.entityPsqlDefinition = entityQueryDefinition.getEntityPsqlDefinition();
         this.entityManager = entityQueryDefinition.getEntityManager();
         this.queryDefinition = entityQueryDefinition;
         this.entityClass = entityQueryDefinition.getEntityClass();
@@ -77,19 +81,20 @@ public final class EntityQuery implements Query, Serializable {
      * Constructs new item based on QueryDefinition.
      * @return new item.
      */
-    public Item constructItem() {
+    @Override
+    public final Item constructItem() {
         try {
-            Object entity = entityClass.newInstance();
-            BeanInfo info = Introspector.getBeanInfo(entityClass);
-            for (PropertyDescriptor pd : info.getPropertyDescriptors()) {
-                for (Object propertyId : queryDefinition.getPropertyIds()) {
+            final Object entity = entityClass.newInstance();
+            final BeanInfo info = Introspector.getBeanInfo(entityClass);
+            for (final PropertyDescriptor pd : info.getPropertyDescriptors()) {
+                for (final Object propertyId : queryDefinition.getPropertyIds()) {
                     if (pd.getName().equals(propertyId)) {
                         pd.getWriteMethod().invoke(entity, queryDefinition.getPropertyDefaultValue(propertyId));
                     }
                 }
             }
             return toItem(entity);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException("Error in bean construction or property population with default values.", e);
         }
     }
@@ -98,11 +103,12 @@ public final class EntityQuery implements Query, Serializable {
      * Number of beans returned by query.
      * @return number of beans.
      */
+    @Override
     public int size() {
         if (querySize == -1) {
-            javax.persistence.Query query = entityManager.createQuery(selectCountPsql);
+            final javax.persistence.Query query = entityManager.createQuery(selectCountPsql);
             if (selectParameters != null) {
-                for (String parameterKey : selectParameters.keySet()) {
+                for (final String parameterKey : selectParameters.keySet()) {
                     query.setParameter(parameterKey, selectParameters.get(parameterKey));
                 }
             }
@@ -117,19 +123,20 @@ public final class EntityQuery implements Query, Serializable {
      * @param count Count of the items to be retrieved.
      * @return List of items.
      */
+    @Override
     public List<Item> loadItems(final int startIndex, final int count) {
-        javax.persistence.Query query = entityManager.createQuery(selectPsql);
+        final javax.persistence.Query query = entityManager.createQuery(selectPsql);
         if (selectParameters != null) {
-            for (String parameterKey : selectParameters.keySet()) {
+            for (final String parameterKey : selectParameters.keySet()) {
                 query.setParameter(parameterKey, selectParameters.get(parameterKey));
             }
-        } 
+        }
         query.setFirstResult(startIndex);
         query.setMaxResults(count);
 
-        List<?> entities = query.getResultList();
-        List<Item> items = new ArrayList<Item>();
-        for (Object entity : entities) {
+        final List<?> entities = query.getResultList();
+        final List<Item> items = new ArrayList<Item>();
+        for (final Object entity : entities) {
             if (queryDefinition.isDetachedEntities()) {
                 entityManager.detach(entity);
             }
@@ -140,25 +147,25 @@ public final class EntityQuery implements Query, Serializable {
     }
 
     /**
-     * Saves the modifications done by container to the query result.
-     * Query will be discarded after changes have been saved
-     * and new query loaded so that changed items are sorted
-     * appropriately.
+     * Saves the modifications done by container to the query result. Query will
+     * be discarded after changes have been saved and new query loaded so that
+     * changed items are sorted appropriately.
      * @param addedItems Items to be inserted.
      * @param modifiedItems Items to be updated.
      * @param removedItems Items to be deleted.
      */
+    @Override
     public void saveItems(final List<Item> addedItems, final List<Item> modifiedItems, final List<Item> removedItems) {
         if (applicationTransactionManagement) {
             entityManager.getTransaction().begin();
         }
         try {
-            for (Item item : addedItems) {
+            for (final Item item : addedItems) {
                 if (!removedItems.contains(item)) {
                     entityManager.persist(fromItem(item));
                 }
             }
-            for (Item item : modifiedItems) {
+            for (final Item item : modifiedItems) {
                 if (!removedItems.contains(item)) {
                     Object entity = fromItem(item);
                     if (queryDefinition.isDetachedEntities()) {
@@ -167,7 +174,7 @@ public final class EntityQuery implements Query, Serializable {
                     entityManager.persist(entity);
                 }
             }
-            for (Item item : removedItems) {
+            for (final Item item : removedItems) {
                 if (!addedItems.contains(item)) {
                     Object entity = fromItem(item);
                     if (queryDefinition.isDetachedEntities()) {
@@ -179,21 +186,22 @@ public final class EntityQuery implements Query, Serializable {
             if (applicationTransactionManagement) {
                 entityManager.getTransaction().commit();
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             if (applicationTransactionManagement) {
                 if (entityManager.getTransaction().isActive()) {
                     entityManager.getTransaction().rollback();
                 }
             }
-            throw new RuntimeException(e);            
+            throw new RuntimeException(e);
         }
     }
 
     /**
-     * Removes all items.
-     * Query will be discarded after delete all items has been called.
+     * Removes all items. Query will be discarded after delete all items has
+     * been called.
      * @return true if the operation succeeded or false in case of a failure.
      */
+    @Override
     public boolean deleteAllItems() {
         if (applicationTransactionManagement) {
             entityManager.getTransaction().begin();
@@ -203,32 +211,32 @@ public final class EntityQuery implements Query, Serializable {
             if (applicationTransactionManagement) {
                 entityManager.getTransaction().commit();
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             if (applicationTransactionManagement) {
                 if (entityManager.getTransaction().isActive()) {
                     entityManager.getTransaction().rollback();
                 }
             }
-            throw new RuntimeException(e);            
+            throw new RuntimeException(e);
         }
         return true;
     }
 
     /**
-     * Converts bean to Item. Implemented by encapsulating the Bean
-     * first to BeanItem and then to CompositeItem.
+     * Converts bean to Item. Implemented by encapsulating the Bean first to
+     * BeanItem and then to CompositeItem.
      * @param entity bean to be converted.
      * @return item converted from bean.
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private Item toItem(final Object entity) {
+    protected final Item toItem(final Object entity) {
         if (queryDefinition.isCompositeItems()) {
-            BeanItem<?> beanItem = new BeanItem<Object>(entity);
-    
-            CompositeItem compositeItem = new CompositeItem();
+            final BeanItem<?> beanItem = new BeanItem<Object>(entity);
+
+            final CompositeItem compositeItem = new CompositeItem();
             compositeItem.addItem("bean", beanItem);
-    
-            for (Object propertyId : queryDefinition.getPropertyIds()) {
+
+            for (final Object propertyId : queryDefinition.getPropertyIds()) {
                 if (compositeItem.getItemProperty(propertyId) == null) {
                     compositeItem.addItemProperty(
                             propertyId,
@@ -236,7 +244,7 @@ public final class EntityQuery implements Query, Serializable {
                                     .getPropertyType(propertyId), queryDefinition.isPropertyReadOnly(propertyId)));
                 }
             }
-    
+
             return compositeItem;
         } else {
             return new BeanItem<Object>(entity);
@@ -248,11 +256,25 @@ public final class EntityQuery implements Query, Serializable {
      * @param item Item to be converted to bean.
      * @return Resulting bean.
      */
-    private Object fromItem(final Item item) {
+    protected final Object fromItem(final Item item) {
         if (queryDefinition.isCompositeItems()) {
             return (Object) ((BeanItem<?>) (((CompositeItem) item).getItem("bean"))).getBean();
         } else {
             return ((BeanItem<?>) item).getBean();
         }
+    }
+
+    /**
+     * @return the queryDefinition
+     */
+    protected final EntityQueryDefinition getQueryDefinition() {
+        return queryDefinition;
+    }
+
+    /**
+     * @return the entityPsqlDefinition
+     */
+    protected final EntityQueryDefinition.EntityPsqlDefinition getEntityPsqlDefinition() {
+        return entityPsqlDefinition;
     }
 }
