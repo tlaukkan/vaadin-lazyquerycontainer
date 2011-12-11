@@ -5,7 +5,7 @@
 	<groupId>org.vaadin.addons.lazyquerycontainer</groupId>
 	<artifactId>vaadin-lazyquerycontainer-mock-example</artifactId>
 	<packaging>war</packaging>
-	<version>1.2.10</version>
+	<version>1.2.11</version>
 	<name>vaadin-lazyquerycontainer-mock-example</name>
 
 	<properties>
@@ -88,11 +88,6 @@
 		</releases> </pluginRepository> </pluginRepositories> -->
 
 	<dependencies>
-		<dependency>
-			<groupId>com.vaadin</groupId>
-			<artifactId>vaadin</artifactId>
-			<version>6.6.0</version>
-		</dependency>
 		<dependency>
 			<groupId>org.vaadin.addons.lazyquerycontainer</groupId>
 			<artifactId>vaadin-lazyquerycontainer</artifactId>
