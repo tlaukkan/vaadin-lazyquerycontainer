@@ -60,9 +60,6 @@ public class VaadinApplication extends UI implements ClickListener {
     @Override
     protected void init(VaadinRequest request) {
 
-		//Window mainWindow = new Window("Lazycontainer Application");
-        //setMainWindow(mainWindow);
-		
 		VerticalLayout mainLayout=new VerticalLayout();
 		mainLayout.setMargin(true);
 		mainLayout.setSpacing(true);
