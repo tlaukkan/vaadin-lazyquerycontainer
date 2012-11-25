@@ -19,21 +19,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.vaadin.data.Buffered;
-import com.vaadin.data.Container;
+import com.vaadin.data.*;
 import com.vaadin.data.Container.Indexed;
 import com.vaadin.data.Container.ItemSetChangeNotifier;
 import com.vaadin.data.Container.PropertySetChangeNotifier;
 import com.vaadin.data.Container.Sortable;
-import com.vaadin.data.Item;
-import com.vaadin.data.Property;
 
 /**
  * LazyQueryContainer provides lazy loading of items from business services. See
  * package level documentation for detailed description. This implements event
  * notification functionality and delegates other methods to QueryView
  * aggregate.
- * 
+ *
  * @author Tommi S.E. Laukkanen
  */
 public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotifier, PropertySetChangeNotifier,
@@ -229,7 +226,7 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
             return (Integer) itemId == 0;
         } else {
             return false;
-        }        
+        }
     }
 
     /**
@@ -242,7 +239,7 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
             return (Integer) itemId == size() - 1;
         } else {
             return false;
-        }        
+        }
     }
 
     /**
@@ -357,15 +354,23 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
      * Adds ItemSetChangeListener.
      * @param listener ItemSetChangeListener to be added.
      */
+    @Deprecated
     public final void addListener(final ItemSetChangeListener listener) {
-        itemSetChangeListeners.add(listener);
+        addItemSetChangeListener(listener);
+
     }
 
     /**
      * Removes ItemSetChangeListener.
      * @param listener ItemSetChangeListener to be removed.
      */
+    @Deprecated
     public final void removeListener(final ItemSetChangeListener listener) {
+        removeItemSetChangeListener(listener);
+    }
+
+    @Override
+    public void removeItemSetChangeListener(ItemSetChangeListener listener) {
         itemSetChangeListeners.remove(listener);
     }
 
@@ -390,16 +395,34 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
     /**
      * Adds PropertySetChangeListener.
      * @param listener PropertySetChangeListener to be added.
-     */    
+     */
+    @Deprecated
     public final void addListener(final PropertySetChangeListener listener) {
+        addPropertySetChangeListener(listener);
+    }
+
+    @Override
+    public void addItemSetChangeListener(ItemSetChangeListener listener) {
+        itemSetChangeListeners.add(listener);
+    }
+
+    @Override
+    public void addPropertySetChangeListener(PropertySetChangeListener listener) {
         propertySetChangeListeners.add(listener);
     }
 
     /**
      * Removes PropertySetChangeListener.
      * @param listener PropertySetChangeListener to be removed.
-     */    
+     *
+     */
+    @Deprecated
     public final void removeListener(final PropertySetChangeListener listener) {
+        removePropertySetChangeListener(listener);
+    }
+
+    @Override
+    public void removePropertySetChangeListener(PropertySetChangeListener listener) {
         propertySetChangeListeners.remove(listener);
     }
 
@@ -493,42 +516,25 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
     }
 
     /**
-     * Is container in read through mode.
-     * @return always false.
-     */
-    public final boolean isReadThrough() {
-        return false;
-    }
-
-    /**
-     * Is container in write through mode.
-     * @return always false.
-     */
-    public final boolean isWriteThrough() {
-        return false;
-    }
-
-    /**
-     * Not supported.
-     * @param readThrough is container in read through mode.
-     */
-    public final void setReadThrough(final boolean readThrough) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Not supported.
-     * @param writeThrough is container in write through mode.
-     */
-    public final void setWriteThrough(final boolean writeThrough) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
      * @return the queryView
      */
     public final QueryView getQueryView() {
         return queryView;
+    }
+
+    @Override
+    public void setBuffered(boolean buffered) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isBuffered() {
+        return true;
+    }
+
+    @Override
+    public List<?> getItemIds(int startIndex, int numberOfItems) {
+        return ContainerHelpers.getItemIdsUsingGetIdByIndex(startIndex, numberOfItems, this);
     }
 
 }

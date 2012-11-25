@@ -19,10 +19,10 @@ import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.data.Property.ValueChangeNotifier;
-import com.vaadin.terminal.ClassResource;
-import com.vaadin.terminal.Resource;
+import com.vaadin.server.ClassResource;
+import com.vaadin.server.Resource;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Embedded;
+import com.vaadin.ui.Image;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.ColumnGenerator;
 
@@ -43,7 +43,7 @@ public final class QueryItemStatusColumnGenerator implements ColumnGenerator, Va
     /** Icon resource for removed state. */
     private Resource removedIconResource;
     /** The status icon Vaadin component. */
-    private Embedded statusIcon;
+    private Image statusIcon;
 
     /**
      * Construct which sets the application instance.
@@ -61,21 +61,17 @@ public final class QueryItemStatusColumnGenerator implements ColumnGenerator, Va
     public Component generateCell(final Table source, final Object itemId, final Object columnId) {
         Property statusProperty = source.getItem(itemId).getItemProperty(columnId);
 
-        noneIconResource = new ClassResource(QueryItemStatusColumnGenerator.class, "images/textfield.png",
-                source.getApplication());
-        addedIconResource = new ClassResource(QueryItemStatusColumnGenerator.class, "images/textfield_add.png",
-                source.getApplication());
-        modifiedIconResource = new ClassResource(QueryItemStatusColumnGenerator.class, "images/textfield_rename.png",
-                source.getApplication());
-        removedIconResource = new ClassResource(QueryItemStatusColumnGenerator.class, "images/textfield_delete.png",
-                source.getApplication());
+        noneIconResource = new ClassResource(QueryItemStatusColumnGenerator.class, "images/textfield.png");
+        addedIconResource = new ClassResource(QueryItemStatusColumnGenerator.class, "images/textfield_add.png");
+        modifiedIconResource = new ClassResource(QueryItemStatusColumnGenerator.class, "images/textfield_rename.png");
+        removedIconResource = new ClassResource(QueryItemStatusColumnGenerator.class, "images/textfield_delete.png");
 
-        statusIcon = new Embedded(null, noneIconResource);
+        statusIcon = new Image(null, noneIconResource);
         statusIcon.setHeight("16px");
 
         if (statusProperty instanceof ValueChangeNotifier) {
             ValueChangeNotifier notifier = (ValueChangeNotifier) statusProperty;
-            notifier.addListener(this);
+            notifier.addValueChangeListener(this);
         }
 
         refreshImage(statusProperty);
@@ -89,7 +85,7 @@ public final class QueryItemStatusColumnGenerator implements ColumnGenerator, Va
      */
     public void valueChange(final ValueChangeEvent event) {
         refreshImage(event.getProperty());
-        statusIcon.requestRepaint();
+        statusIcon.markAsDirty();
     }
 
     /**
