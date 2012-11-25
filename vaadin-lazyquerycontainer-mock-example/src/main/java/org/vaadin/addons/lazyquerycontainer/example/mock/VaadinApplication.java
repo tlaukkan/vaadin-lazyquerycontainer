@@ -18,22 +18,18 @@ package org.vaadin.addons.lazyquerycontainer.example.mock;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.vaadin.annotations.Title;
+import com.vaadin.server.ClassResource;
+import com.vaadin.server.VaadinRequest;
+import com.vaadin.shared.ui.MultiSelectMode;
+import com.vaadin.ui.*;
 import org.vaadin.addons.lazyquerycontainer.LazyQueryContainer;
 import org.vaadin.addons.lazyquerycontainer.LazyQueryView;
 import org.vaadin.addons.lazyquerycontainer.QueryItemStatus;
 import org.vaadin.addons.lazyquerycontainer.QueryItemStatusColumnGenerator;
 
-import com.vaadin.Application;
-import com.vaadin.terminal.ClassResource;
-import com.vaadin.ui.AbstractSelect.MultiSelectMode;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.Table;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.Runo;
 
 /**
@@ -41,7 +37,8 @@ import com.vaadin.ui.themes.Runo;
  * @author Tommi S.E. Laukkanen
  */
 @SuppressWarnings("rawtypes")
-public class VaadinApplication extends Application implements ClickListener {
+@Title("Lazycontainer Application")
+public class VaadinApplication extends UI implements ClickListener {
 	private static final long serialVersionUID = 1L;
 
 	private LazyQueryContainer container;
@@ -59,82 +56,80 @@ public class VaadinApplication extends Application implements ClickListener {
 	
 	private ArrayList<Object> visibleColumnIds=new ArrayList<Object>();
 	private ArrayList<String> visibleColumnLabels=new ArrayList<String>();
-	
-	
-	@Override
-	public void init() {
-		
-		Window mainWindow = new Window("Lazycontainer Application");
-        setMainWindow(mainWindow);
+
+    @Override
+    protected void init(VaadinRequest request) {
+
+		//Window mainWindow = new Window("Lazycontainer Application");
+        //setMainWindow(mainWindow);
 		
 		VerticalLayout mainLayout=new VerticalLayout();
 		mainLayout.setMargin(true);
 		mainLayout.setSpacing(true);
-		mainWindow.setContent(mainLayout);
+		setContent(mainLayout);
 						
 		Panel buttonPanel=new Panel();
 		buttonPanel.addStyleName(Runo.PANEL_LIGHT);
 		HorizontalLayout buttonLayout=new HorizontalLayout();
 		buttonLayout.setMargin(false);
 		buttonLayout.setSpacing(true);
-		buttonPanel.setContent(buttonLayout);		
-		mainWindow.addComponent(buttonPanel);
+		buttonPanel.setContent(buttonLayout);
+        mainLayout.addComponent(buttonPanel);
 
 		Panel buttonPanel2=new Panel();
 		buttonPanel2.addStyleName(Runo.PANEL_LIGHT);
 		HorizontalLayout buttonLayout2=new HorizontalLayout();
 		buttonLayout2.setMargin(false);
 		buttonLayout2.setSpacing(true);
-		buttonPanel2.setContent(buttonLayout2);		
-		mainWindow.addComponent(buttonPanel2);
+		buttonPanel2.setContent(buttonLayout2);
+        mainLayout.addComponent(buttonPanel2);
 
-		
 		refreshButton=new Button("Refresh");
-		refreshButton.setIcon(new ClassResource(QueryItemStatusColumnGenerator.class, "images/table_refresh.png", this));
-		refreshButton.addListener(this);
-		buttonPanel.addComponent(refreshButton);
+		refreshButton.setIcon(new ClassResource(QueryItemStatusColumnGenerator.class, "images/table_refresh.png"));
+		refreshButton.addClickListener(this);
+        buttonLayout.addComponent(refreshButton);
 		
 		editButton=new Button("Edit");
-		editButton.setIcon(new ClassResource(QueryItemStatusColumnGenerator.class, "images/table_edit.png", this));
-		editButton.addListener(this);
-		buttonPanel.addComponent(editButton);
+		editButton.setIcon(new ClassResource(QueryItemStatusColumnGenerator.class, "images/table_edit.png"));
+		editButton.addClickListener(this);
+        buttonLayout.addComponent(editButton);
 
 		addPropertyButton=new Button("Add Column");
-		addPropertyButton.setIcon(new ClassResource(QueryItemStatusColumnGenerator.class, "images/tab_add.png", this));
-		addPropertyButton.addListener(this);
-		buttonPanel.addComponent(addPropertyButton);
+		addPropertyButton.setIcon(new ClassResource(QueryItemStatusColumnGenerator.class, "images/tab_add.png"));
+		addPropertyButton.addClickListener(this);
+        buttonLayout.addComponent(addPropertyButton);
 		
 		removeAllItemsButton=new Button("Remove All Rows");
-		removeAllItemsButton.setIcon(new ClassResource(QueryItemStatusColumnGenerator.class, "images/delete.png", this));
-		removeAllItemsButton.addListener(this);
-		buttonPanel.addComponent(removeAllItemsButton);
+		removeAllItemsButton.setIcon(new ClassResource(QueryItemStatusColumnGenerator.class, "images/delete.png"));
+		removeAllItemsButton.addClickListener(this);
+        buttonLayout.addComponent(removeAllItemsButton);
 		
 		saveButton=new Button("Save");
-		saveButton.setIcon(new ClassResource(QueryItemStatusColumnGenerator.class, "images/table_save.png", this));
-		saveButton.addListener(this);
+		saveButton.setIcon(new ClassResource(QueryItemStatusColumnGenerator.class, "images/table_save.png"));
+		saveButton.addClickListener(this);
 		saveButton.setEnabled(false);
-		buttonPanel2.addComponent(saveButton);
+        buttonLayout2.addComponent(saveButton);
 
 		cancelButton=new Button("Cancel");
-		cancelButton.setIcon(new ClassResource(QueryItemStatusColumnGenerator.class, "images/cancel.png", this));
-		cancelButton.addListener(this);
+		cancelButton.setIcon(new ClassResource(QueryItemStatusColumnGenerator.class, "images/cancel.png"));
+		cancelButton.addClickListener(this);
 		cancelButton.setEnabled(false);
-		buttonPanel2.addComponent(cancelButton);
+        buttonLayout2.addComponent(cancelButton);
 
 		addItemButton=new Button("Add Row");
-		addItemButton.setIcon(new ClassResource(QueryItemStatusColumnGenerator.class, "images/table_row_insert.png", this));
-		addItemButton.addListener(this);
+		addItemButton.setIcon(new ClassResource(QueryItemStatusColumnGenerator.class, "images/table_row_insert.png"));
+		addItemButton.addClickListener(this);
 		addItemButton.setEnabled(false);
-		buttonPanel2.addComponent(addItemButton);
+        buttonLayout2.addComponent(addItemButton);
 
 		removeItemButton=new Button("Remove Row");
-		removeItemButton.setIcon(new ClassResource(QueryItemStatusColumnGenerator.class, "images/table_row_delete.png", this));
-		removeItemButton.addListener(this);
+		removeItemButton.setIcon(new ClassResource(QueryItemStatusColumnGenerator.class, "images/table_row_delete.png"));
+		removeItemButton.addClickListener(this);
 		removeItemButton.setEnabled(false);
-		buttonPanel2.addComponent(removeItemButton);
+        buttonLayout2.addComponent(removeItemButton);
 				
 		table=new Table();
-        mainWindow.addComponent(table);
+        mainLayout.addComponent(table);
 		
 		table.setPageLength(20);
 				
@@ -179,14 +174,13 @@ public class VaadinApplication extends Application implements ClickListener {
 		table.setMultiSelect(true);
 		table.setMultiSelectMode(MultiSelectMode.DEFAULT);
 		table.setSelectable(true);
-		table.setWriteThrough(true);
-				
+		//table.setWriteThrough(true);
 	}
 
 	private void setEditMode(boolean editMode) {
 		if(editMode) {
 			table.setEditable(true);
-			table.setSortDisabled(true);
+			table.setSortEnabled(false);
 			refreshButton.setEnabled(false);
 			removeAllItemsButton.setEnabled(false);
 			addPropertyButton.setEnabled(false);
@@ -197,7 +191,7 @@ public class VaadinApplication extends Application implements ClickListener {
 			removeItemButton.setEnabled(true);
 		} else {
 			table.setEditable(false);
-			table.setSortDisabled(false);
+			table.setSortEnabled(true);
 			refreshButton.setEnabled(true);
 			removeAllItemsButton.setEnabled(true);
 			addPropertyButton.setEnabled(true);
@@ -235,9 +229,7 @@ public class VaadinApplication extends Application implements ClickListener {
 			}
 			if(selection instanceof Integer) {
 				Integer selectedIndex=(Integer)selection;
-				if(selectedIndex!=null) {
-					container.removeItem(selectedIndex);
-				}
+				container.removeItem(selectedIndex);
 			}
 			if(selection instanceof Collection) {
 				Collection selectionIndexes=(Collection)selection;
@@ -263,7 +255,7 @@ public class VaadinApplication extends Application implements ClickListener {
 
 			table.setVisibleColumns(visibleColumnIds.toArray());
 			table.setColumnHeaders(visibleColumnLabels.toArray(new String[0]));
-			table.requestRepaint();
+			table.markAsDirty();
 		}
 	}
 

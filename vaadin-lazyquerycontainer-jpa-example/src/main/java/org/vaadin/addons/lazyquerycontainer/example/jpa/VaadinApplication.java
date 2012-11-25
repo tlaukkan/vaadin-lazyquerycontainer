@@ -9,22 +9,17 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+import com.vaadin.annotations.Title;
+import com.vaadin.server.VaadinRequest;
+import com.vaadin.shared.ui.MultiSelectMode;
+import com.vaadin.ui.*;
 import org.vaadin.addons.lazyquerycontainer.EntityContainer;
 import org.vaadin.addons.lazyquerycontainer.LazyQueryView;
 import org.vaadin.addons.lazyquerycontainer.QueryItemStatus;
 import org.vaadin.addons.lazyquerycontainer.QueryItemStatusColumnGenerator;
 
-import com.vaadin.Application;
-import com.vaadin.ui.AbstractSelect.MultiSelectMode;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.Table;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.Runo;
 
 /**
@@ -32,7 +27,8 @@ import com.vaadin.ui.themes.Runo;
  * @author Tommi S.E. Laukkanen
  */
 @SuppressWarnings("rawtypes")
-public class VaadinApplication extends Application implements ClickListener {
+@Title("Lazycontainer Application")
+public class VaadinApplication extends UI implements ClickListener {
     private static final long serialVersionUID = 1L;
 
     public static final String PERSISTENCE_UNIT = "vaadin-lazyquerycontainer-example";
@@ -55,15 +51,12 @@ public class VaadinApplication extends Application implements ClickListener {
     private final ArrayList<String> visibleColumnLabels = new ArrayList<String>();
 
     @Override
-    public void init() {
-
-        final Window mainWindow = new Window("Lazycontainer Application");
-        setMainWindow(mainWindow);
+    protected void init(VaadinRequest request) {
 
         final VerticalLayout mainLayout = new VerticalLayout();
         mainLayout.setMargin(true);
         mainLayout.setSpacing(true);
-        mainWindow.setContent(mainLayout);
+        setContent(mainLayout);
 
         final Panel filterPanel = new Panel();
         filterPanel.addStyleName(Runo.PANEL_LIGHT);
@@ -71,7 +64,7 @@ public class VaadinApplication extends Application implements ClickListener {
         filterLayout.setMargin(false);
         filterLayout.setSpacing(true);
         filterPanel.setContent(filterLayout);
-        mainWindow.addComponent(filterPanel);
+        mainLayout.addComponent(filterPanel);
 
         final Panel buttonPanel = new Panel();
         buttonPanel.addStyleName(Runo.PANEL_LIGHT);
@@ -79,7 +72,7 @@ public class VaadinApplication extends Application implements ClickListener {
         buttonLayout.setMargin(false);
         buttonLayout.setSpacing(true);
         buttonPanel.setContent(buttonLayout);
-        mainWindow.addComponent(buttonPanel);
+        mainLayout.addComponent(buttonPanel);
 
         final Panel buttonPanel2 = new Panel();
         buttonPanel2.addStyleName(Runo.PANEL_LIGHT);
@@ -87,38 +80,38 @@ public class VaadinApplication extends Application implements ClickListener {
         buttonLayout2.setMargin(false);
         buttonLayout2.setSpacing(true);
         buttonPanel2.setContent(buttonLayout2);
-        mainWindow.addComponent(buttonPanel2);
+        mainLayout.addComponent(buttonPanel2);
 
         nameFilterField = new TextField("Name");
-        filterPanel.addComponent(nameFilterField);
+        filterLayout.addComponent(nameFilterField);
 
         refreshButton = new Button("Refresh");
-        refreshButton.addListener(this);
-        buttonPanel.addComponent(refreshButton);
+        refreshButton.addClickListener(this);
+        buttonLayout.addComponent(refreshButton);
 
         editButton = new Button("Edit");
-        editButton.addListener(this);
-        buttonPanel.addComponent(editButton);
+        editButton.addClickListener(this);
+        buttonLayout.addComponent(editButton);
 
         saveButton = new Button("Save");
-        saveButton.addListener(this);
+        saveButton.addClickListener(this);
         saveButton.setEnabled(false);
-        buttonPanel2.addComponent(saveButton);
+        buttonLayout2.addComponent(saveButton);
 
         cancelButton = new Button("Cancel");
-        cancelButton.addListener(this);
+        cancelButton.addClickListener(this);
         cancelButton.setEnabled(false);
-        buttonPanel2.addComponent(cancelButton);
+        buttonLayout2.addComponent(cancelButton);
 
         addItemButton = new Button("Add Row");
-        addItemButton.addListener(this);
+        addItemButton.addClickListener(this);
         addItemButton.setEnabled(false);
-        buttonPanel2.addComponent(addItemButton);
+        buttonLayout2.addComponent(addItemButton);
 
         removeItemButton = new Button("Remove Row");
-        removeItemButton.addListener(this);
+        removeItemButton.addClickListener(this);
         removeItemButton.setEnabled(false);
-        buttonPanel2.addComponent(removeItemButton);
+        buttonLayout2.addComponent(removeItemButton);
 
         visibleColumnIds.add(LazyQueryView.PROPERTY_ID_ITEM_STATUS);
         visibleColumnIds.add("taskId");
@@ -152,7 +145,7 @@ public class VaadinApplication extends Application implements ClickListener {
                 new boolean[] { true });
         entityContainer.addContainerProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS, QueryItemStatus.class,
                 QueryItemStatus.None, true, false);
-        entityContainer.addContainerProperty("taskId", Long.class, new Long(0), true, true);
+        entityContainer.addContainerProperty("taskId", Long.class, 0L, true, true);
         entityContainer.addContainerProperty("name", String.class, "", true, true);
         entityContainer.addContainerProperty("reporter", String.class, "", true, true);
         entityContainer.addContainerProperty("assignee", String.class, "", true, true);
@@ -166,7 +159,7 @@ public class VaadinApplication extends Application implements ClickListener {
                 false);
 
         Task entity = null;
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 40; i++) {
             entity = entityContainer.addEntity();
             entity.setName("task-" + Integer.toString(i));
             entity.setAssignee("assignee-" + Integer.toString(i));
@@ -180,10 +173,10 @@ public class VaadinApplication extends Application implements ClickListener {
         entityContainer.commit();
 
         table = new Table();
-        mainWindow.addComponent(table);
+        mainLayout.addComponent(table);
 
         table.setCaption("JpaQuery");
-        table.setPageLength(40);
+        table.setPageLength(5);
 
         table.setContainerDataSource(entityContainer);
 
@@ -202,17 +195,16 @@ public class VaadinApplication extends Application implements ClickListener {
         table.setMultiSelect(true);
         table.setMultiSelectMode(MultiSelectMode.DEFAULT);
         table.setSelectable(true);
-        table.setWriteThrough(true);
 
-        entityManager.getTransaction().begin();
-        entityManager.remove(entity);
-        entityManager.getTransaction().commit();
+//        entityManager.getTransaction().begin();
+//        entityManager.remove(entity);
+//        entityManager.getTransaction().commit();
     }
 
     private void setEditMode(final boolean editMode) {
         if (editMode) {
             table.setEditable(true);
-            table.setSortDisabled(true);
+            table.setSortEnabled(false);
             refreshButton.setEnabled(false);
             editButton.setEnabled(false);
             saveButton.setEnabled(true);
@@ -222,7 +214,7 @@ public class VaadinApplication extends Application implements ClickListener {
             nameFilterField.setEnabled(false);
         } else {
             table.setEditable(false);
-            table.setSortDisabled(false);
+            table.setSortEnabled(true);
             refreshButton.setEnabled(true);
             editButton.setEnabled(true);
             saveButton.setEnabled(false);
@@ -236,7 +228,7 @@ public class VaadinApplication extends Application implements ClickListener {
     @Override
     public void buttonClick(final ClickEvent event) {
         if (event.getButton() == refreshButton) {
-            final String nameFilter = (String) nameFilterField.getValue();
+            final String nameFilter = nameFilterField.getValue();
             if (nameFilter != null && nameFilter.length() != 0) {
                 final Map<String, Object> whereParameters = new HashMap<String, Object>();
                 whereParameters.put("name", nameFilter);
@@ -268,9 +260,7 @@ public class VaadinApplication extends Application implements ClickListener {
             }
             if (selection instanceof Integer) {
                 final Integer selectedIndex = (Integer) selection;
-                if (selectedIndex != null) {
-                    entityContainer.removeItem(selectedIndex);
-                }
+                entityContainer.removeItem(selectedIndex);
             }
             if (selection instanceof Collection) {
                 final Collection selectionIndexes = (Collection) selection;
