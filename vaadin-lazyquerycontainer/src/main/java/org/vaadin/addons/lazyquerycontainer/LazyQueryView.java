@@ -15,18 +15,13 @@
  */
 package org.vaadin.addons.lazyquerycontainer;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.data.Property.ValueChangeNotifier;
+
+import java.util.*;
 
 /**
  * Lazy loading implementation of QueryView. This implementation supports lazy
@@ -68,6 +63,10 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
     private QueryFactory queryFactory;
     /** Currenct query used by view. */
     private Query query;
+
+    // ISSUE #34: Fix excessive number of query size() calls
+    private Integer size;
+
 
     /** Property IDs participating in sort. */
     private Object[] sortPropertyIds;
@@ -168,7 +167,8 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
         itemCache.clear();
         itemCacheAccessLog.clear();
         propertyItemMapCache.clear();
-
+        // ISSUE #34: Fix excessive number of query size() calls
+        size = null;
         discard();
     }
 
@@ -178,7 +178,11 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
      */
     @Override
     public int size() {
-        return getQuery().size() + addedItems.size();
+        // ISSUE #34: Fix excessive number of query size() calls
+        if (size == null){
+            size = getQuery().size();
+        }
+        return size + addedItems.size();
     }
 
     /**
@@ -239,7 +243,8 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
     private void queryItem(final int index) {
         final int batchSize = getBatchSize();
         final int startIndex = index - index % batchSize;
-        final int count = Math.min(batchSize, getQuery().size() - startIndex);
+        // ISSUE #34: Fix excessive number of query size() calls
+        final int count = Math.min(batchSize, size() - startIndex);
 
         final long queryStartTime = System.currentTimeMillis();
         // load more items
