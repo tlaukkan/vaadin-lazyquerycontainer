@@ -15,42 +15,47 @@
  */
 package org.vaadin.addons.lazyquerycontainer;
 
-import java.util.Map;
+import com.vaadin.data.util.BeanItem;
 
 import javax.persistence.EntityManager;
-
-import com.vaadin.data.util.BeanItem;
+import java.util.Map;
 
 /**
  * EntityContainer enables using JPA entities with lazy batch loading, filter, sort
  * and buffered writes.
+ *
  * @param <T> Entity class.
  * @author Tommi Laukkanen
  */
-public final class EntityContainer<T extends Object> extends LazyQueryContainer {
-    /** Java serialization version UID. */
+public final class EntityContainer<T> extends LazyQueryContainer {
+    /**
+     * Java serialization version UID.
+     */
     private static final long serialVersionUID = 1L;
 
     /**
      * Constructor which configures query definition for accessing JPA entities.
-     * @param entityManager The JPA EntityManager.
+     *
+     * @param entityManager                  The JPA EntityManager.
      * @param applicationManagedTransactions True if application manages transactions instead of container.
-     * @param detachedEntities True if entities are detached from PersistenceContext.
-     * @param compositeItems True f items are wrapped to CompositeItems.
-     * @param entityClass The entity class.
-     * @param batchSize The batch size.
-     * @param nativeSortPropertyIds Properties participating in the native sort.
-     * @param nativeSortPropertyAscendingStates List of property sort directions for the native sort.
+     * @param detachedEntities               True if entities are detached from PersistenceContext.
+     * @param compositeItems                 True f items are wrapped to CompositeItems.
+     * @param entityClass                    The entity class.
+     * @param batchSize                      The batch size.
+     * @param nativeSortPropertyIds          Properties participating in the native sort.
+     * @param nativeSortPropertyAscendingStates
+     *                                       List of property sort directions for the native sort.
      */
     public EntityContainer(final EntityManager entityManager, final boolean applicationManagedTransactions,
-            final boolean detachedEntities, final boolean compositeItems,
-            final Class<?> entityClass, final int batchSize,
-            final Object[] nativeSortPropertyIds, final boolean[] nativeSortPropertyAscendingStates) {
+                           final boolean detachedEntities, final boolean compositeItems,
+                           final Class<?> entityClass, final int batchSize,
+                           final Object[] nativeSortPropertyIds, final boolean[] nativeSortPropertyAscendingStates) {
         super(new EntityQueryDefinition(entityManager, applicationManagedTransactions,
-                detachedEntities, compositeItems, 
+                detachedEntities, compositeItems,
                 entityClass, batchSize, nativeSortPropertyIds, nativeSortPropertyAscendingStates),
                 new EntityQueryFactory());
     }
+
     /**
      * Filters the container content by setting JPQL where criteria.  The entity expression
      * in generated JPQL queries is "e". Where keyword is not to be included. Refresh of container
@@ -58,7 +63,8 @@ public final class EntityContainer<T extends Object> extends LazyQueryContainer 
      * Example:
      * whereCriteria = "beginDate<=:beginDate";
      * whereParameters.put("e.beginDate", new Date());
-     * @param whereCriteria the where criteria to be included in JPA query or null to clear.
+     *
+     * @param whereCriteria   the where criteria to be included in JPA query or null to clear.
      * @param whereParameters the where parameters to set to JPA query or null to clear.
      */
     public void filter(final String whereCriteria, final Map<String, Object> whereParameters) {
@@ -68,6 +74,7 @@ public final class EntityContainer<T extends Object> extends LazyQueryContainer 
 
     /**
      * Adds entity to the container as first item i.e. at index 0.
+     *
      * @return the new constructed entity.
      */
     public T addEntity() {
@@ -77,6 +84,7 @@ public final class EntityContainer<T extends Object> extends LazyQueryContainer 
 
     /**
      * Removes given entity at given index and returns it.
+     *
      * @param index Index of the entity to be removed.
      * @return The removed entity.
      */
@@ -85,9 +93,10 @@ public final class EntityContainer<T extends Object> extends LazyQueryContainer 
         removeItem(new Integer(index));
         return entityToRemove;
     }
-    
+
     /**
      * Gets entity at given index.
+     *
      * @param index The index of the entity.
      * @return the entity.
      */
@@ -97,7 +106,7 @@ public final class EntityContainer<T extends Object> extends LazyQueryContainer 
             final CompositeItem compositeItem = (CompositeItem) getItem(new Integer(index));
             final BeanItem<T> beanItem = (BeanItem<T>) compositeItem.getItem("bean");
             return beanItem.getBean();
-        } else { 
+        } else {
             return ((BeanItem<T>) getItem(new Integer(index))).getBean();
         }
     }

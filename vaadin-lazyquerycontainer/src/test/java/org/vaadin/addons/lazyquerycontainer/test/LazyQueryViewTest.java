@@ -15,20 +15,19 @@
  */
 package org.vaadin.addons.lazyquerycontainer.test;
 
-import java.util.Collection;
-
+import com.vaadin.data.Item;
+import com.vaadin.data.Property;
+import junit.framework.Assert;
+import junit.framework.TestCase;
 import org.vaadin.addons.lazyquerycontainer.LazyQueryDefinition;
 import org.vaadin.addons.lazyquerycontainer.LazyQueryView;
 import org.vaadin.addons.lazyquerycontainer.QueryItemStatus;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
-
-import com.vaadin.data.Item;
-import com.vaadin.data.Property;
+import java.util.Collection;
 
 /**
  * JUnit test for testing LazyQueryView implementation.
+ *
  * @author Tommi S.E. Laukkanen
  */
 public class LazyQueryViewTest extends TestCase {
@@ -81,7 +80,7 @@ public class LazyQueryViewTest extends TestCase {
     }
 
     public void testAscendingSort() {
-        view.sort(new Object[] { "Index" }, new boolean[] { true });
+        view.sort(new Object[]{"Index"}, new boolean[]{true});
 
         for (int i = 0; i < viewSize; i++) {
             Item item = view.getItem(i);
@@ -92,7 +91,7 @@ public class LazyQueryViewTest extends TestCase {
     }
 
     public void testDescendingSort() {
-        view.sort(new Object[] { "Index" }, new boolean[] { false });
+        view.sort(new Object[]{"Index"}, new boolean[]{false});
 
         for (int i = 0; i < viewSize; i++) {
             Item item = view.getItem(i);

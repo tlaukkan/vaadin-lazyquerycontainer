@@ -1,35 +1,35 @@
 package org.vaadin.addons.lazyquerycontainer.test;
 
 public class MockBean {
-	private String name;
-	private String description;
-	private boolean saved;
-	
-	public MockBean() {
-	}
+    private String name;
+    private String description;
+    private boolean saved;
 
-	public String getName() {
-		return name;
-	}
+    public MockBean() {
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	
-	public boolean isSaved() {
-		return saved;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setSaved(boolean saved) {
-		this.saved = saved;
-	}
-		
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public boolean isSaved() {
+        return saved;
+    }
+
+    public void setSaved(boolean saved) {
+        this.saved = saved;
+    }
+
 }

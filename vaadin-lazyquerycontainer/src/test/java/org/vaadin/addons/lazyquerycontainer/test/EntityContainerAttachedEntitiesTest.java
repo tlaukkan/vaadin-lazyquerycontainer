@@ -15,16 +15,9 @@
  */
 package org.vaadin.addons.lazyquerycontainer.test;
 
-import java.security.InvalidParameterException;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-
+import com.vaadin.data.Item;
+import com.vaadin.data.util.BeanItem;
 import junit.framework.Assert;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,26 +26,40 @@ import org.vaadin.addons.lazyquerycontainer.EntityContainer;
 import org.vaadin.addons.lazyquerycontainer.LazyQueryView;
 import org.vaadin.addons.lazyquerycontainer.QueryItemStatus;
 
-import com.vaadin.data.Item;
-import com.vaadin.data.util.BeanItem;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import java.security.InvalidParameterException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Unit test for EntityContainer.
+ *
  * @author Tommi Laukkanen
- * 
  */
 public class EntityContainerAttachedEntitiesTest {
 
-    /** Query cache size. */
+    /**
+     * Query cache size.
+     */
     private static final int QUERY_CACHE_SIZE = 1000;
-    /** Item count for cache test. */
+    /**
+     * Item count for cache test.
+     */
     private static final int ITEM_COUNT_FOR_CACHE_TEST = 2000;
-    /** Batch size for entity container. */
+    /**
+     * Batch size for entity container.
+     */
     private static final int ENTITY_CONTAINER_BATCH_SIZE = 100;
-    /** The JPA EntityManagerFactory. */
+    /**
+     * The JPA EntityManagerFactory.
+     */
     private static EntityManagerFactory entityManagerFactory =
             Persistence.createEntityManagerFactory("vaadin-lazyquerycontainer-test");
-    /** The JPA EntityManager. */
+    /**
+     * The JPA EntityManager.
+     */
     private EntityManager entityManager;
 
     /**
@@ -80,7 +87,7 @@ public class EntityContainerAttachedEntitiesTest {
     @Test
     public final void testEntityContainer() {
         final EntityContainer<Task> entityContainer = new EntityContainer<Task>(entityManager, true, false, true, Task.class,
-                ENTITY_CONTAINER_BATCH_SIZE, new String[] { "name" }, new boolean[] { true });
+                ENTITY_CONTAINER_BATCH_SIZE, new String[]{"name"}, new boolean[]{true});
 
         final Task taskAlpha = entityContainer.addEntity();
         taskAlpha.setName("alpha");
@@ -103,7 +110,7 @@ public class EntityContainerAttachedEntitiesTest {
         Assert.assertEquals("Verify entity alpha is same", taskAlpha, entityContainer.getEntity(0));
         Assert.assertEquals("Verify entity beta is same", taskBeta, entityContainer.getEntity(1));
 
-        entityContainer.sort(new String[] { "name", "assignee" }, new boolean[] { false, false });
+        entityContainer.sort(new String[]{"name", "assignee"}, new boolean[]{false, false});
 
         Assert.assertEquals("Verify entity alpha and beta are in container", 2, entityContainer.size());
         Assert.assertEquals("Verify entity alpha is same", taskAlpha, entityContainer.getEntity(1));
@@ -179,7 +186,7 @@ public class EntityContainerAttachedEntitiesTest {
         final EntityManager entityManager = entityManagerFactory
                 .createEntityManager();
         new EntityContainer<Task>(entityManager, true, false, true, Task.class, ENTITY_CONTAINER_BATCH_SIZE,
-                new String[] {}, new boolean[] {});
+                new String[]{}, new boolean[]{});
     }
 
     /**
@@ -192,7 +199,7 @@ public class EntityContainerAttachedEntitiesTest {
         final EntityManager entityManager = entityManagerFactory
                 .createEntityManager();
         new EntityContainer<Task>(entityManager, true, false, true, Task.class, ENTITY_CONTAINER_BATCH_SIZE,
-                new String[] { "name" }, new boolean[] {});
+                new String[]{"name"}, new boolean[]{});
     }
 
     /**
@@ -206,7 +213,7 @@ public class EntityContainerAttachedEntitiesTest {
                 .createEntityManager();
         final EntityContainer<Task> entityContainer =
                 new EntityContainer<Task>(entityManager, true, false, true, Task.class, ENTITY_CONTAINER_BATCH_SIZE,
-                        new String[] { "name" }, new boolean[] { true });
+                        new String[]{"name"}, new boolean[]{true});
 
         entityContainer.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_INDEX,
                 Integer.class, new Integer(0));
@@ -244,7 +251,7 @@ public class EntityContainerAttachedEntitiesTest {
                 .createEntityManager();
         final EntityContainer<Task> entityContainer =
                 new EntityContainer<Task>(entityManager, true, false, true, Task.class, 1,
-                        new String[] { "name" }, new boolean[] { true });
+                        new String[]{"name"}, new boolean[]{true});
         entityContainer.addContainerProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS,
                 QueryItemStatus.class, QueryItemStatus.None);
 

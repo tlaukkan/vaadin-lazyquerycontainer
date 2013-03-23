@@ -15,6 +15,11 @@
  */
 package org.vaadin.addons.lazyquerycontainer;
 
+import com.vaadin.data.Item;
+import com.vaadin.data.util.BeanItem;
+import com.vaadin.data.util.ObjectProperty;
+
+import javax.persistence.EntityManager;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -23,46 +28,62 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.EntityManager;
-
-import com.vaadin.data.Item;
-import com.vaadin.data.util.BeanItem;
-import com.vaadin.data.util.ObjectProperty;
-
 /**
  * Entity query implementation which dynamically injects missing query
  * definition properties to CompositeItems.
+ *
  * @author Tommi S.E. Laukkanen
  */
 public class EntityQuery implements Query, Serializable {
-    /** Java serialization version UID. */
+    /**
+     * Java serialization version UID.
+     */
     private static final long serialVersionUID = 1L;
-    /** The JPA EntityManager. */
+    /**
+     * The JPA EntityManager.
+     */
     private final EntityManager entityManager;
-    /** Flag reflecting whether application manages transactions. */
+    /**
+     * Flag reflecting whether application manages transactions.
+     */
     private final boolean applicationTransactionManagement;
-    /** The JPA entity class. */
+    /**
+     * The JPA entity class.
+     */
     private final Class<?> entityClass;
-    /** The JPA select query. */
+    /**
+     * The JPA select query.
+     */
     private final String selectPsql;
-    /** The JPA select count query. */
+    /**
+     * The JPA select count query.
+     */
     private final String selectCountPsql;
-    /** The PSQL for deleting entities. */
+    /**
+     * The PSQL for deleting entities.
+     */
     private final String deletePsql;
-    /** The parameters to set to JPA query. */
+    /**
+     * The parameters to set to JPA query.
+     */
     private final Map<String, Object> selectParameters;
     /**
      * QueryDefinition contains definition of the query properties and batch
      * size.
      */
     private final EntityQueryDefinition queryDefinition;
-    /** The size of the query. */
+    /**
+     * The size of the query.
+     */
     private int querySize = -1;
-    /** The entity PSQL definition. */
+    /**
+     * The entity PSQL definition.
+     */
     private final EntityQueryDefinition.EntityPsqlDefinition entityPsqlDefinition;
 
     /**
      * Constructor for configuring the query.
+     *
      * @param entityQueryDefinition The entity query definition.
      */
     public EntityQuery(final EntityQueryDefinition entityQueryDefinition) {
@@ -79,6 +100,7 @@ public class EntityQuery implements Query, Serializable {
 
     /**
      * Constructs new item based on QueryDefinition.
+     *
      * @return new item.
      */
     @Override
@@ -101,6 +123,7 @@ public class EntityQuery implements Query, Serializable {
 
     /**
      * Number of beans returned by query.
+     *
      * @return number of beans.
      */
     @Override
@@ -119,8 +142,9 @@ public class EntityQuery implements Query, Serializable {
 
     /**
      * Load batch of items.
+     *
      * @param startIndex Starting index of the item list.
-     * @param count Count of the items to be retrieved.
+     * @param count      Count of the items to be retrieved.
      * @return List of items.
      */
     @Override
@@ -150,9 +174,10 @@ public class EntityQuery implements Query, Serializable {
      * Saves the modifications done by container to the query result. Query will
      * be discarded after changes have been saved and new query loaded so that
      * changed items are sorted appropriately.
-     * @param addedItems Items to be inserted.
+     *
+     * @param addedItems    Items to be inserted.
      * @param modifiedItems Items to be updated.
-     * @param removedItems Items to be deleted.
+     * @param removedItems  Items to be deleted.
      */
     @Override
     public void saveItems(final List<Item> addedItems, final List<Item> modifiedItems, final List<Item> removedItems) {
@@ -199,6 +224,7 @@ public class EntityQuery implements Query, Serializable {
     /**
      * Removes all items. Query will be discarded after delete all items has
      * been called.
+     *
      * @return true if the operation succeeded or false in case of a failure.
      */
     @Override
@@ -225,10 +251,11 @@ public class EntityQuery implements Query, Serializable {
     /**
      * Converts bean to Item. Implemented by encapsulating the Bean first to
      * BeanItem and then to CompositeItem.
+     *
      * @param entity bean to be converted.
      * @return item converted from bean.
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked" })
     protected final Item toItem(final Object entity) {
         if (queryDefinition.isCompositeItems()) {
             final BeanItem<?> beanItem = new BeanItem<Object>(entity);
@@ -253,6 +280,7 @@ public class EntityQuery implements Query, Serializable {
 
     /**
      * Converts item back to bean.
+     *
      * @param item Item to be converted to bean.
      * @return Resulting bean.
      */

@@ -21,19 +21,27 @@ import java.util.RandomAccess;
 /**
  * Natural numbers list implementation used in LazyQueryContainer.getItemIds
  * method. This list is immutable and contains integer numbers from 0 to size - 1.
+ *
  * @author HRE@github.com, Tommi Laukkanen
  */
 public final class NaturalNumbersList extends AbstractList<Integer> implements
         RandomAccess, java.io.Serializable {
-    /** Java serialization version UID. */
+    /**
+     * Java serialization version UID.
+     */
     private static final long serialVersionUID = 1L;
-    /** The size of the list. */
+    /**
+     * The size of the list.
+     */
     private final int size;
-    /** Array containing list values. This array is created on demand. */
+    /**
+     * Array containing list values. This array is created on demand.
+     */
     private Integer[] array = null;
 
     /**
      * Constructor which sets the size of the constructed list.
+     *
      * @param size Size of the constructed list.
      */
     public NaturalNumbersList(final int size) {
@@ -66,7 +74,7 @@ public final class NaturalNumbersList extends AbstractList<Integer> implements
     @SuppressWarnings("unchecked")
     public <T> T[] toArray(final T[] a) {
         if (a.length < size) {
-           return (T[]) toArray();
+            return (T[]) toArray();
         }
         for (int i = 0; i < size; i++) {
             a[i] = (T) Integer.valueOf(i);

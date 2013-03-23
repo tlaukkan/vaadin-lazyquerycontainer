@@ -15,6 +15,12 @@
  */
 package org.vaadin.addons.lazyquerycontainer;
 
+import com.vaadin.data.Item;
+import com.vaadin.data.Property;
+import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.Property.ValueChangeListener;
+import com.vaadin.data.Property.ValueChangeNotifier;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -22,54 +28,74 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.vaadin.data.Item;
-import com.vaadin.data.Property;
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.Property.ValueChangeListener;
-import com.vaadin.data.Property.ValueChangeNotifier;
-
 /**
  * Lazy loading implementation of QueryView. This implementation supports lazy
  * loading, batch loading, caching and sorting. LazyQueryView supports debug
  * properties which will be filled with debug information when they exist in
  * query definition. The debug property IDs are defined as string constants with
  * the following naming convention: DEBUG_PROPERTY_XXXX.
- * 
+ * <p/>
  * LazyQueryView implements mainly batch loading, caching and debug
  * functionalities. When data is sorted old query is discarded and new
  * constructed with QueryFactory and new sort state.
- * 
+ *
  * @author Tommi S.E. Laukkanen
  */
 public final class LazyQueryView implements QueryView, ValueChangeListener {
-    /** Java serialization UID. */
+    /**
+     * Java serialization UID.
+     */
     private static final long serialVersionUID = 1L;
 
-    /** Query count debug property ID. */
+    /**
+     * Query count debug property ID.
+     */
     public static final String DEBUG_PROPERTY_ID_QUERY_INDEX = "DEBUG_PROPERTY_ID_QUERY_COUT";
-    /** Batch index debug property ID. */
+    /**
+     * Batch index debug property ID.
+     */
     public static final String DEBUG_PROPERTY_ID_BATCH_INDEX = "DEBUG_PROPERTY_ID_BATCH_INDEX";
-    /** Batch query time debug property ID. */
-    public static final String DEBUG_PROPERTY_ID_BATCH_QUERY_TIME = "DEBUG_PROPERTY_ID_ACCESS_COUNT";
-    /** Item status property ID. */
+    /**
+     * Batch query time debug property ID.
+     */
+    public static final String DEBUG_PROPERTY_ID_BATCH_QUERY_TIME = "DEBUG_PROPERTY_ID_BATCH_QUERY_TIME";
+    /**
+     * Item status property ID.
+     */
     public static final String PROPERTY_ID_ITEM_STATUS = "PROPERTY_ID_ITEM_STATUS";
-    /** Initial maximum cache size. */
+    /**
+     * Initial maximum cache size.
+     */
     private static final int DEFAULT_MAX_CACHE_SIZE = 1000;
 
-    /** Maximum items in cache before old ones are evicted. */
+    /**
+     * Maximum items in cache before old ones are evicted.
+     */
     private int maxCacheSize = DEFAULT_MAX_CACHE_SIZE;
-    /** Number of query executions. */
+    /**
+     * Number of query executions.
+     */
     private int queryCount = 0;
-    /** Number of batches read. */
+    /**
+     * Number of batches read.
+     */
     private int batchCount = 0;
-    /** QueryDefinition containing query properties and batch size. */
+    /**
+     * QueryDefinition containing query properties and batch size.
+     */
     private QueryDefinition queryDefinition;
-    /** QueryFactory for constructing new queries when sort state changes. */
+    /**
+     * QueryFactory for constructing new queries when sort state changes.
+     */
     private QueryFactory queryFactory;
-    /** Currenct query used by view. */
+    /**
+     * Currenct query used by view.
+     */
     private Query query;
 
-    /** Property IDs participating in sort. */
+    /**
+     * Property IDs participating in sort.
+     */
     private Object[] sortPropertyIds;
     /**
      * Sort state of the properties participating in sort. If true then
@@ -77,27 +103,40 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
      */
     private boolean[] ascendingStates;
 
-    /** List of item indexes in cache in order of access. */
+    /**
+     * List of item indexes in cache in order of access.
+     */
     private final LinkedList<Integer> itemCacheAccessLog = new LinkedList<Integer>();
-    /** Map of items in cache. */
+    /**
+     * Map of items in cache.
+     */
     private final Map<Integer, Item> itemCache = new HashMap<Integer, Item>();
-    /** Map from properties to items for items which are in cache. */
+    /**
+     * Map from properties to items for items which are in cache.
+     */
     private Map<Property, Item> propertyItemMapCache = new HashMap<Property, Item>();
 
-    /** List of added items since last commit/rollback. */
+    /**
+     * List of added items since last commit/rollback.
+     */
     private final List<Item> addedItems = new ArrayList<Item>();
-    /** List of modified items since last commit/rollback. */
+    /**
+     * List of modified items since last commit/rollback.
+     */
     private final List<Item> modifiedItems = new ArrayList<Item>();
-    /** List of deleted items since last commit/rollback. */
+    /**
+     * List of deleted items since last commit/rollback.
+     */
     private final List<Item> removedItems = new ArrayList<Item>();
 
     /**
      * Constructs LazyQueryView with DefaultQueryDefinition and the given
      * QueryFactory.
-     * @param queryFactory The QueryFactory to be used.
+     *
+     * @param queryFactory   The QueryFactory to be used.
      * @param compositeItems True if native items should be wrapped to
-     *            CompositeItems.
-     * @param batchSize The batch size to be used when loading data.
+     *                       CompositeItems.
+     * @param batchSize      The batch size to be used when loading data.
      */
     public LazyQueryView(final QueryFactory queryFactory, final boolean compositeItems, final int batchSize) {
         initialize(new LazyQueryDefinition(compositeItems, batchSize), queryFactory);
@@ -107,8 +146,9 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
      * Constructs LazyQueryView with given QueryDefinition and QueryFactory. The
      * role of this constructor is to enable use of custom QueryDefinition
      * implementations.
+     *
      * @param queryDefinition The QueryDefinition to be used.
-     * @param queryFactory The QueryFactory to be used.
+     * @param queryFactory    The QueryFactory to be used.
      */
     public LazyQueryView(final QueryDefinition queryDefinition, final QueryFactory queryFactory) {
         initialize(queryDefinition, queryFactory);
@@ -116,8 +156,9 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
 
     /**
      * Initializes the LazyQueryView.
+     *
      * @param queryDefinition The QueryDefinition to be used.
-     * @param queryFactory The QueryFactory to be used.
+     * @param queryFactory    The QueryFactory to be used.
      */
     private void initialize(final QueryDefinition queryDefinition, final QueryFactory queryFactory) {
         this.queryDefinition = queryDefinition;
@@ -129,6 +170,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
 
     /**
      * Gets the QueryDefinition.
+     *
      * @return the QueryDefinition
      */
     @Override
@@ -138,9 +180,10 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
 
     /**
      * Sets new sort state and refreshes view.
+     *
      * @param sortPropertyIds The IDs of the properties participating in sort.
      * @param ascendingStates The sort state of the properties participating in
-     *            sort. True means ascending.
+     *                        sort. True means ascending.
      */
     @Override
     public void sort(final Object[] sortPropertyIds, final boolean[] ascendingStates) {
@@ -174,6 +217,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
 
     /**
      * Returns the total size of query and added items since last commit.
+     *
      * @return total number of items in the view.
      */
     @Override
@@ -184,6 +228,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
     /**
      * Gets the batch size i.e. how many items is fetched at a time from
      * storage.
+     *
      * @return the batch size.
      */
     public int getBatchSize() {
@@ -209,6 +254,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
     /**
      * Gets item at given index from addedItems, cache and loads new batch on
      * demand if required.
+     *
      * @param index The item index.
      * @return the item at given index.
      */
@@ -234,6 +280,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
 
     /**
      * Query item and the surrounding batch of items.
+     *
      * @param index The index of item requested to be queried.
      */
     private void queryItem(final int index) {
@@ -341,6 +388,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
 
     /**
      * Gets current query or constructs one on demand.
+     *
      * @return The current query.
      */
     private Query getQuery() {
@@ -354,6 +402,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
     /**
      * Constructs and adds item to added items and returns index. Change can be
      * committed or discarded with respective methods.
+     *
      * @return index of the new item.
      */
     @Override
@@ -372,6 +421,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
      * Event handler for value change events. Adds the item to modified list if
      * value was actually changed. Change can be committed or discarded with
      * respective methods.
+     *
      * @param event the ValueChangeEvent
      */
     @Override
@@ -396,6 +446,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
     /**
      * Removes item at given index by adding it to the removed list. Change can
      * be committed or discarded with respective methods.
+     *
      * @param index of the item to be removed.
      */
     @Override
@@ -427,6 +478,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
 
     /**
      * Checks whether view has been modified.
+     *
      * @return True if view has been modified.
      */
     @Override
@@ -506,7 +558,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
      */
     @Override
     public List<Item> getAddedItems() {
-        return Collections.<Item> unmodifiableList(addedItems);
+        return Collections.<Item>unmodifiableList(addedItems);
     }
 
     /**
@@ -514,7 +566,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
      */
     @Override
     public List<Item> getModifiedItems() {
-        return Collections.<Item> unmodifiableList(modifiedItems);
+        return Collections.<Item>unmodifiableList(modifiedItems);
     }
 
     /**
@@ -522,12 +574,12 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
      */
     @Override
     public List<Item> getRemovedItems() {
-        return Collections.<Item> unmodifiableList(removedItems);
+        return Collections.<Item>unmodifiableList(removedItems);
     }
 
     /**
      * Used to set implementation property item cache map.
-     * 
+     *
      * @param propertyItemCacheMap the propertyItemMapCache to set
      */
     public void setPropertyItemCacheMap(final Map<Property, Item> propertyItemCacheMap) {

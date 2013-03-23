@@ -15,26 +15,25 @@
  */
 package org.vaadin.addons.lazyquerycontainer.test;
 
-import java.util.Collection;
-import java.util.Iterator;
-
-import junit.framework.TestCase;
-
-import org.vaadin.addons.lazyquerycontainer.LazyQueryContainer;
-import org.vaadin.addons.lazyquerycontainer.LazyQueryDefinition;
-import org.vaadin.addons.lazyquerycontainer.LazyQueryView;
-import org.vaadin.addons.lazyquerycontainer.QueryItemStatus;
-import org.vaadin.addons.lazyquerycontainer.QueryView;
-
 import com.vaadin.data.Container.ItemSetChangeEvent;
 import com.vaadin.data.Container.ItemSetChangeListener;
 import com.vaadin.data.Container.PropertySetChangeEvent;
 import com.vaadin.data.Container.PropertySetChangeListener;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
+import junit.framework.TestCase;
+import org.vaadin.addons.lazyquerycontainer.LazyQueryContainer;
+import org.vaadin.addons.lazyquerycontainer.LazyQueryDefinition;
+import org.vaadin.addons.lazyquerycontainer.LazyQueryView;
+import org.vaadin.addons.lazyquerycontainer.QueryItemStatus;
+import org.vaadin.addons.lazyquerycontainer.QueryView;
+
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * JUnit test for testing LazyQueryContainer implementation.
+ *
  * @author Tommi S.E. Laukkanen
  */
 @SuppressWarnings("serial")
@@ -77,7 +76,7 @@ public class LazyQueryContainerTest extends TestCase implements ItemSetChangeLis
             assertEquals(i, idIterator.next());
         }
     }
-    
+
     public void testGetItem() {
         for (int i = 0; i < viewSize; i++) {
             Item item = container.getItem(i);
@@ -88,7 +87,7 @@ public class LazyQueryContainerTest extends TestCase implements ItemSetChangeLis
     }
 
     public void testAscendingSort() {
-        container.sort(new Object[] { "Index" }, new boolean[] { true });
+        container.sort(new Object[]{"Index"}, new boolean[]{true});
 
         for (int i = 0; i < viewSize; i++) {
             Item item = container.getItem(i);
@@ -99,7 +98,7 @@ public class LazyQueryContainerTest extends TestCase implements ItemSetChangeLis
     }
 
     public void testDescendingSort() {
-        container.sort(new Object[] { "Index" }, new boolean[] { false });
+        container.sort(new Object[]{"Index"}, new boolean[]{false});
 
         for (int i = 0; i < viewSize; i++) {
             Item item = container.getItem(i);

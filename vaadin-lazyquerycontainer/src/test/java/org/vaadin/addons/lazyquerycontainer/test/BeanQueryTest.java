@@ -1,8 +1,6 @@
 package org.vaadin.addons.lazyquerycontainer.test;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.vaadin.data.Item;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,17 +10,21 @@ import org.vaadin.addons.lazyquerycontainer.LazyQueryDefinition;
 import org.vaadin.addons.lazyquerycontainer.LazyQueryView;
 import org.vaadin.addons.lazyquerycontainer.QueryItemStatus;
 
-import com.vaadin.data.Item;
+import java.util.HashMap;
+import java.util.Map;
 
+/**
+ * The test class for BeanQueryFactory.
+ */
 public class BeanQueryTest {
 
     @Before
-    public void setUp() throws Exception {
+    public final void setUp() throws Exception {
         MockBeanQuery.reset();
     }
-    
+
     @Test
-    public void testLoadItems() {
+    public final void testLoadItems() {
         LazyQueryDefinition queryDefinition = new LazyQueryDefinition(true, 50);
         queryDefinition.addProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS, QueryItemStatus.class, QueryItemStatus.None,
                 true, false);
@@ -46,7 +48,7 @@ public class BeanQueryTest {
     @Test
     public void testSaveItems() {
         BeanQueryFactory<MockBeanQuery> factory = new BeanQueryFactory<MockBeanQuery>(MockBeanQuery.class);
-        LazyQueryView view = new LazyQueryView(factory, true,  50);
+        LazyQueryView view = new LazyQueryView(factory, true, 50);
         LazyQueryDefinition queryDefinition = (LazyQueryDefinition) view.getQueryDefinition();
         queryDefinition.addProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS, QueryItemStatus.class, QueryItemStatus.None,
                 true, false);
@@ -72,7 +74,7 @@ public class BeanQueryTest {
     @Test
     public void testSaveItemsWithoutCompositeItems() {
         BeanQueryFactory<MockBeanQuery> factory = new BeanQueryFactory<MockBeanQuery>(MockBeanQuery.class);
-        LazyQueryView view = new LazyQueryView(factory, false,  50);
+        LazyQueryView view = new LazyQueryView(factory, false, 50);
         LazyQueryDefinition queryDefinition = (LazyQueryDefinition) view.getQueryDefinition();
         queryDefinition.addProperty("name", String.class, "test-bean-2", true, false);
 
@@ -92,7 +94,7 @@ public class BeanQueryTest {
         view.commit();
         Assert.assertTrue((Boolean) item.getItemProperty("saved").getValue());
     }
-    
+
     @Test(expected = UnsupportedOperationException.class)
     public void testRemoveAllItems() {
         LazyQueryDefinition queryDefinition = new LazyQueryDefinition(true, 50);

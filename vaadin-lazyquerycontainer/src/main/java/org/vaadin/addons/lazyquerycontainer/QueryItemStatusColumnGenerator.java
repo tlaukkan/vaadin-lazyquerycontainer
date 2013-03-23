@@ -28,21 +28,33 @@ import com.vaadin.ui.Table.ColumnGenerator;
 
 /**
  * Helper class for Vaadin tables to generate status column.
- * 
+ *
  * @author Tommi S.E. Laukkanen
  */
 public final class QueryItemStatusColumnGenerator implements ColumnGenerator, ValueChangeListener {
-    /** Serial version UID of this class. */
+    /**
+     * Serial version UID of this class.
+     */
     private static final long serialVersionUID = 1L;
-    /** Icon resource for none state. */
+    /**
+     * Icon resource for none state.
+     */
     private Resource noneIconResource;
-    /** Icon resource for added state. */
+    /**
+     * Icon resource for added state.
+     */
     private Resource addedIconResource;
-    /** Icon resource for modified state. */
+    /**
+     * Icon resource for modified state.
+     */
     private Resource modifiedIconResource;
-    /** Icon resource for removed state. */
+    /**
+     * Icon resource for removed state.
+     */
     private Resource removedIconResource;
-    /** The status icon Vaadin component. */
+    /**
+     * The status icon Vaadin component.
+     */
     private Image statusIcon;
 
     /**
@@ -53,8 +65,9 @@ public final class QueryItemStatusColumnGenerator implements ColumnGenerator, Va
 
     /**
      * Generates cell component.
-     * @param source The table this cell is generated for.
-     * @param itemId ID of the item this cell is presenting property of.
+     *
+     * @param source   The table this cell is generated for.
+     * @param itemId   ID of the item this cell is presenting property of.
      * @param columnId ID of the column this cell is located at.
      * @return Component used to render this cell.
      */
@@ -81,6 +94,7 @@ public final class QueryItemStatusColumnGenerator implements ColumnGenerator, Va
 
     /**
      * Event handler for ValueChangeEvent.
+     *
      * @param event The event to be handled.
      */
     public void valueChange(final ValueChangeEvent event) {
@@ -90,6 +104,7 @@ public final class QueryItemStatusColumnGenerator implements ColumnGenerator, Va
 
     /**
      * Refreshes the status Icon according to the property value.
+     *
      * @param statusProperty The property according to which status is updated.
      */
     private void refreshImage(final Property statusProperty) {

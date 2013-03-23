@@ -15,6 +15,10 @@
  */
 package org.vaadin.addons.lazyquerycontainer;
 
+import com.vaadin.data.Item;
+import com.vaadin.data.Property;
+import com.vaadin.data.util.PropertysetItem;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -22,27 +26,33 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.vaadin.data.Item;
-import com.vaadin.data.Property;
-import com.vaadin.data.util.PropertysetItem;
-
 /**
  * CompositeItem enables joining multiple items as single item. CompositeItem
  * contains PropertysetItem as default item to support adding and removing of
  * properties.
- * 
+ *
  * @author Tommi Laukkanen
  */
 public final class CompositeItem implements Item {
-    /** Serial version UID for this class. */
+    /**
+     * Serial version UID for this class.
+     */
     private static final long serialVersionUID = 1L;
-    /** Key for default item. */
+    /**
+     * Key for default item.
+     */
     public static final String DEFAULT_ITEM_KEY = "default-item";
-    /** List of item keys. */
+    /**
+     * List of item keys.
+     */
     private List<String> itemKeys = new ArrayList<String>();
-    /** Map of items. */
+    /**
+     * Map of items.
+     */
     private Map<String, Item> items = new HashMap<String, Item>();
-    /** The default item. */
+    /**
+     * The default item.
+     */
     private Item defaultItem = new PropertysetItem();
 
     /**
@@ -54,7 +64,8 @@ public final class CompositeItem implements Item {
 
     /**
      * Adds new Item.
-     * @param key Key of new Item.
+     *
+     * @param key  Key of new Item.
      * @param item Item to be added.
      */
     public void addItem(final String key, final Item item) {
@@ -64,6 +75,7 @@ public final class CompositeItem implements Item {
 
     /**
      * Removes item.
+     *
      * @param key Key of the item to be removed.
      */
     public void removeItem(final String key) {
@@ -73,6 +85,7 @@ public final class CompositeItem implements Item {
 
     /**
      * Gets keys of Items.
+     *
      * @return List of keys.
      */
     public List<String> getItemKeys() {
@@ -81,6 +94,7 @@ public final class CompositeItem implements Item {
 
     /**
      * Gets Item identified by Key.
+     *
      * @param key Key of the item to be retrieved.
      * @return Item corresponding to the given key.
      */
@@ -90,6 +104,7 @@ public final class CompositeItem implements Item {
 
     /**
      * Lists IDs of the properties in the item.
+     *
      * @return Collection of property IDs.
      */
     public Collection<?> getItemPropertyIds() {
@@ -105,6 +120,7 @@ public final class CompositeItem implements Item {
 
     /**
      * Gets Item property by Item id.
+     *
      * @param id ID of the property to be retrieved.
      * @return property corresponding to the given ID or null if no matching property is found.
      */
@@ -121,7 +137,8 @@ public final class CompositeItem implements Item {
 
     /**
      * Adds property to default Item.
-     * @param id ID of the property to be added.
+     *
+     * @param id       ID of the property to be added.
      * @param property Property to be added.
      * @return true if Property was added successfully.
      */
@@ -131,6 +148,7 @@ public final class CompositeItem implements Item {
 
     /**
      * Removes item from default Item.
+     *
      * @param id ID of the property to be removed.
      * @return true if Property was removed successfully.
      */

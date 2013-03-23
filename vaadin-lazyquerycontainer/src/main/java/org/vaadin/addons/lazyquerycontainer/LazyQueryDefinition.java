@@ -26,32 +26,49 @@ import java.util.Map;
 /**
  * Default implementation of Query Definition. Stores the property information
  * of query to simple Map structure.
- * 
+ *
  * @author Tommi S.E. Laukkanen
  */
 public class LazyQueryDefinition implements QueryDefinition, Serializable {
-    /** Java serialization version UID. */
+    /**
+     * Java serialization version UID.
+     */
     private static final long serialVersionUID = 1L;
-    /** Lust of property IDs included in this QueryDefinition. */
+    /**
+     * Lust of property IDs included in this QueryDefinition.
+     */
     private final List<Object> propertyIds = new ArrayList<Object>();
-    /** Map of types of the properties. */
+    /**
+     * Map of types of the properties.
+     */
     private final Map<Object, Object> propertyTypes = new HashMap<Object, Object>();
-    /** Default values for the properties. */
+    /**
+     * Default values for the properties.
+     */
     private final Map<Object, Object> defaultValues = new HashMap<Object, Object>();
-    /** Flags reflecting whether the properties are read only. */
+    /**
+     * Flags reflecting whether the properties are read only.
+     */
     private final Map<Object, Boolean> readOnlyStates = new HashMap<Object, Boolean>();
-    /** The sort states of the properties. */
+    /**
+     * The sort states of the properties.
+     */
     private final Map<Object, Boolean> sortableStates = new HashMap<Object, Boolean>();
-    /** Batch size of the query. */
+    /**
+     * Batch size of the query.
+     */
     private int batchSize;
-    /** True if native items should be wrapped to CompositeItems. */
+    /**
+     * True if native items should be wrapped to CompositeItems.
+     */
     private boolean compositeItems;
 
     /**
      * Constructor which sets the batch size.
+     *
      * @param compositeItems True if native items should be wrapped to
-     *            CompositeItems.
-     * @param batchSize Value for batch size.
+     *                       CompositeItems.
+     * @param batchSize      Value for batch size.
      */
     public LazyQueryDefinition(final boolean compositeItems, final int batchSize) {
         this.compositeItems = compositeItems;
@@ -68,6 +85,7 @@ public class LazyQueryDefinition implements QueryDefinition, Serializable {
 
     /**
      * List of sortable property IDs.
+     *
      * @return the sortablePropertyIds
      */
     @Override
@@ -83,6 +101,7 @@ public class LazyQueryDefinition implements QueryDefinition, Serializable {
 
     /**
      * Gets the default value for a given property.
+     *
      * @param propertyId ID identifying the property.
      * @return the default value to be used or null.
      */
@@ -93,6 +112,7 @@ public class LazyQueryDefinition implements QueryDefinition, Serializable {
 
     /**
      * Gets the type for a given property.
+     *
      * @param propertyId ID identifying the property.
      * @return the type of the property.
      */
@@ -103,6 +123,7 @@ public class LazyQueryDefinition implements QueryDefinition, Serializable {
 
     /**
      * Checks whether given property is read only.
+     *
      * @param propertyId ID identifying the property.
      * @return true if property is read only.
      */
@@ -113,6 +134,7 @@ public class LazyQueryDefinition implements QueryDefinition, Serializable {
 
     /**
      * Checks whether property is sortable.
+     *
      * @param propertyId ID identifying the property.
      * @return true if property is sortable.
      */
@@ -123,15 +145,16 @@ public class LazyQueryDefinition implements QueryDefinition, Serializable {
 
     /**
      * Adds property.
-     * @param propertyId ID of the property.
-     * @param type Type of the property.
+     *
+     * @param propertyId   ID of the property.
+     * @param type         Type of the property.
      * @param defaultValue Default value of the property.
-     * @param readOnly True if property is read only.
-     * @param sortable True if property is sortable.
+     * @param readOnly     True if property is read only.
+     * @param sortable     True if property is sortable.
      */
     @Override
     public final void addProperty(final Object propertyId, final Class<?> type, final Object defaultValue,
-            final boolean readOnly, final boolean sortable) {
+                                  final boolean readOnly, final boolean sortable) {
         propertyIds.add(propertyId);
         propertyTypes.put(propertyId, type);
         defaultValues.put(propertyId, defaultValue);
@@ -141,6 +164,7 @@ public class LazyQueryDefinition implements QueryDefinition, Serializable {
 
     /**
      * Removes property.
+     *
      * @param propertyId ID identifying the property.
      */
     @Override
@@ -179,6 +203,7 @@ public class LazyQueryDefinition implements QueryDefinition, Serializable {
     /**
      * After this method has been called the Query has to be discarded
      * immediately.
+     *
      * @param batchSize the batchSize to set
      */
     @Override

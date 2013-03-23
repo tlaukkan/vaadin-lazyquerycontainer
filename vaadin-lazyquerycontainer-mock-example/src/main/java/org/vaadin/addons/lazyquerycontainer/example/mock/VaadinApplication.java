@@ -53,7 +53,7 @@ public class VaadinApplication extends UI implements ClickListener {
 	private Button addPropertyButton;
 	private Table table;
 	private int addedPropertyCount=0;
-	
+
 	private ArrayList<Object> visibleColumnIds=new ArrayList<Object>();
 	private ArrayList<String> visibleColumnLabels=new ArrayList<String>();
 
@@ -64,7 +64,7 @@ public class VaadinApplication extends UI implements ClickListener {
 		mainLayout.setMargin(true);
 		mainLayout.setSpacing(true);
 		setContent(mainLayout);
-						
+
 		Panel buttonPanel=new Panel();
 		buttonPanel.addStyleName(Runo.PANEL_LIGHT);
 		HorizontalLayout buttonLayout=new HorizontalLayout();
@@ -85,7 +85,7 @@ public class VaadinApplication extends UI implements ClickListener {
 		refreshButton.setIcon(new ClassResource(QueryItemStatusColumnGenerator.class, "images/table_refresh.png"));
 		refreshButton.addClickListener(this);
         buttonLayout.addComponent(refreshButton);
-		
+
 		editButton=new Button("Edit");
 		editButton.setIcon(new ClassResource(QueryItemStatusColumnGenerator.class, "images/table_edit.png"));
 		editButton.addClickListener(this);
@@ -95,12 +95,12 @@ public class VaadinApplication extends UI implements ClickListener {
 		addPropertyButton.setIcon(new ClassResource(QueryItemStatusColumnGenerator.class, "images/tab_add.png"));
 		addPropertyButton.addClickListener(this);
         buttonLayout.addComponent(addPropertyButton);
-		
+
 		removeAllItemsButton=new Button("Remove All Rows");
 		removeAllItemsButton.setIcon(new ClassResource(QueryItemStatusColumnGenerator.class, "images/delete.png"));
 		removeAllItemsButton.addClickListener(this);
         buttonLayout.addComponent(removeAllItemsButton);
-		
+
 		saveButton=new Button("Save");
 		saveButton.setIcon(new ClassResource(QueryItemStatusColumnGenerator.class, "images/table_save.png"));
 		saveButton.addClickListener(this);
@@ -124,25 +124,25 @@ public class VaadinApplication extends UI implements ClickListener {
 		removeItemButton.addClickListener(this);
 		removeItemButton.setEnabled(false);
         buttonLayout2.addComponent(removeItemButton);
-				
+
 		table=new Table();
         mainLayout.addComponent(table);
-		
+
 		table.setPageLength(20);
-				
+
 		mockQueryFactory=new MockQueryFactory(2000,10,20);
 		container=new LazyQueryContainer(mockQueryFactory, true, 50);
-		
+
 		container.addContainerProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS, QueryItemStatus.class, QueryItemStatus.None, true, false);
 		container.addContainerProperty("Index", Integer.class, 0, true, true);
 		container.addContainerProperty("ReverseIndex", Integer.class, 0, true, true);
 		container.addContainerProperty("Editable", String.class, "", false, false);
 		container.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_QUERY_INDEX, Integer.class, 0, true, false);
 		container.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_INDEX, Integer.class, 0, true, false);
-		container.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_QUERY_TIME, Integer.class, 0, true, false);
-		
+		container.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_QUERY_TIME, Long.class, 0, true, false);
+
 		table.setContainerDataSource(container);
-	
+
 		visibleColumnIds.add(LazyQueryView.PROPERTY_ID_ITEM_STATUS);
 		visibleColumnIds.add("Index");
 		visibleColumnIds.add("ReverseIndex");
@@ -158,12 +158,12 @@ public class VaadinApplication extends UI implements ClickListener {
 		visibleColumnLabels.add("Query");
 		visibleColumnLabels.add("Batch");
 		visibleColumnLabels.add("Time [ms]");
-		
+
 		table.setColumnWidth("Editable", 135);
 
 		table.setVisibleColumns(visibleColumnIds.toArray());
 		table.setColumnHeaders(visibleColumnLabels.toArray(new String[0]));
-		
+
 		table.setColumnWidth(LazyQueryView.PROPERTY_ID_ITEM_STATUS, 16);
 		table.addGeneratedColumn(LazyQueryView.PROPERTY_ID_ITEM_STATUS, new QueryItemStatusColumnGenerator());
 
@@ -199,7 +199,7 @@ public class VaadinApplication extends UI implements ClickListener {
 			removeItemButton.setEnabled(false);
 		}
 	}
-	
+
 	public void buttonClick(ClickEvent event) {
 		if(event.getButton()==refreshButton) {
 			container.refresh();
@@ -233,7 +233,7 @@ public class VaadinApplication extends UI implements ClickListener {
 				for(Object selectedIndex : selectionIndexes) {
 					container.removeItem((Integer)selectedIndex);
 				}
-			}			
+			}
 		}
 		if(event.getButton()==removeAllItemsButton) {
 			container.removeAllItems();
@@ -242,13 +242,13 @@ public class VaadinApplication extends UI implements ClickListener {
 			addedPropertyCount++;
 
 			String newPropertyId="Property-"+addedPropertyCount;
-			
+
 			container.addContainerProperty(newPropertyId, Integer.class, 0, false, true);
 			mockQueryFactory.addProperty(newPropertyId, Integer.class, 0, false, true);
 			container.refresh();
 
 			visibleColumnIds.add(newPropertyId);
-			visibleColumnLabels.add(newPropertyId);	
+			visibleColumnLabels.add(newPropertyId);
 
 			table.setVisibleColumns(visibleColumnIds.toArray());
 			table.setColumnHeaders(visibleColumnLabels.toArray(new String[0]));

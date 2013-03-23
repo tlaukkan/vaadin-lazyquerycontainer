@@ -17,15 +17,24 @@ package org.vaadin.addons.lazyquerycontainer;
 
 /**
  * Enumeration defining the query item states.
+ *
  * @author Tommi S.E. Laukkanen
  */
 public enum QueryItemStatus {
-    /** Item state is up to date which storage. */
-	None,
-	/** Item is newly added and needs to be inserted to storage. */
-	Added,
-	/** Item has been modified and needs to updated to storage. */
-	Modified,
-	/** Item has been removed and needs to be deleted from storage. */
-	Removed
+    /**
+     * Item state is up to date which storage.
+     */
+    None,
+    /**
+     * Item is newly added and needs to be inserted to storage.
+     */
+    Added,
+    /**
+     * Item has been modified and needs to updated to storage.
+     */
+    Modified,
+    /**
+     * Item has been removed and needs to be deleted from storage.
+     */
+    Removed
 }

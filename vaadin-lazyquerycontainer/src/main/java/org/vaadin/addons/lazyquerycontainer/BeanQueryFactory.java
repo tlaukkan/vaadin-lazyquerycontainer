@@ -21,27 +21,33 @@ import java.util.Map;
 /**
  * QueryFactory implementation for BeanQuery. BeanQuery can be used to simplify
  * implementation of queries returning JavaBeans.
- * 
+ *
+ * @param <Q> The BeanQuery implementation class
  * @author Tommi Laukkanen
- * @param <Q>
- *            The BeanQuery implementation class
  */
 @SuppressWarnings("rawtypes")
 public final class BeanQueryFactory<Q extends AbstractBeanQuery> implements QueryFactory, Serializable {
-    /** Java serialization version UID. */
+    /**
+     * Java serialization version UID.
+     */
     private static final long serialVersionUID = 1L;
-    /** QueryDefinition contains definition of the query properties. */
+    /**
+     * QueryDefinition contains definition of the query properties.
+     */
     private QueryDefinition queryDefinition;
-    /** Query configuration contains implementation specific configuration. */
+    /**
+     * Query configuration contains implementation specific configuration.
+     */
     private Class<Q> queryClass;
-    /** The query implementation class. */
+    /**
+     * The query implementation class.
+     */
     private Map<String, Object> queryConfiguration;
 
     /**
      * Constructs BeanQuery and sets the user defined parameters.
-     * 
-     * @param queryClass
-     *            The BeanQuery class;
+     *
+     * @param queryClass The BeanQuery class;
      */
     public BeanQueryFactory(final Class<Q> queryClass) {
         super();
@@ -50,7 +56,8 @@ public final class BeanQueryFactory<Q extends AbstractBeanQuery> implements Quer
 
     /**
      * Sets the query configuration for the custom query implementation.
-     * @param queryConfiguration  The query configuration to be used by the custom query implementation.
+     *
+     * @param queryConfiguration The query configuration to be used by the custom query implementation.
      */
     public void setQueryConfiguration(final Map<String, Object> queryConfiguration) {
         this.queryConfiguration = queryConfiguration;
@@ -58,6 +65,7 @@ public final class BeanQueryFactory<Q extends AbstractBeanQuery> implements Quer
 
     /**
      * Sets the query definition.
+     *
      * @param queryDefinition New query definition to be set.
      */
     public void setQueryDefinition(final QueryDefinition queryDefinition) {
@@ -66,8 +74,9 @@ public final class BeanQueryFactory<Q extends AbstractBeanQuery> implements Quer
 
     /**
      * Constructs new query.
+     *
      * @param sortPropertyIds The properties participating in sort.
-     * @param sortStates  The ascending or descending state of sort properties.
+     * @param sortStates      The ascending or descending state of sort properties.
      * @return new instance of Query interface implementation.
      */
     public Query constructQuery(final Object[] sortPropertyIds, final boolean[] sortStates) {
@@ -75,8 +84,8 @@ public final class BeanQueryFactory<Q extends AbstractBeanQuery> implements Quer
 
         try {
             query = queryClass.getConstructor(
-                    new Class[] { QueryDefinition.class, Map.class, Object[].class, boolean[].class }).newInstance(
-                    new Object[] { queryDefinition, queryConfiguration, sortPropertyIds, sortStates });
+                    new Class[]{QueryDefinition.class, Map.class, Object[].class, boolean[].class}).newInstance(
+                    queryDefinition, queryConfiguration, sortPropertyIds, sortStates);
         } catch (Exception e) {
             throw new RuntimeException("Error instantiating query.", e);
         }
