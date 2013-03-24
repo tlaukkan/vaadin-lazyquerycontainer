@@ -36,10 +36,6 @@ public final class LazyIdList<T> extends AbstractList<T> {
      */
     private static final long serialVersionUID = 1L;
     /**
-     * The size of the list.
-     */
-    private final int size;
-    /**
      * The composite LazyQueryView.
      */
     private final LazyQueryView lazyQueryView;
@@ -61,14 +57,13 @@ public final class LazyIdList<T> extends AbstractList<T> {
     public LazyIdList(final LazyQueryView lazyQueryView, final Object idPropertyId) {
         this.lazyQueryView = lazyQueryView;
         this.idPropertyId = idPropertyId;
-        this.size = lazyQueryView.size();
     }
 
     /**
      * {@inheritDoc}
      */
     public int size() {
-        return size;
+        return lazyQueryView.size();
     }
 
     /**
@@ -90,7 +85,7 @@ public final class LazyIdList<T> extends AbstractList<T> {
      * {@inheritDoc}
      */
     public T get(final int index) {
-        if (index < 0 || index >= size) {
+        if (index < 0 || index >= lazyQueryView.size()) {
             throw new IndexOutOfBoundsException();
         }
         final T itemId = (T) lazyQueryView.getItem(index).getItemProperty(idPropertyId).getValue();

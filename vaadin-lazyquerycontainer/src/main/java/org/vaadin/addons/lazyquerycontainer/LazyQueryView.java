@@ -92,7 +92,10 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
      * Currenct query used by view.
      */
     private Query query;
-
+    /**
+     * Size of the query.
+     */
+    private int querySize = -1;
     /**
      * Property IDs participating in sort.
      */
@@ -226,7 +229,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
      */
     @Override
     public int size() {
-        return getQuery().size() + addedItems.size();
+        return getQuerySize() + addedItems.size();
     }
 
     /**
@@ -293,7 +296,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
     private void queryItem(final int index) {
         final int batchSize = getBatchSize();
         final int startIndex = index - index % batchSize;
-        final int count = Math.min(batchSize, getQuery().size() - startIndex);
+        final int count = Math.min(batchSize, getQuerySize() - startIndex);
 
         final long queryStartTime = System.currentTimeMillis();
         // load more items
@@ -306,7 +309,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
             final Item item;
 
             if (i >= items.size()) {
-                item = query.constructItem();
+                item = getQuery().constructItem();
             } else {
                 item = items.get(i);
             }
@@ -394,6 +397,17 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
     }
 
     /**
+     * Get the query size.
+     * @return the query size
+     */
+    private int getQuerySize() {
+        if (query == null) {
+            getQuery();
+        }
+        return querySize;
+    }
+
+    /**
      * Gets current query or constructs one on demand.
      *
      * @return The current query.
@@ -401,6 +415,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
     private Query getQuery() {
         if (query == null) {
             query = queryFactory.constructQuery(sortPropertyIds, ascendingStates);
+            querySize = getQuery().size();
             queryCount++;
         }
         return query;
@@ -421,6 +436,9 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
             item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(true);
         }
         addedItems.add(0, item);
+        if (itemIdList instanceof NaturalNumbersList) {
+            itemIdList = null;
+        }
         return 0;
     }
 
