@@ -33,6 +33,7 @@ import java.util.Map;
  */
 public class MockQuery implements Query {
 
+    private int addedItemCounter = 0;
     private MockQueryFactory queryFactory;
     private List<Item> items;
     private int batchQueryMinTime;
@@ -72,7 +73,8 @@ public class MockQuery implements Query {
 
 
     public Item constructItem() {
-        return queryFactory.constructItem(-1, -1);
+        addedItemCounter++;
+        return queryFactory.constructItem(-addedItemCounter, -addedItemCounter);
     }
 
 

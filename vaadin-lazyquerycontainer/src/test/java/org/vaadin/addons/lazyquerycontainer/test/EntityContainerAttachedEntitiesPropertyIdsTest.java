@@ -38,7 +38,7 @@ import java.util.Map;
  *
  * @author Tommi Laukkanen
  */
-public class EntityContainerAttachedEntitiesTest {
+public class EntityContainerAttachedEntitiesPropertyIdsTest {
 
     /**
      * Query cache size.
@@ -87,7 +87,7 @@ public class EntityContainerAttachedEntitiesTest {
     @Test
     public final void testEntityContainer() {
         final EntityContainer<Task> entityContainer = new EntityContainer<Task>(entityManager, true, false, true, Task.class,
-                ENTITY_CONTAINER_BATCH_SIZE, null, new String[]{"name"}, new boolean[]{true});
+                ENTITY_CONTAINER_BATCH_SIZE, "taskId", new String[]{"name"}, new boolean[]{true});
 
         final Task taskAlpha = entityContainer.addEntity();
         taskAlpha.setName("alpha");
@@ -130,7 +130,7 @@ public class EntityContainerAttachedEntitiesTest {
         Assert.assertEquals("Verify entity alpha is same", taskAlpha, entityContainer.getEntity(1));
         Assert.assertEquals("Verify entity beta is same", taskBeta, entityContainer.getEntity(0));
 
-        entityContainer.getItem(new Integer(1)).getItemProperty("name").setValue("gamme");
+        entityContainer.getItem(entityContainer.getEntity(1).getTaskId()).getItemProperty("name").setValue("gamme");
 
         entityContainer.commit();
 
@@ -146,14 +146,14 @@ public class EntityContainerAttachedEntitiesTest {
         Assert.assertEquals("Verify entity beta is in container", 1, entityContainer.size());
         Assert.assertEquals("Verify entity beta is same", taskBeta, entityContainer.getEntity(0));
 
-        final Item betaItemBeforeRefresh = entityContainer.getItem(new Integer(0));
+        final Item betaItemBeforeRefresh = entityContainer.getItem(taskBeta.getTaskId());
         Assert.assertNull("Verify new property does not exist before refresh.",
                 betaItemBeforeRefresh.getItemProperty("description"));
 
         entityContainer.addContainerProperty("description", String.class, "");
         entityContainer.refresh();
 
-        final Item betaItem = entityContainer.getItem(new Integer(0));
+        final Item betaItem = entityContainer.getItem(taskBeta.getTaskId());
         Assert.assertNotNull("Verify new property exists.", betaItem.getItemProperty("description"));
         Assert.assertEquals("Verify new property has correct default value.",
                 "", betaItem.getItemProperty("description").getValue());
@@ -162,8 +162,9 @@ public class EntityContainerAttachedEntitiesTest {
 
         entityContainer.getQueryView().getQueryDefinition().setCompositeItems(false);
         entityContainer.refresh();
-        Assert.assertEquals("Verify item is BeanItem", BeanItem.class, entityContainer.getItem(new Integer(0)).getClass());
-        Assert.assertNotNull("Verify that entity can be accessed", entityContainer.getEntity(new Integer(0)));
+        Assert.assertEquals("Verify item is BeanItem", BeanItem.class, entityContainer.getItem(
+                taskBeta.getTaskId()).getClass());
+        Assert.assertNotNull("Verify that entity can be accessed", entityContainer.getEntity(0));
 
         entityContainer.removeAllItems();
         Assert.assertEquals("Verify container is empty after remove all.", 0, entityContainer.size());
@@ -186,7 +187,7 @@ public class EntityContainerAttachedEntitiesTest {
         final EntityManager entityManager = entityManagerFactory
                 .createEntityManager();
         new EntityContainer<Task>(entityManager, true, false, true, Task.class, ENTITY_CONTAINER_BATCH_SIZE,
-                null, new String[]{}, new boolean[]{});
+                "taskId", new String[]{}, new boolean[]{});
     }
 
     /**
@@ -199,7 +200,7 @@ public class EntityContainerAttachedEntitiesTest {
         final EntityManager entityManager = entityManagerFactory
                 .createEntityManager();
         new EntityContainer<Task>(entityManager, true, false, true, Task.class, ENTITY_CONTAINER_BATCH_SIZE,
-                null, new String[]{"name"}, new boolean[]{});
+                "taskId", new String[]{"name"}, new boolean[]{});
     }
 
     /**
@@ -213,7 +214,7 @@ public class EntityContainerAttachedEntitiesTest {
                 .createEntityManager();
         final EntityContainer<Task> entityContainer =
                 new EntityContainer<Task>(entityManager, true, false, true, Task.class, ENTITY_CONTAINER_BATCH_SIZE,
-                        null, new String[]{"name"}, new boolean[]{true});
+                        "taskId", new String[]{"name"}, new boolean[]{true});
 
         entityContainer.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_INDEX,
                 Integer.class, new Integer(0));
@@ -223,17 +224,17 @@ public class EntityContainerAttachedEntitiesTest {
         }
         entityContainer.commit();
         for (int i = 0; i < ITEM_COUNT_FOR_CACHE_TEST; i++) {
-            final Item item = entityContainer.getItem(i);
+            final Item item = entityContainer.getItem(entityContainer.getEntity(i).getTaskId());
             Assert.assertEquals("Verify batch index", i / ENTITY_CONTAINER_BATCH_SIZE,
                     item.getItemProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_INDEX).getValue());
         }
         for (int i = ITEM_COUNT_FOR_CACHE_TEST - 1; i >= QUERY_CACHE_SIZE; i--) {
-            final Item item = entityContainer.getItem(i);
+            final Item item = entityContainer.getItem(entityContainer.getEntity(i).getTaskId());
             Assert.assertEquals("Verify batch index", i / ENTITY_CONTAINER_BATCH_SIZE,
                     item.getItemProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_INDEX).getValue());
         }
         for (int i = QUERY_CACHE_SIZE - 1; i >= 0; i--) {
-            final Item item = entityContainer.getItem(i);
+            final Item item = entityContainer.getItem(entityContainer.getEntity(i).getTaskId());
             Assert.assertEquals("Verify batch index", ITEM_COUNT_FOR_CACHE_TEST / ENTITY_CONTAINER_BATCH_SIZE
                     + (QUERY_CACHE_SIZE - 1 - i) / ENTITY_CONTAINER_BATCH_SIZE,
                     item.getItemProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_INDEX).getValue());
@@ -251,7 +252,7 @@ public class EntityContainerAttachedEntitiesTest {
                 .createEntityManager();
         final EntityContainer<Task> entityContainer =
                 new EntityContainer<Task>(entityManager, true, false, true, Task.class, 1,
-                        null, new String[]{"name"}, new boolean[]{true});
+                        "taskId", new String[]{"name"}, new boolean[]{true});
         entityContainer.addContainerProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS,
                 QueryItemStatus.class, QueryItemStatus.None);
 
@@ -269,11 +270,13 @@ public class EntityContainerAttachedEntitiesTest {
 
         Assert.assertEquals("Verify that entity is deleted.",
                 QueryItemStatus.None,
-                entityContainer.getItem(0).getItemProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());
+                entityContainer.getItem(entityContainer.getEntity(0).getTaskId()).getItemProperty(
+                        LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());
 
         Assert.assertEquals("Verify that entity is deleted.",
                 QueryItemStatus.Removed,
-                entityContainer.getItem(1).getItemProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());
+                entityContainer.getItem(entityContainer.getEntity(1).getTaskId()).getItemProperty(
+                        LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());
 
         entityContainer.commit();
 

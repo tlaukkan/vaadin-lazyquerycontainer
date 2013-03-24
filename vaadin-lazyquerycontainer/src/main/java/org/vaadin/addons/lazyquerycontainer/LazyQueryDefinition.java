@@ -62,6 +62,10 @@ public class LazyQueryDefinition implements QueryDefinition, Serializable {
      * True if native items should be wrapped to CompositeItems.
      */
     private boolean compositeItems;
+    /**
+     * The ID of the ID property or null if item index in result set is used as ID.
+     */
+    private final Object idPropertyId;
 
     /**
      * Constructor which sets the batch size.
@@ -69,10 +73,12 @@ public class LazyQueryDefinition implements QueryDefinition, Serializable {
      * @param compositeItems True if native items should be wrapped to
      *                       CompositeItems.
      * @param batchSize      Value for batch size.
+     * @param idPropertyId   The ID of the ID property or null if item index in result set is used as ID.
      */
-    public LazyQueryDefinition(final boolean compositeItems, final int batchSize) {
+    public LazyQueryDefinition(final boolean compositeItems, final int batchSize, final Object idPropertyId) {
         this.compositeItems = compositeItems;
         this.batchSize = batchSize;
+        this.idPropertyId = idPropertyId;
     }
 
     /**
@@ -211,4 +217,12 @@ public class LazyQueryDefinition implements QueryDefinition, Serializable {
         this.batchSize = batchSize;
     }
 
+    /**
+     * Gets the  ID of the ID property or null if item index in result set is used as ID.
+     * @return The ID of the ID property or null if item index in result set is used as ID.
+     */
+    @Override
+    public final Object getIdPropertyId() {
+        return idPropertyId;
+    }
 }

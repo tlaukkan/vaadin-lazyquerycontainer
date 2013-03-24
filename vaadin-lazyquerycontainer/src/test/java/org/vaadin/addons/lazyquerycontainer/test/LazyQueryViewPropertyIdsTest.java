@@ -30,7 +30,7 @@ import java.util.Collection;
  *
  * @author Tommi S.E. Laukkanen
  */
-public class LazyQueryViewTest extends TestCase {
+public class LazyQueryViewPropertyIdsTest extends TestCase {
 
     private final int viewSize = 100;
     private LazyQueryView view;
@@ -39,7 +39,7 @@ public class LazyQueryViewTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        definition = new LazyQueryDefinition(true, this.viewSize, null);
+        definition = new LazyQueryDefinition(true, this.viewSize, "Index");
         definition.addProperty("Index", Integer.class, 0, true, true);
         definition.addProperty("Reverse Index", Integer.class, 0, true, false);
         definition.addProperty("Editable", String.class, "", false, false);

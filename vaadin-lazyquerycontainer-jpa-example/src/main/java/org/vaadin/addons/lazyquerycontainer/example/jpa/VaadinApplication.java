@@ -141,8 +141,8 @@ public class VaadinApplication extends UI implements ClickListener {
 
         entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
 
-        entityContainer = new EntityContainer<Task>(entityManager, true, true, true, Task.class, 100, new Object[] { "name" },
-                new boolean[] { true });
+        entityContainer = new EntityContainer<Task>(entityManager, true, true, true, Task.class, 100, "taskId",
+                new Object[] { "name" }, new boolean[] { true });
         entityContainer.addContainerProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS, QueryItemStatus.class,
                 QueryItemStatus.None, true, false);
         entityContainer.addContainerProperty("taskId", Long.class, 0L, true, true);

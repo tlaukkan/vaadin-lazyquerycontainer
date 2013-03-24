@@ -102,7 +102,10 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
      * ascending else descending.
      */
     private boolean[] ascendingStates;
-
+    /**
+     * List of item IDs.
+     */
+    private List<?> itemIdList;
     /**
      * List of item indexes in cache in order of access.
      */
@@ -139,7 +142,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
      * @param batchSize      The batch size to be used when loading data.
      */
     public LazyQueryView(final QueryFactory queryFactory, final boolean compositeItems, final int batchSize) {
-        initialize(new LazyQueryDefinition(compositeItems, batchSize), queryFactory);
+        initialize(new LazyQueryDefinition(compositeItems, batchSize, null), queryFactory);
     }
 
     /**
@@ -208,6 +211,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
 
         query = null;
         batchCount = 0;
+        itemIdList = null;
         itemCache.clear();
         itemCacheAccessLog.clear();
         propertyItemMapCache.clear();
@@ -260,6 +264,9 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
      */
     @Override
     public Item getItem(final int index) {
+        if (index < 0 || index >= size()) {
+            throw new IndexOutOfBoundsException("Container size: " + size() + " and item index  requested: " + index);
+        }
         final int addedItemCount = addedItems.size();
         if (index < addedItemCount) {
             // an item from the addedItems was requested
@@ -586,4 +593,19 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
         this.propertyItemMapCache = propertyItemCacheMap;
     }
 
+    /**
+     * Gets list of item IDs present in this view.
+     * @return list of item IDs present in this view.
+     */
+    public List<?> getItemIdList() {
+        if (itemIdList == null) {
+            if (queryDefinition.getIdPropertyId() != null) {
+                itemIdList = new LazyIdList<Object>(this, queryDefinition.getIdPropertyId());
+            } else {
+                itemIdList = new NaturalNumbersList(size());
+            }
+        }
+
+        return itemIdList;
+    }
 }

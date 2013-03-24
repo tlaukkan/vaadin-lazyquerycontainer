@@ -185,7 +185,7 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
      * @return Collection of Integers.
      */
     public final Collection<?> getItemIds() {
-        return new NaturalNumbersList(size());
+        return queryView.getItemIdList();
     }
 
     /**
@@ -195,7 +195,11 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
      * @return Item at the given index.
      */
     public final Item getItem(final Object itemId) {
-        return queryView.getItem((Integer) itemId);
+        if (itemId == null) {
+            return null;
+        } else {
+            return queryView.getItem(queryView.getItemIdList().indexOf(itemId));
+        }
     }
 
     /**
@@ -217,7 +221,7 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
      * @return the object ID i.e. index.
      */
     public final Object getIdByIndex(final int index) {
-        return index;
+        return queryView.getItemIdList().get(index);
     }
 
     /**
@@ -228,7 +232,7 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
      * @return the index.
      */
     public final int indexOfId(final Object itemId) {
-        return (Integer) itemId;
+        return queryView.getItemIdList().indexOf(itemId);
     }
 
     /**
@@ -238,11 +242,7 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
      * @return true if container contains the given index.
      */
     public final boolean containsId(final Object itemId) {
-        if (itemId.getClass() == Integer.class) {
-            return size() > (Integer) itemId && (Integer) itemId >= 0;
-        } else {
-            return false;
-        }
+        return queryView.getItemIdList().contains(itemId);
     }
 
     /**
@@ -252,11 +252,7 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
      * @return true if index is 0.
      */
     public final boolean isFirstId(final Object itemId) {
-        if (itemId.getClass() == Integer.class) {
-            return (Integer) itemId == 0;
-        } else {
-            return false;
-        }
+        return queryView.getItemIdList().indexOf(itemId) == 0;
     }
 
     /**
@@ -266,25 +262,21 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
      * @return true if index is size() - 1.
      */
     public final boolean isLastId(final Object itemId) {
-        if (itemId.getClass() == Integer.class) {
-            return (Integer) itemId == size() - 1;
-        } else {
-            return false;
-        }
+        return queryView.getItemIdList().indexOf(itemId) == size() - 1;
     }
 
     /**
      * @return first item ID i.e. 0.
      */
     public final Object firstItemId() {
-        return 0;
+        return queryView.getItemIdList().get(0);
     }
 
     /**
      * @return last item ID i.e. size() - 1
      */
     public final Object lastItemId() {
-        return size() - 1;
+        return queryView.getItemIdList().get(size() - 1);
     }
 
     /**
@@ -292,7 +284,7 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
      * @return itemId + 1
      */
     public final Object nextItemId(final Object itemId) {
-        return (Integer) itemId + 1;
+        return queryView.getItemIdList().get(queryView.getItemIdList().indexOf(itemId) + 1);
     }
 
     /**
@@ -300,7 +292,7 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
      * @return itemId - 1
      */
     public final Object prevItemId(final Object itemId) {
-        return (Integer) itemId - 1;
+        return queryView.getItemIdList().get(queryView.getItemIdList().indexOf(itemId) - 1);
     }
 
     /**
@@ -361,7 +353,8 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
      * @return item index.
      */
     public final Object addItem() {
-        Object itemId = queryView.addItem();
+        final int itemIndex = queryView.addItem();
+        final Object itemId = queryView.getItemIdList().get(itemIndex);
         notifyItemSetChanged();
         return itemId;
     }
@@ -373,7 +366,7 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
      * @return always true.
      */
     public final boolean removeItem(final Object itemId) {
-        queryView.removeItem((Integer) itemId);
+        queryView.removeItem(indexOfId(itemId));
         notifyItemSetChanged();
         return true;
     }
@@ -496,7 +489,7 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
         /**
          * Constructor for setting the container.
          *
-         * @param container the Contianer.
+         * @param container the Container.
          */
         public QueryItemSetChangeEvent(final LazyQueryContainer container) {
             this.container = container;
@@ -505,7 +498,7 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
         /**
          * Gets the container where event occurred.
          *
-         * @return the Contianer.
+         * @return the Container.
          */
         public Container getContainer() {
             return container;
@@ -531,7 +524,7 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
         /**
          * Constructor for setting the container.
          *
-         * @param container the Contianer.
+         * @param container the Container.
          */
         public QueryPropertySetChangeEvent(final LazyQueryContainer container) {
             this.container = container;
@@ -540,7 +533,7 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
         /**
          * Gets the container where event occurred.
          *
-         * @return the Contianer.
+         * @return the Container.
          */
         public Container getContainer() {
             return container;
@@ -565,7 +558,7 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
     }
 
     /**
-     * @return true if container contains uncommited modifications.
+     * @return true if container contains not commited modifications.
      */
     public final boolean isModified() {
         return queryView.isModified();

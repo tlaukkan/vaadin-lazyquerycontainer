@@ -24,6 +24,7 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.shared.ui.MultiSelectMode;
 import com.vaadin.ui.*;
 import org.vaadin.addons.lazyquerycontainer.LazyQueryContainer;
+import org.vaadin.addons.lazyquerycontainer.LazyQueryDefinition;
 import org.vaadin.addons.lazyquerycontainer.LazyQueryView;
 import org.vaadin.addons.lazyquerycontainer.QueryItemStatus;
 import org.vaadin.addons.lazyquerycontainer.QueryItemStatusColumnGenerator;
@@ -131,7 +132,7 @@ public class VaadinApplication extends UI implements ClickListener {
 		table.setPageLength(20);
 
 		mockQueryFactory=new MockQueryFactory(2000,10,20);
-		container=new LazyQueryContainer(mockQueryFactory, true, 50);
+		container=new LazyQueryContainer(new LazyQueryDefinition(true, 50, "Index"), mockQueryFactory);
 
 		container.addContainerProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS, QueryItemStatus.class, QueryItemStatus.None, true, false);
 		container.addContainerProperty("Index", Integer.class, 0, true, true);

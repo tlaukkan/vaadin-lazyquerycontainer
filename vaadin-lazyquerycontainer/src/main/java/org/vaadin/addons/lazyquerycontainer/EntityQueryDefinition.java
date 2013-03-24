@@ -80,6 +80,7 @@ public class EntityQueryDefinition extends LazyQueryDefinition {
      * @param compositeItems                 True f items are wrapped to CompositeItems.
      * @param entityClass                    The entity class.
      * @param batchSize                      The batch size.
+     * @param idPropertyId                   The ID of the ID property or null if item index is used as ID.
      * @param nativeSortPropertyIds          Properties participating in the native sort.
      * @param nativeSortPropertyAscendingStates
      *                                       List of property sort directions for the native sort.
@@ -87,9 +88,10 @@ public class EntityQueryDefinition extends LazyQueryDefinition {
     public EntityQueryDefinition(final EntityManager entityManager, final boolean applicationManagedTransactions,
                                  final boolean detachedEntities, final boolean compositeItems,
                                  final Class<?> entityClass, final int batchSize,
+                                 final Object idPropertyId,
                                  final Object[] nativeSortPropertyIds,
                                  final boolean[] nativeSortPropertyAscendingStates) {
-        super(compositeItems, batchSize);
+        super(compositeItems, batchSize, idPropertyId);
         this.entityManager = entityManager;
         this.applicationManagedTransactions = applicationManagedTransactions;
         this.entityClass = entityClass;

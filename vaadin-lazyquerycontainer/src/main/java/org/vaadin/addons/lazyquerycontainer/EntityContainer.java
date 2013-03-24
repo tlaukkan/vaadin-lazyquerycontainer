@@ -42,17 +42,18 @@ public final class EntityContainer<T> extends LazyQueryContainer {
      * @param compositeItems                 True f items are wrapped to CompositeItems.
      * @param entityClass                    The entity class.
      * @param batchSize                      The batch size.
+     * @param idPropertyId                   The ID of the ID property or null if item index is used as ID.
      * @param nativeSortPropertyIds          Properties participating in the native sort.
      * @param nativeSortPropertyAscendingStates
      *                                       List of property sort directions for the native sort.
      */
     public EntityContainer(final EntityManager entityManager, final boolean applicationManagedTransactions,
                            final boolean detachedEntities, final boolean compositeItems,
-                           final Class<?> entityClass, final int batchSize,
+                           final Class<?> entityClass, final int batchSize, final Object idPropertyId,
                            final Object[] nativeSortPropertyIds, final boolean[] nativeSortPropertyAscendingStates) {
         super(new EntityQueryDefinition(entityManager, applicationManagedTransactions,
                 detachedEntities, compositeItems,
-                entityClass, batchSize, nativeSortPropertyIds, nativeSortPropertyAscendingStates),
+                entityClass, batchSize, idPropertyId, nativeSortPropertyIds, nativeSortPropertyAscendingStates),
                 new EntityQueryFactory());
     }
 
@@ -79,7 +80,7 @@ public final class EntityContainer<T> extends LazyQueryContainer {
      */
     public T addEntity() {
         final Object itemId = addItem();
-        return getEntity((Integer) itemId);
+        return getEntity(indexOfId(itemId));
     }
 
     /**
@@ -90,7 +91,7 @@ public final class EntityContainer<T> extends LazyQueryContainer {
      */
     public T removeEntity(final int index) {
         final T entityToRemove = getEntity(index);
-        removeItem(new Integer(index));
+        removeItem(getIdByIndex(index));
         return entityToRemove;
     }
 
@@ -103,11 +104,11 @@ public final class EntityContainer<T> extends LazyQueryContainer {
     @SuppressWarnings("unchecked")
     public T getEntity(final int index) {
         if (getQueryView().getQueryDefinition().isCompositeItems()) {
-            final CompositeItem compositeItem = (CompositeItem) getItem(new Integer(index));
+            final CompositeItem compositeItem = (CompositeItem) getItem(getIdByIndex(index));
             final BeanItem<T> beanItem = (BeanItem<T>) compositeItem.getItem("bean");
             return beanItem.getBean();
         } else {
-            return ((BeanItem<T>) getItem(new Integer(index))).getBean();
+            return ((BeanItem<T>) getItem(getIdByIndex(index))).getBean();
         }
     }
 

@@ -85,7 +85,7 @@ public class EntityContainerDetachedEntitiesTest {
     @Test
     public final void testEntityContainer() {
         final EntityContainer<Task> entityContainer = new EntityContainer<Task>(entityManager, true, true, true, Task.class,
-                ENTITY_CONTAINER_BATCH_SIZE, new String[]{"name"}, new boolean[]{true});
+                ENTITY_CONTAINER_BATCH_SIZE, null, new String[]{"name"}, new boolean[]{true});
 
         final Task taskAlpha = entityContainer.addEntity();
         taskAlpha.setName("alpha");
@@ -180,7 +180,7 @@ public class EntityContainerDetachedEntitiesTest {
         final EntityManager entityManager = entityManagerFactory
                 .createEntityManager();
         new EntityContainer<Task>(entityManager, true, true, true, Task.class, ENTITY_CONTAINER_BATCH_SIZE,
-                new String[]{}, new boolean[]{});
+                null, new String[]{}, new boolean[]{});
     }
 
     /**
@@ -193,7 +193,7 @@ public class EntityContainerDetachedEntitiesTest {
         final EntityManager entityManager = entityManagerFactory
                 .createEntityManager();
         new EntityContainer<Task>(entityManager, true, true, true, Task.class, ENTITY_CONTAINER_BATCH_SIZE,
-                new String[]{"name"}, new boolean[]{});
+                null, new String[]{"name"}, new boolean[]{});
     }
 
     /**
@@ -207,7 +207,7 @@ public class EntityContainerDetachedEntitiesTest {
                 .createEntityManager();
         final EntityContainer<Task> entityContainer =
                 new EntityContainer<Task>(entityManager, true, true, true, Task.class, ENTITY_CONTAINER_BATCH_SIZE,
-                        new String[]{"name"}, new boolean[]{true});
+                        null, new String[]{"name"}, new boolean[]{true});
 
         entityContainer.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_INDEX,
                 Integer.class, new Integer(0));
@@ -245,7 +245,7 @@ public class EntityContainerDetachedEntitiesTest {
                 .createEntityManager();
         final EntityContainer<Task> entityContainer =
                 new EntityContainer<Task>(entityManager, true, true, true, Task.class, 1,
-                        new String[]{"name"}, new boolean[]{true});
+                        null, new String[]{"name"}, new boolean[]{true});
         entityContainer.addContainerProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS,
                 QueryItemStatus.class, QueryItemStatus.None);
 

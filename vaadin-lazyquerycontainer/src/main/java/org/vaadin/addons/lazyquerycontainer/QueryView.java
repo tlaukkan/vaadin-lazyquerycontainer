@@ -33,6 +33,12 @@ public interface QueryView {
     QueryDefinition getQueryDefinition();
 
     /**
+     * Gets list of item IDs present in this view.
+     * @return list of item IDs present in this view.
+     */
+    List<?> getItemIdList();
+
+    /**
      * @return the maxCacheSize
      */
     int getMaxCacheSize();
@@ -127,4 +133,5 @@ public interface QueryView {
      * @return list of removed buffered items
      */
     List<Item> getRemovedItems();
+
 }

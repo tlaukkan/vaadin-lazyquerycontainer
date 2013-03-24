@@ -24,6 +24,12 @@ import java.util.Collection;
  */
 public interface QueryDefinition {
     /**
+     * Gets the  ID of the ID property or null if item index in result set is used as ID.
+     * @return The ID of the ID property or null if item index in result set is used as ID.
+     */
+    Object getIdPropertyId();
+
+    /**
      * Lists of the property IDs queried.
      *
      * @return A list of property IDs queried.
