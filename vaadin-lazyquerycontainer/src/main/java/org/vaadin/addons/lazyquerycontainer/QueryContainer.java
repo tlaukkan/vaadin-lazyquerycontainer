@@ -15,18 +15,13 @@
  */
 package org.vaadin.addons.lazyquerycontainer;
 
-import com.vaadin.data.util.BeanItem;
-
-import javax.persistence.EntityManager;
-
 /**
- * EntityContainer enables loading JPA entities in non lazy manner in single read operation
- * using same query backend as LCQ.
+ * QueryContainer enables loading items in non lazy manner with same query backend as LCQ.
  *
  * @param <T> Entity class.
  * @author Tommi Laukkanen
  */
-public final class EntityContainer<T> extends LazyQueryContainer {
+public final class QueryContainer<T> extends LazyQueryContainer {
     /**
      * Java serialization version UID.
      */
@@ -35,26 +30,17 @@ public final class EntityContainer<T> extends LazyQueryContainer {
     /**
      * Constructor which configures query definition for accessing JPA entities.
      *
-     * @param entityManager                  The JPA EntityManager.
-     * @param entityClass                    The entity class.
+     * @param queryFactory                   The query factory.
      * @param idPropertyId                   The ID of the ID property or null if item index is used as ID.
      * @param maximumQueryResultSize         The maximum size of the query result.
-     * @param applicationManagedTransactions True if application manages transactions instead of container.
-     * @param detachedEntities               True if entities are detached from PersistenceContext.
      * @param compositeItems                 True f items are wrapped to CompositeItems.
      */
-    public EntityContainer(final EntityManager entityManager,
-                           final Class<?> entityClass,
-                           final Object idPropertyId,
-                           final int maximumQueryResultSize,
-                           final boolean applicationManagedTransactions,
-                           final boolean detachedEntities, final boolean compositeItems) {
-        super(new EntityQueryDefinition(applicationManagedTransactions,
-                detachedEntities, compositeItems,
-                entityClass, maximumQueryResultSize, idPropertyId),
-                new EntityQueryFactory(entityManager));
+    public QueryContainer(final QueryFactory queryFactory,
+                          final Object idPropertyId,
+                          final int maximumQueryResultSize,
+                          final boolean compositeItems) {
+        super(new LazyQueryDefinition(compositeItems, maximumQueryResultSize, idPropertyId), queryFactory);
         getQueryView().getQueryDefinition().setMaxQuerySize(maximumQueryResultSize);
     }
-
 
 }

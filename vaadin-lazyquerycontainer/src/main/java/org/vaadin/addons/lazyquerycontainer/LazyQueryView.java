@@ -137,19 +137,6 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
     private final List<Item> removedItems = new ArrayList<Item>();
 
     /**
-     * Constructs LazyQueryView with DefaultQueryDefinition and the given
-     * QueryFactory.
-     *
-     * @param queryFactory   The QueryFactory to be used.
-     * @param compositeItems True if native items should be wrapped to
-     *                       CompositeItems.
-     * @param batchSize      The batch size to be used when loading data.
-     */
-    public LazyQueryView(final QueryFactory queryFactory, final boolean compositeItems, final int batchSize) {
-        initialize(new LazyQueryDefinition(compositeItems, batchSize, null), queryFactory);
-    }
-
-    /**
      * Constructs LazyQueryView with given QueryDefinition and QueryFactory. The
      * role of this constructor is to enable use of custom QueryDefinition
      * implementations.

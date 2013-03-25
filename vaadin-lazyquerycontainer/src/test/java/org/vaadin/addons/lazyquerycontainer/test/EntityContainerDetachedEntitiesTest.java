@@ -22,19 +22,16 @@ import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.vaadin.addons.lazyquerycontainer.EntityContainer;
+import org.vaadin.addons.lazyquerycontainer.LazyEntityContainer;
 import org.vaadin.addons.lazyquerycontainer.LazyQueryView;
 import org.vaadin.addons.lazyquerycontainer.QueryItemStatus;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import java.security.InvalidParameterException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
- * Unit test for EntityContainer.
+ * Unit test for LazyEntityContainer.
  *
  * @author Tommi Laukkanen
  */
@@ -86,7 +83,7 @@ public class EntityContainerDetachedEntitiesTest {
      */
     @Test
     public final void testEntityContainer() {
-        final EntityContainer<Task> entityContainer = new EntityContainer<Task>(
+        final LazyEntityContainer<Task> entityContainer = new LazyEntityContainer<Task>(
                 entityManager, Task.class,
                 ENTITY_CONTAINER_BATCH_SIZE, null, true, true, true);
         entityContainer.getQueryView().getQueryDefinition().setDefaultSortState(
@@ -187,7 +184,7 @@ public class EntityContainerDetachedEntitiesTest {
                 .createEntityManagerFactory("vaadin-lazyquerycontainer-test");
         final EntityManager entityManager = entityManagerFactory
                 .createEntityManager();
-        final EntityContainer<Task> entityContainer = new EntityContainer<Task>(
+        final LazyEntityContainer<Task> entityContainer = new LazyEntityContainer<Task>(
                 entityManager, Task.class,
                 ENTITY_CONTAINER_BATCH_SIZE, null, true, true, true);
         entityContainer.getQueryView().getQueryDefinition().setDefaultSortState(
@@ -227,7 +224,7 @@ public class EntityContainerDetachedEntitiesTest {
                 .createEntityManagerFactory("vaadin-lazyquerycontainer-test");
         final EntityManager entityManager = entityManagerFactory
                 .createEntityManager();
-        final EntityContainer<Task> entityContainer = new EntityContainer<Task>(
+        final LazyEntityContainer<Task> entityContainer = new LazyEntityContainer<Task>(
                 entityManager, Task.class,
                 ENTITY_CONTAINER_BATCH_SIZE, null, true, true, true);
         entityContainer.getQueryView().getQueryDefinition().setDefaultSortState(

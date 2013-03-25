@@ -59,13 +59,17 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
     /**
      * Constructs LazyQueryContainer with LazyQueryView and given queryFactory.
      *
-     * @param queryFactory   The query factory to be used.
-     * @param compositeItems True if items are wrapped to CompositeItems.
-     * @param batchSize      The batch size to be used when loading data.
+     * @param queryFactory                  The query factory to be used.
+     * @param idPropertyId                  The ID of the ID property or null if item index is used as ID.
+     * @param batchSize                     The batch size to be used when loading data.
+     * @param compositeItems                True if items are wrapped to CompositeItems.
      */
-    public LazyQueryContainer(final QueryFactory queryFactory, final boolean compositeItems,
-                              final int batchSize) {
-        this.queryView = new LazyQueryView(queryFactory, compositeItems, batchSize);
+    public LazyQueryContainer(final QueryFactory queryFactory,
+                              final Object idPropertyId,
+                              final int batchSize,
+                              final boolean compositeItems) {
+        this.queryView = new LazyQueryView(new LazyQueryDefinition(compositeItems, batchSize, idPropertyId),
+                queryFactory);
     }
 
     /**

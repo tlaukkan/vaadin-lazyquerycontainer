@@ -1,8 +1,6 @@
 package org.vaadin.addons.lazyquerycontainer.example.jpa;
 
-import com.sun.org.apache.xpath.internal.operations.Equals;
 import com.vaadin.annotations.Title;
-import com.vaadin.data.Container;
 import com.vaadin.data.util.filter.Compare;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.shared.ui.MultiSelectMode;
@@ -16,7 +14,7 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.Runo;
-import org.vaadin.addons.lazyquerycontainer.EntityContainer;
+import org.vaadin.addons.lazyquerycontainer.LazyEntityContainer;
 import org.vaadin.addons.lazyquerycontainer.LazyQueryView;
 import org.vaadin.addons.lazyquerycontainer.QueryItemStatus;
 import org.vaadin.addons.lazyquerycontainer.QueryItemStatusColumnGenerator;
@@ -26,8 +24,6 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Example application demonstrating the Lazy Query Container features.
@@ -53,7 +49,7 @@ public class VaadinApplication extends UI implements ClickListener {
     private Button removeItemButton;
 
     private Table table;
-    private EntityContainer<Task> entityContainer;
+    private LazyEntityContainer<Task> entityContainer;
 
     private final ArrayList<Object> visibleColumnIds = new ArrayList<Object>();
     private final ArrayList<String> visibleColumnLabels = new ArrayList<String>();
@@ -149,7 +145,7 @@ public class VaadinApplication extends UI implements ClickListener {
 
         entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
 
-        entityContainer = new EntityContainer<Task>(entityManager, Task.class, 100, "taskId", true, true, true);
+        entityContainer = new LazyEntityContainer<Task>(entityManager, Task.class, 100, "taskId", true, true, true);
         entityContainer.getQueryView().getQueryDefinition().setDefaultSortState(
                 new Object[]{"name"}, new boolean[]{true});
 
