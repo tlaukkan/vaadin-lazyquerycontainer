@@ -81,9 +81,10 @@ public class EntityQuery<E> implements Query, Serializable {
      * Constructor for configuring the query.
      *
      * @param entityQueryDefinition The entity query definition.
+     * @param entityManager The entity manager.
      */
-    public EntityQuery(final EntityQueryDefinition entityQueryDefinition) {
-        this.entityManager = entityQueryDefinition.getEntityManager();
+    public EntityQuery(final EntityQueryDefinition entityQueryDefinition, final EntityManager entityManager) {
+        this.entityManager = entityManager;
         this.queryDefinition = entityQueryDefinition;
         this.entityClass = (Class<E>) entityQueryDefinition.getEntityClass();
         this.applicationTransactionManagement = entityQueryDefinition.isApplicationManagedTransactions();
@@ -118,7 +119,7 @@ public class EntityQuery<E> implements Query, Serializable {
      * @return number of beans.
      */
     @Override
-    public int size() {
+    public final int size() {
 
         if (querySize == -1) {
             final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
@@ -146,7 +147,7 @@ public class EntityQuery<E> implements Query, Serializable {
      * @return List of items.
      */
     @Override
-    public List<Item> loadItems(final int startIndex, final int count) {
+    public final List<Item> loadItems(final int startIndex, final int count) {
 
         final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         final CriteriaQuery<E> cq = cb.createQuery(entityClass);
@@ -339,7 +340,7 @@ public class EntityQuery<E> implements Query, Serializable {
      * @param removedItems  Items to be deleted.
      */
     @Override
-    public void saveItems(final List<Item> addedItems, final List<Item> modifiedItems, final List<Item> removedItems) {
+    public final void saveItems(final List<Item> addedItems, final List<Item> modifiedItems, final List<Item> removedItems) {
         if (applicationTransactionManagement) {
             entityManager.getTransaction().begin();
         }
@@ -387,7 +388,7 @@ public class EntityQuery<E> implements Query, Serializable {
      * @return true if the operation succeeded or false in case of a failure.
      */
     @Override
-    public boolean deleteAllItems() {
+    public final boolean deleteAllItems() {
         if (applicationTransactionManagement) {
             entityManager.getTransaction().begin();
         }

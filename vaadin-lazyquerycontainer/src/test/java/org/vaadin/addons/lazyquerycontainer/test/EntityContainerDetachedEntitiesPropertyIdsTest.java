@@ -86,9 +86,11 @@ public class EntityContainerDetachedEntitiesPropertyIdsTest {
      */
     @Test
     public final void testEntityContainer() {
-        final EntityContainer<Task> entityContainer = new EntityContainer<Task>(entityManager, true, true, true,
-                Task.class,
-                ENTITY_CONTAINER_BATCH_SIZE, "taskId", new String[]{"name"}, new boolean[]{true});
+        final EntityContainer<Task> entityContainer = new EntityContainer<Task>(
+                entityManager, Task.class,
+                ENTITY_CONTAINER_BATCH_SIZE, "taskId", true, true, true);
+        entityContainer.getQueryView().getQueryDefinition().setDefaultSortState(
+                new String[]{"name"}, new boolean[]{true});
 
 
         final Task taskAlpha = entityContainer.addEntity();
@@ -178,19 +180,6 @@ public class EntityContainerDetachedEntitiesPropertyIdsTest {
     }
 
     /**
-     * Test invalid number or native sort states.
-     */
-    @Test(expected = InvalidParameterException.class)
-    public final void testInvalidNumberOfNativeSortStates() {
-        final EntityManagerFactory entityManagerFactory = Persistence
-                .createEntityManagerFactory("vaadin-lazyquerycontainer-test");
-        final EntityManager entityManager = entityManagerFactory
-                .createEntityManager();
-        new EntityContainer<Task>(entityManager, true, true, true, Task.class, ENTITY_CONTAINER_BATCH_SIZE,
-                "taskId", new String[]{"name"}, new boolean[]{});
-    }
-
-    /**
      * Test cache.
      */
     @Test
@@ -199,9 +188,11 @@ public class EntityContainerDetachedEntitiesPropertyIdsTest {
                 .createEntityManagerFactory("vaadin-lazyquerycontainer-test");
         final EntityManager entityManager = entityManagerFactory
                 .createEntityManager();
-        final EntityContainer<Task> entityContainer =
-                new EntityContainer<Task>(entityManager, true, true, true, Task.class, ENTITY_CONTAINER_BATCH_SIZE,
-                        "taskId", new String[]{"name"}, new boolean[]{true});
+        final EntityContainer<Task> entityContainer = new EntityContainer<Task>(
+                entityManager, Task.class,
+                ENTITY_CONTAINER_BATCH_SIZE, "taskId", true, true, true);
+        entityContainer.getQueryView().getQueryDefinition().setDefaultSortState(
+                new String[]{"name"}, new boolean[]{true});
 
         entityContainer.addContainerProperty(LazyQueryView.DEBUG_PROPERTY_ID_BATCH_INDEX,
                 Integer.class, new Integer(0));
@@ -237,9 +228,12 @@ public class EntityContainerDetachedEntitiesPropertyIdsTest {
                 .createEntityManagerFactory("vaadin-lazyquerycontainer-test");
         final EntityManager entityManager = entityManagerFactory
                 .createEntityManager();
-        final EntityContainer<Task> entityContainer =
-                new EntityContainer<Task>(entityManager, true, true, true, Task.class, 1,
-                        "taskId", new String[]{"name"}, new boolean[]{true});
+        final EntityContainer<Task> entityContainer = new EntityContainer<Task>(
+                entityManager, Task.class,
+                ENTITY_CONTAINER_BATCH_SIZE, "taskId", true, true, true);
+        entityContainer.getQueryView().getQueryDefinition().setDefaultSortState(
+                new String[]{"name"}, new boolean[]{true});
+
         entityContainer.addContainerProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS,
                 QueryItemStatus.class, QueryItemStatus.None);
 

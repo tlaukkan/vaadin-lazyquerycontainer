@@ -35,26 +35,21 @@ public final class EntityContainer<T> extends LazyQueryContainer {
      * Constructor which configures query definition for accessing JPA entities.
      *
      * @param entityManager                  The JPA EntityManager.
+     * @param entityClass                    The entity class.
+     * @param idPropertyId                   The ID of the ID property or null if item index is used as ID.
+     * @param batchSize                      The batch size.
      * @param applicationManagedTransactions True if application manages transactions instead of container.
      * @param detachedEntities               True if entities are detached from PersistenceContext.
      * @param compositeItems                 True f items are wrapped to CompositeItems.
-     * @param entityClass                    The entity class.
-     * @param batchSize                      The batch size.
-     * @param idPropertyId                   The ID of the ID property or null if item index is used as ID.
-     * @param defaultSortPropertyIds          Properties participating in the native sort.
-     * @param defaultSortPropertyAscendingStates
-     *                                       List of property sort directions for the native sort.
      */
-    public EntityContainer(final EntityManager entityManager, final boolean applicationManagedTransactions,
-                           final boolean detachedEntities, final boolean compositeItems,
+    public EntityContainer(final EntityManager entityManager,
                            final Class<?> entityClass, final int batchSize, final Object idPropertyId,
-                           final Object[] defaultSortPropertyIds, final boolean[] defaultSortPropertyAscendingStates) {
-        super(new EntityQueryDefinition(entityManager, applicationManagedTransactions,
+                           final boolean applicationManagedTransactions,
+                           final boolean detachedEntities, final boolean compositeItems) {
+        super(new EntityQueryDefinition(applicationManagedTransactions,
                 detachedEntities, compositeItems,
                 entityClass, batchSize, idPropertyId),
-                new EntityQueryFactory());
-        getQueryView().getQueryDefinition().setDefaultSortState(
-                defaultSortPropertyIds, defaultSortPropertyAscendingStates);
+                new EntityQueryFactory(entityManager));
     }
 
     /**

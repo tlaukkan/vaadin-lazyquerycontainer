@@ -15,6 +15,7 @@
  */
 package org.vaadin.addons.lazyquerycontainer;
 
+import javax.persistence.EntityManager;
 import java.io.Serializable;
 
 /**
@@ -29,6 +30,26 @@ public final class EntityQueryFactory implements QueryFactory, Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
+     * The JPA EntityManager.
+     */
+    private final EntityManager entityManager;
+
+    /**
+     * Constructor which allows setting the entity manager.
+     * @param entityManager the entity manager
+     */
+    public EntityQueryFactory(final EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+
+    /**
+     * @return the entityManager
+     */
+    public EntityManager getEntityManager() {
+        return entityManager;
+    }
+
+    /**
      * Constructs a new query according to the given QueryDefinition.
      *
      * @param queryDefinition Properties participating in the sorting.
@@ -36,7 +57,7 @@ public final class EntityQueryFactory implements QueryFactory, Serializable {
      */
     @Override
     public Query constructQuery(final QueryDefinition queryDefinition) {
-        return new EntityQuery((EntityQueryDefinition) queryDefinition);
+        return new EntityQuery((EntityQueryDefinition) queryDefinition, entityManager);
     }
 
 }

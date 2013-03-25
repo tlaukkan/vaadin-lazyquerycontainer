@@ -15,8 +15,6 @@
  */
 package org.vaadin.addons.lazyquerycontainer;
 
-import javax.persistence.EntityManager;
-
 /**
  * Defines entity query definition to be used with JPA entity managers.
  *
@@ -27,10 +25,6 @@ public class EntityQueryDefinition extends LazyQueryDefinition {
      * Serial version UID for this class.
      */
     private static final long serialVersionUID = 1L;
-    /**
-     * The JPA EntityManager.
-     */
-    private final EntityManager entityManager;
     /**
      * Class of the persistent entity type.
      */
@@ -48,7 +42,6 @@ public class EntityQueryDefinition extends LazyQueryDefinition {
     /**
      * Constructor for configuring query definition.
      *
-     * @param entityManager                  The JPA EntityManager.
      * @param applicationManagedTransactions True if application manages transactions instead of container.
      * @param detachedEntities               True of entities are detached from PersistenceContext.
      * @param compositeItems                 True f items are wrapped to CompositeItems.
@@ -56,22 +49,14 @@ public class EntityQueryDefinition extends LazyQueryDefinition {
      * @param batchSize                      The batch size.
      * @param idPropertyId                   The ID of the ID property or null if item index is used as ID.
      */
-    public EntityQueryDefinition(final EntityManager entityManager, final boolean applicationManagedTransactions,
+    public EntityQueryDefinition(final boolean applicationManagedTransactions,
                                  final boolean detachedEntities, final boolean compositeItems,
                                  final Class<?> entityClass, final int batchSize,
                                  final Object idPropertyId) {
         super(compositeItems, batchSize, idPropertyId);
-        this.entityManager = entityManager;
         this.applicationManagedTransactions = applicationManagedTransactions;
         this.entityClass = entityClass;
         this.detachedEntities = detachedEntities;
-    }
-
-    /**
-     * @return the entityManager
-     */
-    public final EntityManager getEntityManager() {
-        return entityManager;
     }
 
     /**
