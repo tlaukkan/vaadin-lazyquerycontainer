@@ -417,7 +417,10 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
             queryDefinition.setSortPropertyIds(sortPropertyIds);
             queryDefinition.setSortPropertyAscendingStates(ascendingStates);
             query = queryFactory.constructQuery(queryDefinition);
-            querySize = getQuery().size();
+            querySize = query.size();
+            if (queryDefinition.getMaxQuerySize() > -1 && queryDefinition.getMaxQuerySize() < querySize) {
+                querySize = queryDefinition.getMaxQuerySize();
+            }
             queryCount++;
         }
         return query;

@@ -26,6 +26,13 @@ import java.util.List;
  * @author Tommi S.E. Laukkanen
  */
 public interface QueryDefinition {
+
+    /**
+     * Set the ID of the ID property or null if item index in result set is used as ID.
+     * @param idPropertyId The ID of the ID property or null if item index in result set is used as ID.
+     */
+    void setIdPropertyId(Object idPropertyId);
+
     /**
      * Gets the  ID of the ID property or null if item index in result set is used as ID.
      * @return The ID of the ID property or null if item index in result set is used as ID.
@@ -235,4 +242,16 @@ public interface QueryDefinition {
      * @param sortPropertyAscendingStates List of sort direction for the properties.
      */
     void setSortState(final Object[] sortPropertyIds, final boolean[] sortPropertyAscendingStates);
+
+    /**
+     * Gets the max query size.
+     * @return the max query size
+     */
+    int getMaxQuerySize();
+
+    /**
+     * Sets the max query size.
+     * @param maxQuerySize the max query size
+     */
+    void setMaxQuerySize(final int maxQuerySize);
 }

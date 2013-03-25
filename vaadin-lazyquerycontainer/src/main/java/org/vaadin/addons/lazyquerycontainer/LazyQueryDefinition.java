@@ -92,7 +92,11 @@ public class LazyQueryDefinition implements QueryDefinition, Serializable {
     /**
      * The ID of the ID property or null if item index in result set is used as ID.
      */
-    private final Object idPropertyId;
+    private Object idPropertyId;
+    /**
+     * The query max size.
+     */
+    private int maxQuerySize = -1;
 
     /**
      * Constructor which sets the batch size.
@@ -254,6 +258,15 @@ public class LazyQueryDefinition implements QueryDefinition, Serializable {
     }
 
     /**
+     * Set the ID of the ID property or null if item index in result set is used as ID.
+     * @param idPropertyId The ID of the ID property or null if item index in result set is used as ID.
+     */
+    @Override
+    public final void setIdPropertyId(final Object idPropertyId) {
+        this.idPropertyId = idPropertyId;
+    }
+
+    /**
      * Adds default filter to container.
      * @param filter the default filter to add
      */
@@ -405,5 +418,23 @@ public class LazyQueryDefinition implements QueryDefinition, Serializable {
         if (sortPropertyIds.length != sortPropertyAscendingStates.length) {
             throw new InvalidParameterException("Sort state arrays need to have same length.");
         }
+    }
+
+    /**
+     * Gets the max query size.
+     * @return the max query size
+     */
+    @Override
+    public final int getMaxQuerySize() {
+        return maxQuerySize;
+    }
+
+    /**
+     * Sets the max query size.
+     * @param maxQuerySize the max query size
+     */
+    @Override
+    public final void setMaxQuerySize(final int maxQuerySize) {
+        this.maxQuerySize = maxQuerySize;
     }
 }
