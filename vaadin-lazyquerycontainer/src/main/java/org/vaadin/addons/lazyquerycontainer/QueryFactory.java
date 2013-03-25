@@ -22,7 +22,7 @@ package org.vaadin.addons.lazyquerycontainer;
  */
 public interface QueryFactory {
     /**
-     * Constructs a new query according to the given QueryDefinition
+     * Constructs a new query according to the given QueryDefinition.
      *
      * @param queryDefinition Properties participating in the sorting.
      * @return A new query constructed according to the given sort state.

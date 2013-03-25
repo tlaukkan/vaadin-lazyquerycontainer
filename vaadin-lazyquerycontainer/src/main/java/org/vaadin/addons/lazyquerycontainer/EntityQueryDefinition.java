@@ -16,8 +16,6 @@
 package org.vaadin.addons.lazyquerycontainer;
 
 import javax.persistence.EntityManager;
-import java.security.InvalidParameterException;
-import java.util.Map;
 
 /**
  * Defines entity query definition to be used with JPA entity managers.
@@ -37,14 +35,6 @@ public class EntityQueryDefinition extends LazyQueryDefinition {
      * Class of the persistent entity type.
      */
     private Class<?> entityClass;
-    /**
-     * The where criteria excluding where keyword.
-     */
-    private String whereCriteria;
-    /**
-     * The where parameters to set to JPA query.
-     */
-    private Map<String, Object> whereParameters;
     /**
      * True if entities are detached from PersistenceContext.
      */
@@ -78,17 +68,6 @@ public class EntityQueryDefinition extends LazyQueryDefinition {
     }
 
     /**
-     * Sets the where criteria. Where keyword is not to be included.
-     *
-     * @param whereCriteria   the where criteria to be included in JPA query.
-     * @param whereParameters the where parameters to set to JPA query.
-     */
-    public final void setWhereCriteria(final String whereCriteria, final Map<String, Object> whereParameters) {
-        this.whereCriteria = whereCriteria;
-        this.whereParameters = whereParameters;
-    }
-
-    /**
      * @return the entityManager
      */
     public final EntityManager getEntityManager() {
@@ -118,123 +97,4 @@ public class EntityQueryDefinition extends LazyQueryDefinition {
         return entityClass;
     }
 
-    /**
-     * Method which generates and returns entity PSQLs based
-     * on query definition parameters.
-     *
-     * @return the generated EntitySelectDefinition.
-     */
-    public final EntityPsqlDefinition getEntityPsqlDefinition() {
-        final StringBuilder fromBuilder = new StringBuilder(" from ");
-        fromBuilder.append(entityClass.getSimpleName());
-        fromBuilder.append(" as e");
-        final StringBuilder whereBuilder = new StringBuilder(" where ");
-        whereBuilder.append(whereCriteria);
-        final StringBuilder orderByBuilder = new StringBuilder(" order by");
-        if (getSortPropertyIds().length == 0) {
-            setSortPropertyIds(getDefaultSortPropertyIds());
-            setSortPropertyAscendingStates(getDefaultSortPropertyAscendingStates());
-        }
-        for (int i = 0; i < getSortPropertyIds().length; i++) {
-            if (i != 0) {
-                orderByBuilder.append(",");
-            }
-            orderByBuilder.append(" e.");
-            orderByBuilder.append(getSortPropertyIds()[i]);
-            if (getSortPropertyAscendingStates()[i]) {
-                orderByBuilder.append(" asc");
-            } else {
-                orderByBuilder.append(" desc");
-            }
-        }
-
-        final StringBuilder selectBuilder = new StringBuilder("select e");
-        selectBuilder.append(fromBuilder.toString());
-        if (whereCriteria != null && whereCriteria.length() != 0) {
-            selectBuilder.append(whereBuilder.toString());
-        }
-        selectBuilder.append(orderByBuilder.toString());
-
-        final StringBuilder selectCountBuilder = new StringBuilder("select count(e)");
-        selectCountBuilder.append(fromBuilder.toString());
-        if (whereCriteria != null && whereCriteria.length() != 0) {
-            selectCountBuilder.append(whereBuilder.toString());
-        }
-
-        final StringBuilder deleteBuilder = new StringBuilder("delete");
-        deleteBuilder.append(fromBuilder.toString());
-        if (whereCriteria != null && whereCriteria.length() != 0) {
-            deleteBuilder.append(whereBuilder.toString());
-        }
-
-        return new EntityPsqlDefinition(selectBuilder.toString(), selectCountBuilder.toString(),
-                deleteBuilder.toString());
-    }
-
-    /**
-     * @return the whereParameters
-     */
-    public final Map<String, Object> getWhereParameters() {
-        if (whereCriteria != null && whereCriteria.length() != 0) {
-            return whereParameters;
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Java bean which contains the entity select and delete PSQLs.
-     *
-     * @author Tommi Laukkanen
-     */
-    public final class EntityPsqlDefinition {
-        /**
-         * The PSQL for selecting entities.
-         */
-        private String selectPsql;
-        /**
-         * The PSQL for selecting count of entities.
-         */
-        private String selectCountPsql;
-        /**
-         * The PSQL for deleting entities.
-         */
-        private String deletePsql;
-
-        /**
-         * Constructor which initializes entity select definition.
-         *
-         * @param selectPsql      The PSQL for selecting entities.
-         * @param selectCountPsql The PSQL for selecting count of entities.
-         * @param deletePsql      The PSQL for deleting entities.
-         */
-        public EntityPsqlDefinition(final String selectPsql, final String selectCountPsql,
-                                    final String deletePsql) {
-            super();
-            this.selectPsql = selectPsql;
-            this.selectCountPsql = selectCountPsql;
-            this.deletePsql = deletePsql;
-        }
-
-        /**
-         * @return the selectPsql
-         */
-        public String getSelectPsql() {
-            return selectPsql;
-        }
-
-        /**
-         * @return the selectCountPsql
-         */
-        public String getSelectCountPsql() {
-            return selectCountPsql;
-        }
-
-        /**
-         * @return the deletePsql
-         */
-        public String getDeletePsql() {
-            return deletePsql;
-        }
-    }
 }

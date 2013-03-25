@@ -303,7 +303,7 @@ public class LazyQueryDefinition implements QueryDefinition, Serializable {
     /**
      * Clears filters from container.
      */
-    public final void removeFilter() {
+    public final void removeFilters() {
         filters.clear();
     }
 

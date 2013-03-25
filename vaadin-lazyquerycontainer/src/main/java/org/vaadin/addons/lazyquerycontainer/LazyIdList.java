@@ -16,7 +16,6 @@
 package org.vaadin.addons.lazyquerycontainer;
 
 import com.vaadin.data.Item;
-import sun.util.LocaleServiceProviderPool;
 
 import java.util.AbstractList;
 import java.util.HashMap;

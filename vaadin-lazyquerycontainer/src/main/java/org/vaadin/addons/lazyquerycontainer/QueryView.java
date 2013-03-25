@@ -15,6 +15,7 @@
  */
 package org.vaadin.addons.lazyquerycontainer;
 
+import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 
 import java.util.List;
@@ -134,4 +135,20 @@ public interface QueryView {
      */
     List<Item> getRemovedItems();
 
+    /**
+     * Adds filter to container.
+     * @param filter the default filter to add
+     */
+    void addFilter(final Container.Filter filter);
+
+    /**
+     * Removes filter to container.
+     * @param filter the default filter to add
+     */
+    void removeFilter(final Container.Filter filter);
+
+    /**
+     * Clears filters from container.
+     */
+    void removeFilters();
 }

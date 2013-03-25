@@ -17,6 +17,8 @@ package org.vaadin.addons.lazyquerycontainer.test;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.util.BeanItem;
+import com.vaadin.data.util.filter.And;
+import com.vaadin.data.util.filter.Compare;
 import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;
@@ -116,15 +118,18 @@ public class EntityContainerAttachedEntitiesTest {
         Assert.assertEquals("Verify entity alpha is same", taskAlpha, entityContainer.getEntity(1));
         Assert.assertEquals("Verify entity beta is same", taskBeta, entityContainer.getEntity(0));
 
-        final Map<String, Object> whereParameters = new HashMap<String, Object>();
+        /*final Map<String, Object> whereParameters = new HashMap<String, Object>();
         whereParameters.put("name", "alpha");
         whereParameters.put("assignee", "assignee-alpha");
-        entityContainer.filter("e.name=:name and e.assignee=:assignee", whereParameters);
+        entityContainer.filter("e.name=:name and e.assignee=:assignee", whereParameters);*/
+
+        entityContainer.addContainerFilter(
+                new And(new Compare.Equal("name", "alpha"), new Compare.Equal("assignee", "assignee-alpha")));
 
         Assert.assertEquals("Verify entity alpha is in container", 1, entityContainer.size());
         Assert.assertEquals("Verify entity alpha is same", taskAlpha, entityContainer.getEntity(0));
 
-        entityContainer.filter(null, null);
+        entityContainer.removeAllContainerFilters();
 
         Assert.assertEquals("Verify entity alpha and beta are in container", 2, entityContainer.size());
         Assert.assertEquals("Verify entity alpha is same", taskAlpha, entityContainer.getEntity(1));

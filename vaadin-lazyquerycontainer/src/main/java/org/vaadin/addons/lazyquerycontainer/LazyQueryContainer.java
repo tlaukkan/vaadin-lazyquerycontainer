@@ -24,7 +24,6 @@ import com.vaadin.data.Container.Sortable;
 import com.vaadin.data.ContainerHelpers;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
-import com.vaadin.data.util.filter.UnsupportedFilterException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -405,7 +404,7 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
     }
 
     @Override
-    public void removeItemSetChangeListener(final ItemSetChangeListener listener) {
+    public final void removeItemSetChangeListener(final ItemSetChangeListener listener) {
         itemSetChangeListeners.remove(listener);
     }
 
@@ -438,12 +437,12 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
     }
 
     @Override
-    public void addItemSetChangeListener(final ItemSetChangeListener listener) {
+    public final void addItemSetChangeListener(final ItemSetChangeListener listener) {
         itemSetChangeListeners.add(listener);
     }
 
     @Override
-    public void addPropertySetChangeListener(final PropertySetChangeListener listener) {
+    public final void addPropertySetChangeListener(final PropertySetChangeListener listener) {
         propertySetChangeListeners.add(listener);
     }
 
@@ -458,7 +457,7 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
     }
 
     @Override
-    public void removePropertySetChangeListener(final PropertySetChangeListener listener) {
+    public final void removePropertySetChangeListener(final PropertySetChangeListener listener) {
         propertySetChangeListeners.remove(listener);
     }
 
@@ -473,18 +472,18 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
     }
 
     @Override
-    public void addContainerFilter(final Filter filter) throws UnsupportedFilterException {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public final void addContainerFilter(final Filter filter) {
+        getQueryView().addFilter(filter);
     }
 
     @Override
-    public void removeContainerFilter(final Filter filter) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public final void removeContainerFilter(final Filter filter) {
+        getQueryView().removeFilter(filter);
     }
 
     @Override
-    public void removeAllContainerFilters() {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public final void removeAllContainerFilters() {
+        getQueryView().removeFilters();
     }
 
     /**
@@ -588,17 +587,17 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
     }
 
     @Override
-    public void setBuffered(final boolean buffered) {
+    public final void setBuffered(final boolean buffered) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public boolean isBuffered() {
+    public final boolean isBuffered() {
         return true;
     }
 
     @Override
-    public List<?> getItemIds(final int startIndex, final int numberOfItems) {
+    public final List<?> getItemIds(final int startIndex, final int numberOfItems) {
         return ContainerHelpers.getItemIdsUsingGetIdByIndex(startIndex, numberOfItems, this);
     }
 

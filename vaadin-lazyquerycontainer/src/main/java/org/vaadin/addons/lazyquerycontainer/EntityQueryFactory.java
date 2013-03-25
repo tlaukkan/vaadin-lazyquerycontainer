@@ -29,7 +29,7 @@ public final class EntityQueryFactory implements QueryFactory, Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Constructs a new query according to the given QueryDefinition
+     * Constructs a new query according to the given QueryDefinition.
      *
      * @param queryDefinition Properties participating in the sorting.
      * @return A new query constructed according to the given sort state.

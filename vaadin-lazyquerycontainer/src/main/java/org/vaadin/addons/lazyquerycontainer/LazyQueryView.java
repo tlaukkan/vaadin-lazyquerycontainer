@@ -15,6 +15,7 @@
  */
 package org.vaadin.addons.lazyquerycontainer;
 
+import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
@@ -626,5 +627,23 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
         }
 
         return itemIdList;
+    }
+
+    @Override
+    public void addFilter(final Container.Filter filter) {
+        queryDefinition.addFilter(filter);
+        refresh();
+    }
+
+    @Override
+    public void removeFilter(final Container.Filter filter) {
+        queryDefinition.removeFilter(filter);
+        refresh();
+    }
+
+    @Override
+    public void removeFilters() {
+        queryDefinition.removeFilters();
+        refresh();
     }
 }

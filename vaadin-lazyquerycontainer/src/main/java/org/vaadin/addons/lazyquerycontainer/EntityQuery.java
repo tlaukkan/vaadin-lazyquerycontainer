@@ -15,26 +15,42 @@
  */
 package org.vaadin.addons.lazyquerycontainer;
 
+import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.ObjectProperty;
+import com.vaadin.data.util.filter.And;
+import com.vaadin.data.util.filter.Between;
+import com.vaadin.data.util.filter.Compare;
+import com.vaadin.data.util.filter.IsNull;
+import com.vaadin.data.util.filter.Like;
+import com.vaadin.data.util.filter.Or;
+import com.vaadin.data.util.filter.Not;
+import com.vaadin.data.util.filter.SimpleStringFilter;
 
 import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Entity query implementation which dynamically injects missing query
  * definition properties to CompositeItems.
  *
+ * @param <E> the entity type
+ *
  * @author Tommi S.E. Laukkanen
  */
-public class EntityQuery implements Query, Serializable {
+public class EntityQuery<E> implements Query, Serializable {
     /**
      * Java serialization version UID.
      */
@@ -50,23 +66,7 @@ public class EntityQuery implements Query, Serializable {
     /**
      * The JPA entity class.
      */
-    private final Class<?> entityClass;
-    /**
-     * The JPA select query.
-     */
-    private final String selectPsql;
-    /**
-     * The JPA select count query.
-     */
-    private final String selectCountPsql;
-    /**
-     * The PSQL for deleting entities.
-     */
-    private final String deletePsql;
-    /**
-     * The parameters to set to JPA query.
-     */
-    private final Map<String, Object> selectParameters;
+    private final Class<E> entityClass;
     /**
      * QueryDefinition contains definition of the query properties and batch
      * size.
@@ -76,10 +76,6 @@ public class EntityQuery implements Query, Serializable {
      * The size of the query.
      */
     private int querySize = -1;
-    /**
-     * The entity PSQL definition.
-     */
-    private final EntityQueryDefinition.EntityPsqlDefinition entityPsqlDefinition;
 
     /**
      * Constructor for configuring the query.
@@ -87,14 +83,9 @@ public class EntityQuery implements Query, Serializable {
      * @param entityQueryDefinition The entity query definition.
      */
     public EntityQuery(final EntityQueryDefinition entityQueryDefinition) {
-        this.entityPsqlDefinition = entityQueryDefinition.getEntityPsqlDefinition();
         this.entityManager = entityQueryDefinition.getEntityManager();
         this.queryDefinition = entityQueryDefinition;
-        this.entityClass = entityQueryDefinition.getEntityClass();
-        this.selectPsql = entityPsqlDefinition.getSelectPsql();
-        this.selectCountPsql = entityPsqlDefinition.getSelectCountPsql();
-        this.deletePsql = entityPsqlDefinition.getDeletePsql();
-        this.selectParameters = entityQueryDefinition.getWhereParameters();
+        this.entityClass = (Class<E>) entityQueryDefinition.getEntityClass();
         this.applicationTransactionManagement = entityQueryDefinition.isApplicationManagedTransactions();
     }
 
@@ -128,13 +119,20 @@ public class EntityQuery implements Query, Serializable {
      */
     @Override
     public int size() {
+
         if (querySize == -1) {
-            final javax.persistence.Query query = entityManager.createQuery(selectCountPsql);
-            if (selectParameters != null) {
-                for (final String parameterKey : selectParameters.keySet()) {
-                    query.setParameter(parameterKey, selectParameters.get(parameterKey));
-                }
-            }
+            final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            final CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+            final Root<E> root = cq.from(entityClass);
+
+            cq.select(cb.count(root));
+
+            setWhereCriteria(cb, cq, root);
+
+            //setOrderClause(cb, cq, root);
+
+            final javax.persistence.Query query = entityManager.createQuery(cq);
+
             querySize = ((Number) query.getSingleResult()).intValue();
         }
         return querySize;
@@ -149,12 +147,19 @@ public class EntityQuery implements Query, Serializable {
      */
     @Override
     public List<Item> loadItems(final int startIndex, final int count) {
-        final javax.persistence.Query query = entityManager.createQuery(selectPsql);
-        if (selectParameters != null) {
-            for (final String parameterKey : selectParameters.keySet()) {
-                query.setParameter(parameterKey, selectParameters.get(parameterKey));
-            }
-        }
+
+        final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<E> cq = cb.createQuery(entityClass);
+        final Root<E> root = cq.from(entityClass);
+
+        cq.select(root);
+
+        setWhereCriteria(cb, cq, root);
+
+        setOrderClause(cb, cq, root);
+
+        final javax.persistence.TypedQuery<E> query = entityManager.createQuery(cq);
+
         query.setFirstResult(startIndex);
         query.setMaxResults(count);
 
@@ -168,6 +173,160 @@ public class EntityQuery implements Query, Serializable {
         }
 
         return items;
+    }
+
+    /**
+     * Sets where criteria of JPA 2.0 Criteria API query according to Vaadin filters.
+     * @param cb the CriteriaBuilder
+     * @param cq the CriteriaQuery
+     * @param root the root
+     * @param <SE> the selected entity
+     */
+    private <SE> void setWhereCriteria(final CriteriaBuilder cb, final CriteriaQuery<SE> cq, final Root<E> root) {
+        final List<Container.Filter> filters = new ArrayList<>();
+        filters.addAll(queryDefinition.getDefaultFilters());
+        filters.addAll(queryDefinition.getFilters());
+
+        final Object[] sortPropertyIds;
+        final boolean[] sortPropertyAscendingStates;
+
+        Container.Filter rootFilter;
+        if (filters.size() > 0) {
+            rootFilter = filters.remove(0);
+        } else {
+            rootFilter = null;
+        }
+        while (filters.size() > 0) {
+            final Container.Filter filter = filters.remove(0);
+            rootFilter = new And(rootFilter, filter);
+        }
+
+        if (rootFilter != null) {
+            cq.where(setFilter(rootFilter, cb, cq, root));
+        }
+    }
+
+    /**
+     * Sets order clause of JPA 2.0 Criteria API query according to Vaadin sort states.
+     * @param cb the CriteriaBuilder
+     * @param cq the CriteriaQuery
+     * @param root the root
+     * @param <SE> the selected entity
+     */
+    private <SE> void setOrderClause(final CriteriaBuilder cb, final CriteriaQuery<SE> cq, final Root<E> root) {
+        Object[] sortPropertyIds;
+        boolean[] sortPropertyAscendingStates;
+
+        if (queryDefinition.getSortPropertyIds().length == 0) {
+            sortPropertyIds = queryDefinition.getDefaultSortPropertyIds();
+            sortPropertyAscendingStates = queryDefinition.getDefaultSortPropertyAscendingStates();
+        } else {
+            sortPropertyIds = queryDefinition.getSortPropertyIds();
+            sortPropertyAscendingStates = queryDefinition.getSortPropertyAscendingStates();
+        }
+
+        if (sortPropertyIds.length > 0) {
+            final List<Order> orders = new ArrayList<>();
+            for (int i = 0; i < sortPropertyIds.length; i++) {
+                if (sortPropertyAscendingStates[i]) {
+                    orders.add(cb.asc(root.get((String) sortPropertyIds[i])));
+                } else {
+                    orders.add(cb.desc(root.get((String) sortPropertyIds[i])));
+                }
+            }
+            cq.orderBy(orders);
+        }
+    }
+
+    /**
+     * Implements conversion of Vaadin filter to JPA 2.0 Criteria API based predicate.
+     * Supports the following operations:
+     *
+     * And, Between, Compare, Compare.Equal, Compare.Greater, Compare.GreaterOrEqual,
+     * Compare.Less, Compare.LessOrEqual, IsNull, Like, Not, Or, SimpleStringFilter
+     *
+     * @param filter the Vaadin filter
+     * @param cb the CriteriaBuilder
+     * @param cq the CriteriaQuery
+     * @param root the root
+     * @return the predicate
+     */
+    private Predicate setFilter(final Container.Filter filter, final CriteriaBuilder cb,
+                                final CriteriaQuery<?> cq, final Root<?> root) {
+        if (filter instanceof And) {
+            final And and = (And) filter;
+            final List<Container.Filter> filters = new ArrayList<>(and.getFilters());
+
+            Predicate predicate = cb.and(setFilter(filters.remove(0), cb, cq, root),
+                    setFilter(filters.remove(0), cb, cq, root));
+
+            while (filters.size() > 0) {
+                predicate = cb.and(predicate, setFilter(filters.remove(0), cb, cq, root));
+            }
+
+            return predicate;
+        }
+
+        if (filter instanceof Or) {
+            final Or or = (Or) filter;
+            final List<Container.Filter> filters = new ArrayList<>(or.getFilters());
+
+            Predicate predicate = cb.or(setFilter(filters.remove(0), cb, cq, root),
+                    setFilter(filters.remove(1), cb, cq, root));
+
+            while (filters.size() > 0) {
+                predicate = cb.or(predicate, setFilter(filters.remove(0), cb, cq, root));
+            }
+
+            return predicate;
+        }
+
+        if (filter instanceof Not) {
+            final Not not = (Not) filter;
+            return cb.not(setFilter(not.getFilter(), cb, cq, root));
+        }
+
+        if (filter instanceof Between) {
+            final Between between = (Between) filter;
+            final Expression property = (Expression) root.get((String) between.getPropertyId());
+            return cb.between(property, (Comparable) between.getEndValue(), (Comparable) between.getEndValue());
+        }
+
+        if (filter instanceof Compare) {
+            final Compare compare = (Compare) filter;
+            final Expression<Comparable> property = (Expression) root.get((String) compare.getPropertyId());
+            switch (compare.getOperation()) {
+                case EQUAL:
+                    return cb.equal(property, compare.getValue());
+                case GREATER:
+                    return cb.greaterThan(property, (Comparable) compare.getValue());
+                case GREATER_OR_EQUAL:
+                    return cb.greaterThanOrEqualTo(property, (Comparable) compare.getValue());
+                case LESS:
+                    return cb.lessThan(property, (Comparable) compare.getValue());
+                case LESS_OR_EQUAL:
+                    return cb.lessThanOrEqualTo(property, (Comparable) compare.getValue());
+                default:
+            }
+        }
+
+        if (filter instanceof IsNull) {
+            final IsNull isNull = (IsNull) filter;
+            return cb.isNull((Expression) root.get((String) isNull.getPropertyId()));
+        }
+
+        if (filter instanceof Like) {
+            final Like like = (Like) filter;
+            return cb.like((Expression) root.get((String) like.getPropertyId()), like.getValue());
+        }
+
+        if (filter instanceof SimpleStringFilter) {
+            final SimpleStringFilter simpleStringFilter = (SimpleStringFilter) filter;
+            return cb.like((Expression) root.get((String) simpleStringFilter.getPropertyId()), "%"
+                    + simpleStringFilter.getFilterString() + "%");
+        }
+
+        throw new UnsupportedOperationException("Vaadin filter: " + filter.getClass().getName() + " is not supported.");
     }
 
     /**
@@ -233,7 +392,23 @@ public class EntityQuery implements Query, Serializable {
             entityManager.getTransaction().begin();
         }
         try {
-            entityManager.createQuery(deletePsql).executeUpdate();
+            final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            final CriteriaQuery<E> cq = cb.createQuery(entityClass);
+            final Root<E> root = cq.from(entityClass);
+
+            cq.select(root);
+
+            setWhereCriteria(cb, cq, root);
+
+            setOrderClause(cb, cq, root);
+
+            final javax.persistence.TypedQuery<E> query = entityManager.createQuery(cq);
+
+            final List<?> entities = query.getResultList();
+            for (final Object entity : entities) {
+                entityManager.remove(entity);
+            }
+
             if (applicationTransactionManagement) {
                 entityManager.getTransaction().commit();
             }
@@ -299,10 +474,4 @@ public class EntityQuery implements Query, Serializable {
         return queryDefinition;
     }
 
-    /**
-     * @return the entityPsqlDefinition
-     */
-    protected final EntityQueryDefinition.EntityPsqlDefinition getEntityPsqlDefinition() {
-        return entityPsqlDefinition;
-    }
 }

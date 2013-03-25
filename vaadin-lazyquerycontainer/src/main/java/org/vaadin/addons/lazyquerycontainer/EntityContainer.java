@@ -18,8 +18,6 @@ package org.vaadin.addons.lazyquerycontainer;
 import com.vaadin.data.util.BeanItem;
 
 import javax.persistence.EntityManager;
-import java.util.Map;
-
 /**
  * EntityContainer enables using JPA entities with lazy batch loading, filter, sort
  * and buffered writes.
@@ -57,22 +55,6 @@ public final class EntityContainer<T> extends LazyQueryContainer {
                 new EntityQueryFactory());
         getQueryView().getQueryDefinition().setDefaultSortState(
                 defaultSortPropertyIds, defaultSortPropertyAscendingStates);
-    }
-
-    /**
-     * Filters the container content by setting JPQL where criteria.  The entity expression
-     * in generated JPQL queries is "e". Where keyword is not to be included. Refresh of container
-     * is automatically invoked after this method is called.
-     * Example:
-     * whereCriteria = "beginDate<=:beginDate";
-     * whereParameters.put("e.beginDate", new Date());
-     *
-     * @param whereCriteria   the where criteria to be included in JPA query or null to clear.
-     * @param whereParameters the where parameters to set to JPA query or null to clear.
-     */
-    public void filter(final String whereCriteria, final Map<String, Object> whereParameters) {
-        ((EntityQueryDefinition) getQueryView().getQueryDefinition()).setWhereCriteria(whereCriteria, whereParameters);
-        refresh();
     }
 
     /**

@@ -164,7 +164,7 @@ public interface QueryDefinition {
     /**
      * Clears filters from container.
      */
-    void removeFilter();
+    void removeFilters();
 
     /**
      * Gets filters.

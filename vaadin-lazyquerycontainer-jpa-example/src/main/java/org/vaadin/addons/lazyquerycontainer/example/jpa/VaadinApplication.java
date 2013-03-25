@@ -1,6 +1,9 @@
 package org.vaadin.addons.lazyquerycontainer.example.jpa;
 
+import com.sun.org.apache.xpath.internal.operations.Equals;
 import com.vaadin.annotations.Title;
+import com.vaadin.data.Container;
+import com.vaadin.data.util.filter.Compare;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.shared.ui.MultiSelectMode;
 import com.vaadin.ui.Button;
@@ -235,12 +238,12 @@ public class VaadinApplication extends UI implements ClickListener {
         if (event.getButton() == refreshButton) {
             final String nameFilter = nameFilterField.getValue();
             if (nameFilter != null && nameFilter.length() != 0) {
-                final Map<String, Object> whereParameters = new HashMap<String, Object>();
-                whereParameters.put("name", nameFilter);
-                entityContainer.filter("e.name=:name", whereParameters);
+                entityContainer.removeAllContainerFilters();
+                entityContainer.addContainerFilter(new Compare.Equal("name", nameFilter));
             } else {
-                entityContainer.filter(null, null);
+                entityContainer.removeAllContainerFilters();
             }
+            entityContainer.refresh();
         }
         if (event.getButton() == editButton) {
             setEditMode(true);
@@ -270,7 +273,7 @@ public class VaadinApplication extends UI implements ClickListener {
             if (selection instanceof Collection) {
                 final Collection selectionIndexes = (Collection) selection;
                 for (final Object selectedIndex : selectionIndexes) {
-                    entityContainer.removeItem((Integer) selectedIndex);
+                    entityContainer.removeItem(selectedIndex);
                 }
             }
         }
