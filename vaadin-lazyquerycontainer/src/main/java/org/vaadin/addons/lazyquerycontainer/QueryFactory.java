@@ -22,18 +22,10 @@ package org.vaadin.addons.lazyquerycontainer;
  */
 public interface QueryFactory {
     /**
-     * Gets the definition of properties to be queried.
+     * Constructs a new query according to the given QueryDefinition
      *
-     * @param queryDefinition The query definition.
-     */
-    void setQueryDefinition(QueryDefinition queryDefinition);
-
-    /**
-     * Constructs a new query according to the given sort state.
-     *
-     * @param sortPropertyIds Properties participating in the sorting.
-     * @param sortStates      List of sort order for the properties. True corresponds ascending and false descending.
+     * @param queryDefinition Properties participating in the sorting.
      * @return A new query constructed according to the given sort state.
      */
-    Query constructQuery(Object[] sortPropertyIds, boolean[] sortStates);
+    Query constructQuery(QueryDefinition queryDefinition);
 }

@@ -55,6 +55,7 @@ public class LazyQueryContainerTest extends TestCase implements ItemSetChangeLis
                 true, false);
 
         MockQueryFactory factory = new MockQueryFactory(viewSize, 0, 0);
+        factory.setQueryDefinition(definition);
         QueryView view = new LazyQueryView(definition, factory);
         container = new LazyQueryContainer(view);
         container.addListener((ItemSetChangeListener) this);

@@ -84,8 +84,10 @@ public class EntityContainerDetachedEntitiesPropertyIdsTest {
      */
     @Test
     public final void testEntityContainer() {
-        final EntityContainer<Task> entityContainer = new EntityContainer<Task>(entityManager, true, true, true, Task.class,
+        final EntityContainer<Task> entityContainer = new EntityContainer<Task>(entityManager, true, true, true,
+                Task.class,
                 ENTITY_CONTAINER_BATCH_SIZE, "taskId", new String[]{"name"}, new boolean[]{true});
+
 
         final Task taskAlpha = entityContainer.addEntity();
         taskAlpha.setName("alpha");
@@ -168,19 +170,6 @@ public class EntityContainerDetachedEntitiesPropertyIdsTest {
 
         entityContainer.removeAllItems();
         Assert.assertEquals("Verify container is empty after remove all.", 0, entityContainer.size());
-    }
-
-    /**
-     * Test missing native sort.
-     */
-    @Test(expected = InvalidParameterException.class)
-    public final void testMissingNativeSort() {
-        final EntityManagerFactory entityManagerFactory = Persistence
-                .createEntityManagerFactory("vaadin-lazyquerycontainer-test");
-        final EntityManager entityManager = entityManagerFactory
-                .createEntityManager();
-        new EntityContainer<Task>(entityManager, true, true, true, Task.class, ENTITY_CONTAINER_BATCH_SIZE,
-                "taskId", new String[]{}, new boolean[]{});
     }
 
     /**

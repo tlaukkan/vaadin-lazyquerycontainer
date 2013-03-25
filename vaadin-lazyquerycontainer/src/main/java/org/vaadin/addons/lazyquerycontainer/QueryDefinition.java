@@ -15,7 +15,10 @@
  */
 package org.vaadin.addons.lazyquerycontainer;
 
+import com.vaadin.data.Container;
+
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Interface for defining properties for a query.
@@ -122,4 +125,114 @@ public interface QueryDefinition {
      * @param compositeItems the compositeItems to set
      */
     void setCompositeItems(final boolean compositeItems);
+
+    /**
+     * Adds default filter to container.
+     * @param filter the default filter to add
+     */
+    void addDefaultFilter(final Container.Filter filter);
+
+    /**
+     * Removes default filter to container.
+     * @param filter the default filter to add
+     */
+    void removeDefaultFilter(final Container.Filter filter);
+
+    /**
+     * Clears default filters from container.
+     */
+    void removeDefaultFilters();
+
+    /**
+     * Gets default filters.
+     * @return the default filters.
+     */
+    List<Container.Filter> getDefaultFilters();
+
+    /**
+     * Adds filter to container.
+     * @param filter the default filter to add
+     */
+    void addFilter(final Container.Filter filter);
+
+    /**
+     * Removes filter to container.
+     * @param filter the default filter to add
+     */
+    void removeFilter(final Container.Filter filter);
+
+    /**
+     * Clears filters from container.
+     */
+    void removeFilter();
+
+    /**
+     * Gets filters.
+     * @return the filters.
+     */
+    List<Container.Filter> getFilters();
+
+    /**
+     * Gets the default sort property IDs.
+     * @return the default sort property IDs
+     */
+    Object[] getDefaultSortPropertyIds();
+
+    /**
+     * Sets the default sort propertyIDs.
+     * @param defaultSortPropertyIds the default sort property IDs
+     */
+    void setDefaultSortPropertyIds(final Object[] defaultSortPropertyIds);
+
+    /**
+     * Gets default sort property ascending states.
+     * @return the default sort property ascending states
+     */
+    boolean[] getDefaultSortPropertyAscendingStates();
+
+    /**
+     * Sets default sort property ascending states.
+     * @param defaultSortPropertyAscendingStates the default sort property ascending states.
+     */
+    void setDefaultSortPropertyAscendingStates(final boolean[] defaultSortPropertyAscendingStates);
+
+    /**
+     * Gets sort property IDs.
+     * @return the sort property IDs
+     */
+    Object[] getSortPropertyIds();
+
+    /**
+     * Sets sort property IDs.
+     * @param sortPropertyIds the sort property IDs
+     */
+    void setSortPropertyIds(final Object[] sortPropertyIds);
+
+    /**
+     * Gets sort property ascending states.
+     * @return the sort property ascending states
+     */
+    boolean[] getSortPropertyAscendingStates();
+
+    /**
+     * Sets sort property ascending states.
+     * @param sortPropertyAscendingStates the sort property ascending states.
+     */
+    void setSortPropertyAscendingStates(final boolean[] sortPropertyAscendingStates);
+
+    /**
+     * Sets the default sort state.
+     *
+     * @param sortPropertyIds             Properties participating in the sorting.
+     * @param sortPropertyAscendingStates List of sort direction for the properties.
+     */
+    void setDefaultSortState(final Object[] sortPropertyIds, final boolean[] sortPropertyAscendingStates);
+
+    /**
+     * Sets the sort state.
+     *
+     * @param sortPropertyIds             Properties participating in the sorting.
+     * @param sortPropertyAscendingStates List of sort direction for the properties.
+     */
+    void setSortState(final Object[] sortPropertyIds, final boolean[] sortPropertyAscendingStates);
 }

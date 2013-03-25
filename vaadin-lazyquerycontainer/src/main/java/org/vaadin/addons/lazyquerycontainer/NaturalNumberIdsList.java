@@ -24,7 +24,7 @@ import java.util.RandomAccess;
  *
  * @author HRE@github.com, Tommi Laukkanen
  */
-public final class NaturalNumbersList extends AbstractList<Integer> implements
+public final class NaturalNumberIdsList extends AbstractList<Integer> implements
         RandomAccess, java.io.Serializable {
     /**
      * Java serialization version UID.
@@ -44,7 +44,7 @@ public final class NaturalNumbersList extends AbstractList<Integer> implements
      *
      * @param size Size of the constructed list.
      */
-    public NaturalNumbersList(final int size) {
+    public NaturalNumberIdsList(final int size) {
         this.size = size;
     }
 

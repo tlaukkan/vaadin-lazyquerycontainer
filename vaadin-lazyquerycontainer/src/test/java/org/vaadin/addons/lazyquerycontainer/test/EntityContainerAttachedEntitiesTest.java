@@ -177,19 +177,6 @@ public class EntityContainerAttachedEntitiesTest {
     }
 
     /**
-     * Test missing native sort.
-     */
-    @Test(expected = InvalidParameterException.class)
-    public final void testMissingNativeSort() {
-        final EntityManagerFactory entityManagerFactory = Persistence
-                .createEntityManagerFactory("vaadin-lazyquerycontainer-test");
-        final EntityManager entityManager = entityManagerFactory
-                .createEntityManager();
-        new EntityContainer<Task>(entityManager, true, false, true, Task.class, ENTITY_CONTAINER_BATCH_SIZE,
-                null, new String[]{}, new boolean[]{});
-    }
-
-    /**
      * Test invalid number or native sort states.
      */
     @Test(expected = InvalidParameterException.class)

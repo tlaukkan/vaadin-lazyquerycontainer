@@ -27,33 +27,16 @@ public final class EntityQueryFactory implements QueryFactory, Serializable {
      * Java serialization version UID.
      */
     private static final long serialVersionUID = 1L;
-    /**
-     * The query definition.
-     */
-    private EntityQueryDefinition entityQueryDefinition;
 
     /**
-     * Gets the definition of properties to be queried.
+     * Constructs a new query according to the given QueryDefinition
      *
-     * @param queryDefinition The query definition.
-     */
-    @Override
-    public void setQueryDefinition(final QueryDefinition queryDefinition) {
-        entityQueryDefinition = (EntityQueryDefinition) queryDefinition;
-    }
-
-    /**
-     * Constructs a new query according to the given sort state.
-     *
-     * @param sortPropertyIds Properties participating in the sorting.
-     * @param sortStates      List of sort order for the properties. True corresponds
-     *                        ascending and false descending.
+     * @param queryDefinition Properties participating in the sorting.
      * @return A new query constructed according to the given sort state.
      */
     @Override
-    public Query constructQuery(final Object[] sortPropertyIds, final boolean[] sortStates) {
-        entityQueryDefinition.setSortState(sortPropertyIds, sortStates);
-        return new EntityQuery(entityQueryDefinition);
+    public Query constructQuery(final QueryDefinition queryDefinition) {
+        return new EntityQuery((EntityQueryDefinition) queryDefinition);
     }
 
 }

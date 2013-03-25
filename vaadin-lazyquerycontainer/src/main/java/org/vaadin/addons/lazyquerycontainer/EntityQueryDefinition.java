@@ -46,22 +46,6 @@ public class EntityQueryDefinition extends LazyQueryDefinition {
      */
     private Map<String, Object> whereParameters;
     /**
-     * The native sort property IDs.
-     */
-    private Object[] nativeSortPropertyIds;
-    /**
-     * The native sort ascending and descending states.
-     */
-    private boolean[] nativeSortPropertyAscendingStates;
-    /**
-     * The sort property IDs.
-     */
-    private Object[] sortPropertyIds;
-    /**
-     * The sort ascending and descending states.
-     */
-    private boolean[] sortPropertyAscendingStates;
-    /**
      * True if entities are detached from PersistenceContext.
      */
     private boolean detachedEntities;
@@ -81,30 +65,16 @@ public class EntityQueryDefinition extends LazyQueryDefinition {
      * @param entityClass                    The entity class.
      * @param batchSize                      The batch size.
      * @param idPropertyId                   The ID of the ID property or null if item index is used as ID.
-     * @param nativeSortPropertyIds          Properties participating in the native sort.
-     * @param nativeSortPropertyAscendingStates
-     *                                       List of property sort directions for the native sort.
      */
     public EntityQueryDefinition(final EntityManager entityManager, final boolean applicationManagedTransactions,
                                  final boolean detachedEntities, final boolean compositeItems,
                                  final Class<?> entityClass, final int batchSize,
-                                 final Object idPropertyId,
-                                 final Object[] nativeSortPropertyIds,
-                                 final boolean[] nativeSortPropertyAscendingStates) {
+                                 final Object idPropertyId) {
         super(compositeItems, batchSize, idPropertyId);
         this.entityManager = entityManager;
         this.applicationManagedTransactions = applicationManagedTransactions;
         this.entityClass = entityClass;
-        this.nativeSortPropertyIds = nativeSortPropertyIds;
-        this.nativeSortPropertyAscendingStates = nativeSortPropertyAscendingStates;
         this.detachedEntities = detachedEntities;
-        if (nativeSortPropertyIds.length == 0) {
-            throw new InvalidParameterException("Native sort order is mandatory.");
-        }
-        if (nativeSortPropertyIds.length != nativeSortPropertyAscendingStates.length) {
-            throw new InvalidParameterException(
-                    "Native sort properties have to have matching amount of ascending states.");
-        }
     }
 
     /**
@@ -116,17 +86,6 @@ public class EntityQueryDefinition extends LazyQueryDefinition {
     public final void setWhereCriteria(final String whereCriteria, final Map<String, Object> whereParameters) {
         this.whereCriteria = whereCriteria;
         this.whereParameters = whereParameters;
-    }
-
-    /**
-     * Sets the sort state.
-     *
-     * @param sortPropertyIds             Properties participating in the sorting.
-     * @param sortPropertyAscendingStates List of sort direction for the properties.
-     */
-    public final void setSortState(final Object[] sortPropertyIds, final boolean[] sortPropertyAscendingStates) {
-        this.sortPropertyIds = sortPropertyIds;
-        this.sortPropertyAscendingStates = sortPropertyAscendingStates;
     }
 
     /**
@@ -172,17 +131,17 @@ public class EntityQueryDefinition extends LazyQueryDefinition {
         final StringBuilder whereBuilder = new StringBuilder(" where ");
         whereBuilder.append(whereCriteria);
         final StringBuilder orderByBuilder = new StringBuilder(" order by");
-        if (sortPropertyIds.length == 0) {
-            sortPropertyIds = nativeSortPropertyIds;
-            sortPropertyAscendingStates = nativeSortPropertyAscendingStates;
+        if (getSortPropertyIds().length == 0) {
+            setSortPropertyIds(getDefaultSortPropertyIds());
+            setSortPropertyAscendingStates(getDefaultSortPropertyAscendingStates());
         }
-        for (int i = 0; i < sortPropertyIds.length; i++) {
+        for (int i = 0; i < getSortPropertyIds().length; i++) {
             if (i != 0) {
                 orderByBuilder.append(",");
             }
             orderByBuilder.append(" e.");
-            orderByBuilder.append(sortPropertyIds[i]);
-            if (sortPropertyAscendingStates[i]) {
+            orderByBuilder.append(getSortPropertyIds()[i]);
+            if (getSortPropertyAscendingStates()[i]) {
                 orderByBuilder.append(" asc");
             } else {
                 orderByBuilder.append(" desc");

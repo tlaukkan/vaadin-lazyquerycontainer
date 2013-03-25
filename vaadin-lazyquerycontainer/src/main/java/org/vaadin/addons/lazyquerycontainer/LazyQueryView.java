@@ -169,7 +169,6 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
     private void initialize(final QueryDefinition queryDefinition, final QueryFactory queryFactory) {
         this.queryDefinition = queryDefinition;
         this.queryFactory = queryFactory;
-        this.queryFactory.setQueryDefinition(queryDefinition);
         this.sortPropertyIds = new Object[0];
         this.ascendingStates = new boolean[0];
     }
@@ -414,7 +413,9 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
      */
     private Query getQuery() {
         if (query == null) {
-            query = queryFactory.constructQuery(sortPropertyIds, ascendingStates);
+            queryDefinition.setSortPropertyIds(sortPropertyIds);
+            queryDefinition.setSortPropertyAscendingStates(ascendingStates);
+            query = queryFactory.constructQuery(queryDefinition);
             querySize = getQuery().size();
             queryCount++;
         }
@@ -436,7 +437,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
             item.getItemProperty(PROPERTY_ID_ITEM_STATUS).setReadOnly(true);
         }
         addedItems.add(0, item);
-        if (itemIdList instanceof NaturalNumbersList) {
+        if (itemIdList instanceof NaturalNumberIdsList) {
             itemIdList = null;
         }
         return 0;
@@ -620,7 +621,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
             if (queryDefinition.getIdPropertyId() != null) {
                 itemIdList = new LazyIdList<Object>(this, queryDefinition.getIdPropertyId());
             } else {
-                itemIdList = new NaturalNumbersList(size());
+                itemIdList = new NaturalNumberIdsList(size());
             }
         }
 

@@ -15,7 +15,10 @@
  */
 package org.vaadin.addons.lazyquerycontainer;
 
+import com.vaadin.data.Container;
+
 import java.io.Serializable;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -24,8 +27,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Default implementation of Query Definition. Stores the property information
- * of query to simple Map structure.
+ * Default implementation of Query Definition. Contains the property, filtering and sorting information
+ * of query.
  *
  * @author Tommi S.E. Laukkanen
  */
@@ -37,23 +40,47 @@ public class LazyQueryDefinition implements QueryDefinition, Serializable {
     /**
      * Lust of property IDs included in this QueryDefinition.
      */
-    private final List<Object> propertyIds = new ArrayList<Object>();
+    private final List<Object> propertyIds = new ArrayList<>();
     /**
      * Map of types of the properties.
      */
-    private final Map<Object, Object> propertyTypes = new HashMap<Object, Object>();
+    private final Map<Object, Object> propertyTypes = new HashMap<>();
     /**
      * Default values for the properties.
      */
-    private final Map<Object, Object> defaultValues = new HashMap<Object, Object>();
+    private final Map<Object, Object> defaultValues = new HashMap<>();
     /**
      * Flags reflecting whether the properties are read only.
      */
-    private final Map<Object, Boolean> readOnlyStates = new HashMap<Object, Boolean>();
+    private final Map<Object, Boolean> readOnlyStates = new HashMap<>();
     /**
-     * The sort states of the properties.
+     * Sort states of the properties.
      */
-    private final Map<Object, Boolean> sortableStates = new HashMap<Object, Boolean>();
+    private final Map<Object, Boolean> sortableStates = new HashMap<>();
+    /**
+     * List of default filters.
+     */
+    private final List<Container.Filter> defaultFilters = new ArrayList<>();
+    /**
+     * List of default filters.
+     */
+    private final List<Container.Filter> filters = new ArrayList<>();
+    /**
+     * The sort property IDs.
+     */
+    private Object[] defaultSortPropertyIds = new Object[0];
+    /**
+     * The sort ascending and descending states.
+     */
+    private boolean[] defaultSortPropertyAscendingStates = new boolean[0];
+    /**
+     * The sort property IDs.
+     */
+    private Object[] sortPropertyIds = new Object[0];
+    /**
+     * The sort ascending and descending states.
+     */
+    private boolean[] sortPropertyAscendingStates = new boolean[0];
     /**
      * Batch size of the query.
      */
@@ -96,7 +123,7 @@ public class LazyQueryDefinition implements QueryDefinition, Serializable {
      */
     @Override
     public final Collection<?> getSortablePropertyIds() {
-        final List<Object> sortablePropertyIds = new ArrayList<Object>();
+        final List<Object> sortablePropertyIds = new ArrayList<>();
         for (final Object propertyId : propertyIds) {
             if (isPropertySortable(propertyId)) {
                 sortablePropertyIds.add(propertyId);
@@ -224,5 +251,159 @@ public class LazyQueryDefinition implements QueryDefinition, Serializable {
     @Override
     public final Object getIdPropertyId() {
         return idPropertyId;
+    }
+
+    /**
+     * Adds default filter to container.
+     * @param filter the default filter to add
+     */
+    public final void addDefaultFilter(final Container.Filter filter) {
+        defaultFilters.add(filter);
+    }
+
+    /**
+     * Removes default filter to container.
+     * @param filter the default filter to add
+     */
+    public final void removeDefaultFilter(final Container.Filter filter) {
+        defaultFilters.remove(filter);
+    }
+
+    /**
+     * Clears default filters from container.
+     */
+    public final void removeDefaultFilters() {
+        defaultFilters.clear();
+    }
+
+    /**
+     * Gets default filters.
+     * @return the default filters.
+     */
+    public final List<Container.Filter> getDefaultFilters() {
+        return defaultFilters;
+    }
+
+    /**
+     * Adds filter to container.
+     * @param filter the default filter to add
+     */
+    public final void addFilter(final Container.Filter filter) {
+        filters.add(filter);
+    }
+
+    /**
+     * Removes filter to container.
+     * @param filter the default filter to add
+     */
+    public final void removeFilter(final Container.Filter filter) {
+        filters.remove(filter);
+    }
+
+    /**
+     * Clears filters from container.
+     */
+    public final void removeFilter() {
+        filters.clear();
+    }
+
+    /**
+     * Gets filters.
+     * @return the filters.
+     */
+    public final List<Container.Filter> getFilters() {
+        return filters;
+    }
+
+    /**
+     * Gets the default sort property IDs.
+     * @return the default sort property IDs
+     */
+    public final Object[] getDefaultSortPropertyIds() {
+        return defaultSortPropertyIds;
+    }
+
+    /**
+     * Sets the default sort propertyIDs.
+     * @param defaultSortPropertyIds the default sort property IDs
+     */
+    public final void setDefaultSortPropertyIds(final Object[] defaultSortPropertyIds) {
+        this.defaultSortPropertyIds = defaultSortPropertyIds;
+    }
+
+    /**
+     * Gets default sort property ascending states.
+     * @return the default sort property ascending states
+     */
+    public final boolean[] getDefaultSortPropertyAscendingStates() {
+        return defaultSortPropertyAscendingStates;
+    }
+
+    /**
+     * Sets default sort property ascending states.
+     * @param defaultSortPropertyAscendingStates the default sort property ascending states.
+     */
+    public final void setDefaultSortPropertyAscendingStates(final boolean[] defaultSortPropertyAscendingStates) {
+        this.defaultSortPropertyAscendingStates = defaultSortPropertyAscendingStates;
+    }
+
+    /**
+     * Gets sort property IDs.
+     * @return the sort property IDs
+     */
+    public final Object[] getSortPropertyIds() {
+        return sortPropertyIds;
+    }
+
+    /**
+     * Sets sort property IDs.
+     * @param sortPropertyIds the sort property IDs
+     */
+    public final void setSortPropertyIds(final Object[] sortPropertyIds) {
+        this.sortPropertyIds = sortPropertyIds;
+    }
+
+    /**
+     * Gets sort property ascending states.
+     * @return the sort property ascending states
+     */
+    public final boolean[] getSortPropertyAscendingStates() {
+        return sortPropertyAscendingStates;
+    }
+
+    /**
+     * Sets sort property ascending states.
+     * @param sortPropertyAscendingStates the sort property ascending states.
+     */
+    public final void setSortPropertyAscendingStates(final boolean[] sortPropertyAscendingStates) {
+        this.sortPropertyAscendingStates = sortPropertyAscendingStates;
+    }
+
+    /**
+     * Sets the sort state.
+     *
+     * @param sortPropertyIds             Properties participating in the sorting.
+     * @param sortPropertyAscendingStates List of sort direction for the properties.
+     */
+    public final void setDefaultSortState(final Object[] sortPropertyIds, final boolean[] sortPropertyAscendingStates) {
+        setDefaultSortPropertyIds(sortPropertyIds);
+        setDefaultSortPropertyAscendingStates(sortPropertyAscendingStates);
+        if (sortPropertyIds.length != sortPropertyAscendingStates.length) {
+            throw new InvalidParameterException("Sort state arrays need to have same length.");
+        }
+    }
+
+    /**
+     * Sets the sort state.
+     *
+     * @param sortPropertyIds             Properties participating in the sorting.
+     * @param sortPropertyAscendingStates List of sort direction for the properties.
+     */
+    public final void setSortState(final Object[] sortPropertyIds, final boolean[] sortPropertyAscendingStates) {
+        setSortPropertyIds(sortPropertyIds);
+        setSortPropertyAscendingStates(sortPropertyAscendingStates);
+        if (sortPropertyIds.length != sortPropertyAscendingStates.length) {
+            throw new InvalidParameterException("Sort state arrays need to have same length.");
+        }
     }
 }

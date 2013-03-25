@@ -1,29 +1,34 @@
 package org.vaadin.addons.lazyquerycontainer.example.jpa;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-
 import com.vaadin.annotations.Title;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.shared.ui.MultiSelectMode;
-import com.vaadin.ui.*;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Panel;
+import com.vaadin.ui.Table;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.themes.Runo;
 import org.vaadin.addons.lazyquerycontainer.EntityContainer;
 import org.vaadin.addons.lazyquerycontainer.LazyQueryView;
 import org.vaadin.addons.lazyquerycontainer.QueryItemStatus;
 import org.vaadin.addons.lazyquerycontainer.QueryItemStatusColumnGenerator;
 
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.themes.Runo;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Example application demonstrating the Lazy Query Container features.
+ *
  * @author Tommi S.E. Laukkanen
  */
 @SuppressWarnings("rawtypes")
@@ -142,7 +147,7 @@ public class VaadinApplication extends UI implements ClickListener {
         entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
 
         entityContainer = new EntityContainer<Task>(entityManager, true, true, true, Task.class, 100, "taskId",
-                new Object[] { "name" }, new boolean[] { true });
+                new Object[]{"name"}, new boolean[]{true});
         entityContainer.addContainerProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS, QueryItemStatus.class,
                 QueryItemStatus.None, true, false);
         entityContainer.addContainerProperty("taskId", Long.class, 0L, true, true);

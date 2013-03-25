@@ -35,7 +35,6 @@ public class BeanQueryTest {
 
         BeanQueryFactory<MockBeanQuery> factory = new BeanQueryFactory<MockBeanQuery>(MockBeanQuery.class);
         factory.setQueryConfiguration(queryConfiguration);
-        factory.setQueryDefinition(queryDefinition);
         LazyQueryView view = new LazyQueryView(queryDefinition, factory);
 
         Assert.assertEquals(queryDefinition, view.getQueryDefinition());
@@ -57,7 +56,6 @@ public class BeanQueryTest {
 
         BeanQueryFactory<MockBeanQuery> factory = new BeanQueryFactory<MockBeanQuery>(MockBeanQuery.class);
         factory.setQueryConfiguration(queryConfiguration);
-        factory.setQueryDefinition(queryDefinition);
         LazyQueryView view = new LazyQueryView(queryDefinition, factory);
 
         Assert.assertEquals(queryDefinition, view.getQueryDefinition());
@@ -80,7 +78,6 @@ public class BeanQueryTest {
         queryConfiguration.put("description", "test-bean-description-2");
 
         factory.setQueryConfiguration(queryConfiguration);
-        factory.setQueryDefinition(queryDefinition);
 
         Assert.assertEquals(1, view.size());
         int index = view.addItem();
@@ -104,7 +101,6 @@ public class BeanQueryTest {
         queryConfiguration.put("description", "test-bean-description-2");
 
         factory.setQueryConfiguration(queryConfiguration);
-        factory.setQueryDefinition(queryDefinition);
 
         Assert.assertEquals(1, view.size());
         int index = view.addItem();
@@ -129,7 +125,6 @@ public class BeanQueryTest {
 
         BeanQueryFactory<MockBeanQuery> factory = new BeanQueryFactory<MockBeanQuery>(MockBeanQuery.class);
         factory.setQueryConfiguration(queryConfiguration);
-        factory.setQueryDefinition(queryDefinition);
         LazyQueryView view = new LazyQueryView(queryDefinition, factory);
 
         view.removeAllItems();
@@ -138,7 +133,7 @@ public class BeanQueryTest {
     @Test(expected = RuntimeException.class)
     public void testInvalidConstruction() {
         BeanQueryFactory testFactory = new BeanQueryFactory<AbstractBeanQuery>(AbstractBeanQuery.class);
-        testFactory.constructQuery(null, null);
+        testFactory.constructQuery(null);
     }
 
     @Test(expected = RuntimeException.class)
@@ -153,7 +148,6 @@ public class BeanQueryTest {
 
         BeanQueryFactory<MockBeanQueryWithFailingItemConstruction> factory = new BeanQueryFactory<MockBeanQueryWithFailingItemConstruction>(MockBeanQueryWithFailingItemConstruction.class);
         factory.setQueryConfiguration(queryConfiguration);
-        factory.setQueryDefinition(queryDefinition);
         LazyQueryView view = new LazyQueryView(queryDefinition, factory);
 
         view.addItem();

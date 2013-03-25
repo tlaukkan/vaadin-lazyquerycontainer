@@ -47,13 +47,12 @@ public class MockQueryFactory implements QueryFactory {
         this.batchQueryMaxTime = batchQueryMaxTime;
     }
 
-
     public void setQueryDefinition(QueryDefinition definition) {
         this.definition = definition;
     }
 
 
-    public Query constructQuery(Object[] sortPropertyIds, boolean[] ascendingStates) {
+    public Query constructQuery(QueryDefinition definition) {
         // Creating items on demand when constructQuery is first time called.
         if (items == null) {
             items = new ArrayList<Item>();
@@ -64,8 +63,9 @@ public class MockQueryFactory implements QueryFactory {
             }
         }
 
-        if (sortPropertyIds.length != 0) {
-            ItemComparator comparator = new ItemComparator(sortPropertyIds, ascendingStates);
+        if (definition.getSortPropertyIds().length != 0) {
+            ItemComparator comparator = new ItemComparator(definition.getSortPropertyIds(),
+                    definition.getSortPropertyAscendingStates());
             Collections.sort(this.items, comparator);
         }
 

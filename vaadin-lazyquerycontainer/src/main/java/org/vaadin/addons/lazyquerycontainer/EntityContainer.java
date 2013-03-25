@@ -43,18 +43,20 @@ public final class EntityContainer<T> extends LazyQueryContainer {
      * @param entityClass                    The entity class.
      * @param batchSize                      The batch size.
      * @param idPropertyId                   The ID of the ID property or null if item index is used as ID.
-     * @param nativeSortPropertyIds          Properties participating in the native sort.
-     * @param nativeSortPropertyAscendingStates
+     * @param defaultSortPropertyIds          Properties participating in the native sort.
+     * @param defaultSortPropertyAscendingStates
      *                                       List of property sort directions for the native sort.
      */
     public EntityContainer(final EntityManager entityManager, final boolean applicationManagedTransactions,
                            final boolean detachedEntities, final boolean compositeItems,
                            final Class<?> entityClass, final int batchSize, final Object idPropertyId,
-                           final Object[] nativeSortPropertyIds, final boolean[] nativeSortPropertyAscendingStates) {
+                           final Object[] defaultSortPropertyIds, final boolean[] defaultSortPropertyAscendingStates) {
         super(new EntityQueryDefinition(entityManager, applicationManagedTransactions,
                 detachedEntities, compositeItems,
-                entityClass, batchSize, idPropertyId, nativeSortPropertyIds, nativeSortPropertyAscendingStates),
+                entityClass, batchSize, idPropertyId),
                 new EntityQueryFactory());
+        getQueryView().getQueryDefinition().setDefaultSortState(
+                defaultSortPropertyIds, defaultSortPropertyAscendingStates);
     }
 
     /**

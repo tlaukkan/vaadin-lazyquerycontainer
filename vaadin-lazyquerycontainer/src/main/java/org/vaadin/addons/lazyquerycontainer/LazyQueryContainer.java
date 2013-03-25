@@ -24,6 +24,7 @@ import com.vaadin.data.Container.Sortable;
 import com.vaadin.data.ContainerHelpers;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
+import com.vaadin.data.util.filter.UnsupportedFilterException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,7 +39,7 @@ import java.util.List;
  * @author Tommi S.E. Laukkanen
  */
 public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotifier, PropertySetChangeNotifier,
-        Buffered {
+        Buffered, Container.Filterable {
     /**
      * Java serialization UID.
      */
@@ -469,6 +470,21 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
         for (PropertySetChangeListener listener : propertySetChangeListeners) {
             listener.containerPropertySetChange(event);
         }
+    }
+
+    @Override
+    public void addContainerFilter(final Filter filter) throws UnsupportedFilterException {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void removeContainerFilter(final Filter filter) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void removeAllContainerFilters() {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     /**

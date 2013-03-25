@@ -73,19 +73,20 @@ public final class BeanQueryFactory<Q extends AbstractBeanQuery> implements Quer
     }
 
     /**
-     * Constructs new query.
+     * Constructs a new query according to the given QueryDefinition
      *
-     * @param sortPropertyIds The properties participating in sort.
-     * @param sortStates      The ascending or descending state of sort properties.
-     * @return new instance of Query interface implementation.
+     * @param queryDefinition Properties participating in the sorting.
+     * @return A new query constructed according to the given sort state.
      */
-    public Query constructQuery(final Object[] sortPropertyIds, final boolean[] sortStates) {
+    @Override
+    public Query constructQuery(final QueryDefinition queryDefinition) {
         Q query;
 
         try {
             query = queryClass.getConstructor(
                     new Class[]{QueryDefinition.class, Map.class, Object[].class, boolean[].class}).newInstance(
-                    queryDefinition, queryConfiguration, sortPropertyIds, sortStates);
+                    queryDefinition, queryConfiguration,
+                    queryDefinition.getSortPropertyIds(), queryDefinition.getSortPropertyAscendingStates());
         } catch (Exception e) {
             throw new RuntimeException("Error instantiating query.", e);
         }
