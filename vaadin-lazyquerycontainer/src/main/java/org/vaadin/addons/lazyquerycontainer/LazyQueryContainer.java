@@ -491,6 +491,29 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
     }
 
     /**
+     * Adds default filter to underlying QueryDefinition.
+     * @param filter the default filter
+     */
+    public final void addDefaultFilter(final Filter filter) {
+        getQueryView().getQueryDefinition().addDefaultFilter(filter);
+    }
+
+    /**
+     * Removes default filter from underlying QueryDefinition.
+     * @param filter the default filter
+     */
+    public final void removeDefaultFilter(final Filter filter) {
+        getQueryView().getQueryDefinition().removeDefaultFilter(filter);
+    }
+
+    /**
+     * Removes all default filters from underlying QueryDefinition.
+     */
+    public final void removeDefaultFilters() {
+        getQueryView().getQueryDefinition().removeDefaultFilters();
+    }
+
+    /**
      * Private ItemSetChangeEvent implementation.
      *
      * @author Tommi Laukkanen
