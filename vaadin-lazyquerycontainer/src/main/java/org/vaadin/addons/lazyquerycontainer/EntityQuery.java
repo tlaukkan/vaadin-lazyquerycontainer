@@ -33,6 +33,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.beans.BeanInfo;
@@ -229,10 +230,11 @@ public class EntityQuery<E> implements Query, Serializable {
         if (sortPropertyIds.length > 0) {
             final List<Order> orders = new ArrayList<>();
             for (int i = 0; i < sortPropertyIds.length; i++) {
+                final Expression property = (Expression) getPropertyPath(root, sortPropertyIds[i]);
                 if (sortPropertyAscendingStates[i]) {
-                    orders.add(cb.asc(root.get((String) sortPropertyIds[i])));
+                    orders.add(cb.asc(property));
                 } else {
-                    orders.add(cb.desc(root.get((String) sortPropertyIds[i])));
+                    orders.add(cb.desc(property));
                 }
             }
             cq.orderBy(orders);
@@ -289,13 +291,13 @@ public class EntityQuery<E> implements Query, Serializable {
 
         if (filter instanceof Between) {
             final Between between = (Between) filter;
-            final Expression property = (Expression) root.get((String) between.getPropertyId());
+            final Expression property = (Expression) getPropertyPath(root, between.getPropertyId());
             return cb.between(property, (Comparable) between.getEndValue(), (Comparable) between.getEndValue());
         }
 
         if (filter instanceof Compare) {
             final Compare compare = (Compare) filter;
-            final Expression<Comparable> property = (Expression) root.get((String) compare.getPropertyId());
+            final Expression<Comparable> property = (Expression) getPropertyPath(root, compare.getPropertyId());
             switch (compare.getOperation()) {
                 case EQUAL:
                     return cb.equal(property, compare.getValue());
@@ -313,21 +315,43 @@ public class EntityQuery<E> implements Query, Serializable {
 
         if (filter instanceof IsNull) {
             final IsNull isNull = (IsNull) filter;
-            return cb.isNull((Expression) root.get((String) isNull.getPropertyId()));
+            return cb.isNull((Expression) getPropertyPath(root, isNull.getPropertyId()));
         }
 
         if (filter instanceof Like) {
             final Like like = (Like) filter;
-            return cb.like((Expression) root.get((String) like.getPropertyId()), like.getValue());
+            return cb.like((Expression) getPropertyPath(root, like.getPropertyId()), like.getValue());
         }
 
         if (filter instanceof SimpleStringFilter) {
             final SimpleStringFilter simpleStringFilter = (SimpleStringFilter) filter;
-            return cb.like((Expression) root.get((String) simpleStringFilter.getPropertyId()), "%"
+            final Expression<String> property = (Expression) getPropertyPath(
+                    root, simpleStringFilter.getPropertyId());
+            return cb.like(property, "%"
                     + simpleStringFilter.getFilterString() + "%");
         }
 
         throw new UnsupportedOperationException("Vaadin filter: " + filter.getClass().getName() + " is not supported.");
+    }
+
+    /**
+     * Gets property path.
+     * @param root the root where path starts form
+     * @param propertyId the property ID
+     * @return the path to property
+     */
+    private Path<Object> getPropertyPath(final Root<?> root, final Object propertyId) {
+        final String[] propertyIdParts = ((String) propertyId).split("\\.");
+
+        Path<Object> path = null;
+        for (final String part : propertyIdParts) {
+            if (path == null) {
+                path = root.get(part);
+            } else {
+                path = path.get(part);
+            }
+        }
+        return path;
     }
 
     /**
@@ -340,7 +364,8 @@ public class EntityQuery<E> implements Query, Serializable {
      * @param removedItems  Items to be deleted.
      */
     @Override
-    public final void saveItems(final List<Item> addedItems, final List<Item> modifiedItems, final List<Item> removedItems) {
+    public final void saveItems(final List<Item> addedItems, final List<Item> modifiedItems,
+                                final List<Item> removedItems) {
         if (applicationTransactionManagement) {
             entityManager.getTransaction().begin();
         }

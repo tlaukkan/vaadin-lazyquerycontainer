@@ -28,7 +28,6 @@
         </plugins>
     </build>
 
-
     <repositories>
         <repository>
             <id>vaadin-snapshots</id>
