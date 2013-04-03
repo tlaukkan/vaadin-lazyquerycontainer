@@ -76,13 +76,16 @@ public final class EntityContainer<T> extends LazyQueryContainer {
     public EntityContainer(final EntityManager entityManager, final boolean applicationManagedTransactions,
                                         final boolean detachedEntities, final boolean compositeItems,
                                         final Class<?> entityClass, final int maximumQueryResultSize,
-                                        final Object[] nativeSortPropertyIds, final boolean[] nativeSortPropertyAscendingStates,
+                                        final Object[] nativeSortPropertyIds, final boolean[]
+            nativeSortPropertyAscendingStates,
                                         final Object idPropertyId) {
         super(new EntityQueryDefinition(applicationManagedTransactions,
                 detachedEntities, compositeItems,
                 entityClass, maximumQueryResultSize, idPropertyId),
                 new EntityQueryFactory(entityManager));
         getQueryView().getQueryDefinition().setMaxQuerySize(maximumQueryResultSize);
+        getQueryView().getQueryDefinition().setDefaultSortState(nativeSortPropertyIds,
+                nativeSortPropertyAscendingStates);
     }
 
     /**
