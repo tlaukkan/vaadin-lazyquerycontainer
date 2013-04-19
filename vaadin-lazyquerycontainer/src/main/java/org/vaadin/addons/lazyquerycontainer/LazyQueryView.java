@@ -195,7 +195,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
         for (final Property property : propertyItemMapCache.keySet()) {
             if (property instanceof ValueChangeNotifier) {
                 final ValueChangeNotifier notifier = (ValueChangeNotifier) property;
-                notifier.removeListener(this);
+                notifier.removeValueChangeListener(this);
             }
         }
 
