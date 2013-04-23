@@ -40,31 +40,31 @@ public class LazyQueryDefinition implements QueryDefinition, Serializable {
     /**
      * Lust of property IDs included in this QueryDefinition.
      */
-    private final List<Object> propertyIds = new ArrayList<>();
+    private final List<Object> propertyIds = new ArrayList<Object>();
     /**
      * Map of types of the properties.
      */
-    private final Map<Object, Object> propertyTypes = new HashMap<>();
+    private final Map<Object, Object> propertyTypes = new HashMap<Object, Object>();
     /**
      * Default values for the properties.
      */
-    private final Map<Object, Object> defaultValues = new HashMap<>();
+    private final Map<Object, Object> defaultValues = new HashMap<Object, Object>();
     /**
      * Flags reflecting whether the properties are read only.
      */
-    private final Map<Object, Boolean> readOnlyStates = new HashMap<>();
+    private final Map<Object, Boolean> readOnlyStates = new HashMap<Object, Boolean>();
     /**
      * Sort states of the properties.
      */
-    private final Map<Object, Boolean> sortableStates = new HashMap<>();
+    private final Map<Object, Boolean> sortableStates = new HashMap<Object, Boolean>();
     /**
      * List of default filters.
      */
-    private final List<Container.Filter> defaultFilters = new ArrayList<>();
+    private final List<Container.Filter> defaultFilters = new ArrayList<Container.Filter>();
     /**
      * List of default filters.
      */
-    private final List<Container.Filter> filters = new ArrayList<>();
+    private final List<Container.Filter> filters = new ArrayList<Container.Filter>();
     /**
      * The sort property IDs.
      */
@@ -127,7 +127,7 @@ public class LazyQueryDefinition implements QueryDefinition, Serializable {
      */
     @Override
     public final Collection<?> getSortablePropertyIds() {
-        final List<Object> sortablePropertyIds = new ArrayList<>();
+        final List<Object> sortablePropertyIds = new ArrayList<Object>();
         for (final Object propertyId : propertyIds) {
             if (isPropertySortable(propertyId)) {
                 sortablePropertyIds.add(propertyId);

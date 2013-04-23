@@ -185,7 +185,7 @@ public class EntityQuery<E> implements Query, Serializable {
      * @param <SE> the selected entity
      */
     private <SE> void setWhereCriteria(final CriteriaBuilder cb, final CriteriaQuery<SE> cq, final Root<E> root) {
-        final List<Container.Filter> filters = new ArrayList<>();
+        final List<Container.Filter> filters = new ArrayList<Container.Filter>();
         filters.addAll(queryDefinition.getDefaultFilters());
         filters.addAll(queryDefinition.getFilters());
 
@@ -228,7 +228,7 @@ public class EntityQuery<E> implements Query, Serializable {
         }
 
         if (sortPropertyIds.length > 0) {
-            final List<Order> orders = new ArrayList<>();
+            final List<Order> orders = new ArrayList<Order>();
             for (int i = 0; i < sortPropertyIds.length; i++) {
                 final Expression property = (Expression) getPropertyPath(root, sortPropertyIds[i]);
                 if (sortPropertyAscendingStates[i]) {
@@ -258,7 +258,7 @@ public class EntityQuery<E> implements Query, Serializable {
                                 final CriteriaQuery<?> cq, final Root<?> root) {
         if (filter instanceof And) {
             final And and = (And) filter;
-            final List<Container.Filter> filters = new ArrayList<>(and.getFilters());
+            final List<Container.Filter> filters = new ArrayList<Container.Filter>(and.getFilters());
 
             Predicate predicate = cb.and(setFilter(filters.remove(0), cb, cq, root),
                     setFilter(filters.remove(0), cb, cq, root));
@@ -272,7 +272,7 @@ public class EntityQuery<E> implements Query, Serializable {
 
         if (filter instanceof Or) {
             final Or or = (Or) filter;
-            final List<Container.Filter> filters = new ArrayList<>(or.getFilters());
+            final List<Container.Filter> filters = new ArrayList<Container.Filter>(or.getFilters());
 
             Predicate predicate = cb.or(setFilter(filters.remove(0), cb, cq, root),
                     setFilter(filters.remove(1), cb, cq, root));
