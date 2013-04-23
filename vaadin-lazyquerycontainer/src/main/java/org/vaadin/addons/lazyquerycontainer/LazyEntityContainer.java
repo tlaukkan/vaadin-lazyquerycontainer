@@ -53,6 +53,38 @@ public final class LazyEntityContainer<T> extends LazyQueryContainer {
     }
 
     /**
+     * Constructor which configures query definition for accessing JPA entities.
+     * @param entityManager The JPA EntityManager.
+     * @param applicationManagedTransactions True if application manages
+     *            transactions instead of container.
+     * @param detachedEntities True if entities are detached from
+     *            PersistenceContext.
+     *            items until commit.
+     * @param compositeItems True if native items should be wrapped to
+     *            CompositeItems.
+     * @param entityClass The entity class.
+     * @param maximumQueryResultSize Maximum number of items in the container.
+     * @param nativeSortPropertyIds Properties participating in the native sort.
+     * @param nativeSortPropertyAscendingStates List of property sort directions
+     *            for the native sort.
+     * @param idPropertyId Property containing the property ID.
+     */
+    public LazyEntityContainer(final EntityManager entityManager, final boolean applicationManagedTransactions,
+                           final boolean detachedEntities, final boolean compositeItems,
+                           final Class<?> entityClass, final int maximumQueryResultSize,
+                           final Object[] nativeSortPropertyIds, final boolean[]
+            nativeSortPropertyAscendingStates,
+                           final Object idPropertyId) {
+        super(new EntityQueryDefinition(applicationManagedTransactions,
+                detachedEntities, compositeItems,
+                entityClass, maximumQueryResultSize, idPropertyId),
+                new EntityQueryFactory(entityManager));
+        getQueryView().getQueryDefinition().setMaxQuerySize(maximumQueryResultSize);
+        getQueryView().getQueryDefinition().setDefaultSortState(nativeSortPropertyIds,
+                nativeSortPropertyAscendingStates);
+    }
+
+    /**
      * Adds entity to the container as first item i.e. at index 0.
      *
      * @return the new constructed entity.
@@ -72,6 +104,17 @@ public final class LazyEntityContainer<T> extends LazyQueryContainer {
         final T entityToRemove = getEntity(index);
         removeItem(getIdByIndex(index));
         return entityToRemove;
+    }
+
+    /**
+     * Gets entity by ID.
+     *
+     * @param id The ID of the entity.
+     * @return the entity.
+     */
+    @SuppressWarnings("unchecked")
+    public T getEntity(final Object id) {
+        return getEntity(indexOfId(id));
     }
 
     /**
