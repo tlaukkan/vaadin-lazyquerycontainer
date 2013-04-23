@@ -275,7 +275,7 @@ public class EntityQuery<E> implements Query, Serializable {
             final List<Container.Filter> filters = new ArrayList<Container.Filter>(or.getFilters());
 
             Predicate predicate = cb.or(setFilter(filters.remove(0), cb, cq, root),
-                    setFilter(filters.remove(1), cb, cq, root));
+                    setFilter(filters.remove(0), cb, cq, root));
 
             while (filters.size() > 0) {
                 predicate = cb.or(predicate, setFilter(filters.remove(0), cb, cq, root));
@@ -320,7 +320,11 @@ public class EntityQuery<E> implements Query, Serializable {
 
         if (filter instanceof Like) {
             final Like like = (Like) filter;
-            return cb.like((Expression) getPropertyPath(root, like.getPropertyId()), like.getValue());
+            if(like.isCaseSensitive()) {
+            	return cb.like((Expression) getPropertyPath(root, like.getPropertyId()), like.getValue());
+            } else {
+            	return cb.like(cb.lower((Expression) getPropertyPath(root, like.getPropertyId())), like.getValue().toLowerCase());
+            }
         }
 
         if (filter instanceof SimpleStringFilter) {
