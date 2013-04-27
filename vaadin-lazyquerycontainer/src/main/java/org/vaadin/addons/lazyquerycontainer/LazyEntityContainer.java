@@ -63,7 +63,7 @@ public final class LazyEntityContainer<T> extends LazyQueryContainer {
      * @param compositeItems True if native items should be wrapped to
      *            CompositeItems.
      * @param entityClass The entity class.
-     * @param maximumQueryResultSize Maximum number of items in the container.
+     * @param batchSize The batch size.
      * @param nativeSortPropertyIds Properties participating in the native sort.
      * @param nativeSortPropertyAscendingStates List of property sort directions
      *            for the native sort.
@@ -71,15 +71,14 @@ public final class LazyEntityContainer<T> extends LazyQueryContainer {
      */
     public LazyEntityContainer(final EntityManager entityManager, final boolean applicationManagedTransactions,
                            final boolean detachedEntities, final boolean compositeItems,
-                           final Class<?> entityClass, final int maximumQueryResultSize,
+                           final Class<?> entityClass, final int batchSize,
                            final Object[] nativeSortPropertyIds, final boolean[]
             nativeSortPropertyAscendingStates,
                            final Object idPropertyId) {
         super(new EntityQueryDefinition(applicationManagedTransactions,
                 detachedEntities, compositeItems,
-                entityClass, maximumQueryResultSize, idPropertyId),
+                entityClass, batchSize, idPropertyId),
                 new EntityQueryFactory(entityManager));
-        getQueryView().getQueryDefinition().setMaxQuerySize(maximumQueryResultSize);
         getQueryView().getQueryDefinition().setDefaultSortState(nativeSortPropertyIds,
                 nativeSortPropertyAscendingStates);
     }
