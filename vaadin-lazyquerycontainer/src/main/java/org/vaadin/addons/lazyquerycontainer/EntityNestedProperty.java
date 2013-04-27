@@ -111,14 +111,14 @@ public class EntityNestedProperty<T> extends AbstractProperty<T> {
 	private void findPropertyDescriptor() {
 		if(nestedProperty.contains(".")) {
 			String[] properties = nestedProperty.split("\\.");
-			String targetProperty = properties[ properties.length -1 ];
 			Object target = entity;
 			PropertyDescriptor pd = null;
+			int counter = 1; // 1 based
 			for(String property : properties) {
 				try {
 					if(target != null) {
 						pd = getPropertyDescriptorFromProperty(property, target.getClass());
-						if(!property.equals(targetProperty)) {
+						if(counter < properties.length) {
 							target = pd.getReadMethod().invoke(target, new Object[0]);
 						}
 					} else {
@@ -130,6 +130,7 @@ public class EntityNestedProperty<T> extends AbstractProperty<T> {
 					throw new IllegalArgumentException(
 							String.format("Unable to invoke read method from property [%s] of target [%s] while iterating nested property path", property, target.getClass().getName()));
 				}
+				counter++;
 			}
 			nestedPropertyDescriptor = pd;
 			nestedTarget = target;
