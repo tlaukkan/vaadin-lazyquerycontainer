@@ -11,7 +11,8 @@
             <property name="javax.persistence.jdbc.user" value="sa"/>
             <property name="javax.persistence.jdbc.password" value=""/>
             <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver"/>
-            <property name="eclipselink.cache.type.default" value="NONE"/>
+            <property name="eclipselink.cache.type.default" value="SOFT"/>
+            <property name="eclipselink.cache.shared.default" value="false"/>
             <property name="eclipselink.ddl-generation.output-mode" value="database"/>
             <property name="eclipselink.ddl-generation" value="drop-and-create-tables"/>
         </properties>
