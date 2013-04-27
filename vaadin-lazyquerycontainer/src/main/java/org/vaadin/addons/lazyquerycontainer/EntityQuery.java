@@ -463,14 +463,20 @@ public class EntityQuery<E> implements Query, Serializable {
     @SuppressWarnings({"rawtypes", "unchecked" })
     protected final Item toItem(final Object entity) {
         if (queryDefinition.isCompositeItems()) {
+        	
             final BeanItem<?> beanItem = new BeanItem<Object>(entity);
-
             final CompositeItem compositeItem = new CompositeItem();
             compositeItem.addItem("bean", beanItem);
 
+            for(final String nestedProperty : queryDefinition.getNestedProperties()) {
+            	EntityNestedProperty<Object> prop = new EntityNestedProperty<Object>((Serializable) entity, nestedProperty);
+            	prop.setReadOnly(queryDefinition.isPropertyReadOnly(nestedProperty));
+            	compositeItem.addItemProperty(nestedProperty, prop);
+            }
+            
             for (final Object propertyId : queryDefinition.getPropertyIds()) {
                 if (compositeItem.getItemProperty(propertyId) == null) {
-                    compositeItem.addItemProperty(
+                	compositeItem.addItemProperty(
                             propertyId,
                             new ObjectProperty(queryDefinition.getPropertyDefaultValue(propertyId), queryDefinition
                                     .getPropertyType(propertyId), queryDefinition.isPropertyReadOnly(propertyId)));

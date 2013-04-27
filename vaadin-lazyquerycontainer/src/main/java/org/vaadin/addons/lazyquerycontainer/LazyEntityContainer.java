@@ -15,8 +15,6 @@
  */
 package org.vaadin.addons.lazyquerycontainer;
 
-import com.vaadin.data.util.BeanItem;
-
 import javax.persistence.EntityManager;
 /**
  * LazyEntityContainer enables using JPA entities with lazy batch loading, filter, sort
@@ -25,7 +23,7 @@ import javax.persistence.EntityManager;
  * @param <T> Entity class.
  * @author Tommi Laukkanen
  */
-public final class LazyEntityContainer<T> extends LazyQueryContainer {
+public final class LazyEntityContainer<T> extends AbstractEntityContainer<T> {
     /**
      * Java serialization version UID.
      */
@@ -82,56 +80,6 @@ public final class LazyEntityContainer<T> extends LazyQueryContainer {
         getQueryView().getQueryDefinition().setMaxQuerySize(maximumQueryResultSize);
         getQueryView().getQueryDefinition().setDefaultSortState(nativeSortPropertyIds,
                 nativeSortPropertyAscendingStates);
-    }
-
-    /**
-     * Adds entity to the container as first item i.e. at index 0.
-     *
-     * @return the new constructed entity.
-     */
-    public T addEntity() {
-        final Object itemId = addItem();
-        return getEntity(indexOfId(itemId));
-    }
-
-    /**
-     * Removes given entity at given index and returns it.
-     *
-     * @param index Index of the entity to be removed.
-     * @return The removed entity.
-     */
-    public T removeEntity(final int index) {
-        final T entityToRemove = getEntity(index);
-        removeItem(getIdByIndex(index));
-        return entityToRemove;
-    }
-
-    /**
-     * Gets entity by ID.
-     *
-     * @param id The ID of the entity.
-     * @return the entity.
-     */
-    @SuppressWarnings("unchecked")
-    public T getEntity(final Object id) {
-        return getEntity(indexOfId(id));
-    }
-
-    /**
-     * Gets entity at given index.
-     *
-     * @param index The index of the entity.
-     * @return the entity.
-     */
-    @SuppressWarnings("unchecked")
-    public T getEntity(final int index) {
-        if (getQueryView().getQueryDefinition().isCompositeItems()) {
-            final CompositeItem compositeItem = (CompositeItem) getItem(getIdByIndex(index));
-            final BeanItem<T> beanItem = (BeanItem<T>) compositeItem.getItem("bean");
-            return beanItem.getBean();
-        } else {
-            return ((BeanItem<T>) getItem(getIdByIndex(index))).getBean();
-        }
     }
 
 }

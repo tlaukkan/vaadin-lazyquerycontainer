@@ -15,6 +15,10 @@
  */
 package org.vaadin.addons.lazyquerycontainer;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+
 /**
  * Defines entity query definition to be used with JPA entity managers.
  *
@@ -37,6 +41,11 @@ public class EntityQueryDefinition extends LazyQueryDefinition {
      * True if application manages transactions instead of container.
      */
     private boolean applicationManagedTransactions;
+    
+    /**
+     * Nested properties collection
+     */
+    private Collection<String> nestedProperties = new LinkedHashSet<String>();
 
 
     /**
@@ -80,6 +89,30 @@ public class EntityQueryDefinition extends LazyQueryDefinition {
      */
     public final Class<?> getEntityClass() {
         return entityClass;
+    }
+    
+    /**
+     * Returns an unmodifiable collection of user defined nested properties
+     * @return
+     */
+    public Collection<String> getNestedProperties() {
+    	return Collections.unmodifiableCollection(nestedProperties);
+    }
+    
+    /**
+     * Add an nested property to this query definition
+     * @param nestedProperty
+     */
+    public void addNestedProperty(final String nestedProperty) {
+    	nestedProperties.add(nestedProperty);
+    }
+    
+    /**
+     * Removes an nested property from this query definition
+     * @param nestedProperty
+     */
+    public void removeNestedProperty(final String nestedProperty) {
+    	nestedProperties.remove(nestedProperty);
     }
 
 }
