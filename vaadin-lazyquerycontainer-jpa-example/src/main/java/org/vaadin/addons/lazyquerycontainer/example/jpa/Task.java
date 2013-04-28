@@ -15,9 +15,11 @@
  */
 package org.vaadin.addons.lazyquerycontainer.example.jpa;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import java.io.Serializable;
 
 /**
@@ -64,6 +66,11 @@ public final class Task implements Serializable {
      * Delta value.
      */
     private String delta;
+    /**
+     * Task author.
+     */
+    @ManyToOne(cascade =  CascadeType.PERSIST)
+    private Author author;
 
     /**
      * @return the taskId
@@ -182,6 +189,20 @@ public final class Task implements Serializable {
      */
     public void setDelta(String delta) {
         this.delta = delta;
+    }
+
+    /**
+     * @return the author
+     */
+    public Author getAuthor() {
+        return author;
+    }
+
+    /**
+     * @param author the author to set
+     */
+    public void setAuthor(final Author author) {
+        this.author = author;
     }
 
     @Override

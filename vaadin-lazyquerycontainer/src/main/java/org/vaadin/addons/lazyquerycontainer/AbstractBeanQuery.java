@@ -214,7 +214,8 @@ public abstract class AbstractBeanQuery<T> implements Query {
      */
     @SuppressWarnings({"unchecked", "rawtypes" })
     private Item toItem(final T bean) {
-        BeanItem<T> beanItem = new BeanItem<T>(bean);
+        NestingBeanItem<T> beanItem = new NestingBeanItem<T>(bean,
+                queryDefinition.getMaxNestedPropertyDepth(), queryDefinition.getPropertyIds());
 
         if (queryDefinition.isCompositeItems()) {
             CompositeItem compositeItem = new CompositeItem();

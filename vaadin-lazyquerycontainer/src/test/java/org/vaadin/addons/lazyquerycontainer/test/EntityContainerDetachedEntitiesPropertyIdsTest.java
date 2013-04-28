@@ -88,12 +88,19 @@ public class EntityContainerDetachedEntitiesPropertyIdsTest {
                 ENTITY_CONTAINER_BATCH_SIZE, "taskId", true, true, true);
         entityContainer.getQueryView().getQueryDefinition().setDefaultSortState(
                 new String[]{"name"}, new boolean[]{true});
+        entityContainer.getQueryView().getQueryDefinition().setMaxNestedPropertyDepth(3);
 
+        final Company company = new Company();
+        company.setName("test-company");
+        final Author author = new Author();
+        author.setName("test-author");
+        author.setCompany(company);
 
         final Task taskAlpha = entityContainer.addEntity();
         taskAlpha.setName("alpha");
         taskAlpha.setAssignee("assignee-alpha");
         taskAlpha.setReporter("reporter-alpha");
+        taskAlpha.setAuthor(author);
 
         entityContainer.commit();
 
@@ -104,6 +111,7 @@ public class EntityContainerDetachedEntitiesPropertyIdsTest {
         taskBeta.setName("beta");
         taskBeta.setAssignee("assignee-beta");
         taskBeta.setReporter("reporter-beta");
+        taskBeta.setAuthor(author);
 
         entityContainer.commit();
 
@@ -165,12 +173,20 @@ public class EntityContainerDetachedEntitiesPropertyIdsTest {
                 betaItemBeforeRefresh.getItemProperty("description"));
 
         entityContainer.addContainerProperty("description", String.class, "");
+        entityContainer.addContainerProperty("author.name", String.class, "");
+        entityContainer.addContainerProperty("author.company.name", String.class, "");
+
         entityContainer.refresh();
 
         final Item betaItem = entityContainer.getItem(entityContainer.getIdByIndex(0));
         Assert.assertNotNull("Verify new property exists.", betaItem.getItemProperty("description"));
         Assert.assertEquals("Verify new property has correct default value.",
                 "", betaItem.getItemProperty("description").getValue());
+
+        Assert.assertEquals("Verify new property has correct value.",
+                "test-author", betaItem.getItemProperty("author.name").getValue());
+        Assert.assertEquals("Verify new property has correct value.",
+                "test-company", betaItem.getItemProperty("author.company.name").getValue());
 
         entityContainer.removeAllItems();
         Assert.assertEquals("Verify container is empty after remove all.", 0, entityContainer.size());

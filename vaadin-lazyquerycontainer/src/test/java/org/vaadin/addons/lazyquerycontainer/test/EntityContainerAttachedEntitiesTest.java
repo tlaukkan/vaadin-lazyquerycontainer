@@ -26,6 +26,7 @@ import org.junit.Test;
 import org.vaadin.addons.lazyquerycontainer.CompositeItem;
 import org.vaadin.addons.lazyquerycontainer.LazyEntityContainer;
 import org.vaadin.addons.lazyquerycontainer.LazyQueryView;
+import org.vaadin.addons.lazyquerycontainer.NestingBeanItem;
 import org.vaadin.addons.lazyquerycontainer.QueryItemStatus;
 
 import javax.persistence.EntityManager;
@@ -90,12 +91,21 @@ public class EntityContainerAttachedEntitiesTest {
                 ENTITY_CONTAINER_BATCH_SIZE, null, true, false, true);
         entityContainer.getQueryView().getQueryDefinition().setDefaultSortState(
                 new String[]{"name"}, new boolean[]{true});
+        entityContainer.getQueryView().getQueryDefinition().setMaxNestedPropertyDepth(3);
+
+        final Company company = new Company();
+        company.setName("test-company");
+        final Author author = new Author();
+        author.setName("test-author");
+        author.setCompany(company);
 
         final Task taskAlpha = entityContainer.addEntity();
         taskAlpha.setName("alpha");
         taskAlpha.setAssignee("assignee-alpha");
         taskAlpha.setReporter("reporter-alpha");
+        taskAlpha.setAuthor(author);
 
+        entityContainer.commit();
         entityContainer.commit();
 
         Assert.assertEquals("Verify entity alpha is in container", 1, entityContainer.size());
@@ -105,6 +115,7 @@ public class EntityContainerAttachedEntitiesTest {
         taskBeta.setName("beta");
         taskBeta.setAssignee("assignee-beta");
         taskBeta.setReporter("reporter-beta");
+        taskBeta.setAuthor(author);
 
         entityContainer.commit();
 
@@ -156,6 +167,9 @@ public class EntityContainerAttachedEntitiesTest {
                 betaItemBeforeRefresh.getItemProperty("description"));
 
         entityContainer.addContainerProperty("description", String.class, "");
+        entityContainer.addContainerProperty("author.name", String.class, "");
+        entityContainer.addContainerProperty("author.company.name", String.class, "");
+
         entityContainer.refresh();
 
         final Item betaItem = entityContainer.getItem(new Integer(0));
@@ -163,11 +177,17 @@ public class EntityContainerAttachedEntitiesTest {
         Assert.assertEquals("Verify new property has correct default value.",
                 "", betaItem.getItemProperty("description").getValue());
 
+        Assert.assertEquals("Verify new property has correct value.",
+                "test-author", betaItem.getItemProperty("author.name").getValue());
+        Assert.assertEquals("Verify new property has correct value.",
+                "test-company", betaItem.getItemProperty("author.company.name").getValue());
+
         Assert.assertEquals("Verify item is CompositeItem", CompositeItem.class, betaItem.getClass());
 
         entityContainer.getQueryView().getQueryDefinition().setCompositeItems(false);
         entityContainer.refresh();
-        Assert.assertEquals("Verify item is BeanItem", BeanItem.class, entityContainer.getItem(new Integer(0)).getClass());
+        Assert.assertEquals("Verify item is BeanItem", NestingBeanItem.class, entityContainer.getItem(
+                new Integer(0)).getClass());
         Assert.assertNotNull("Verify that entity can be accessed", entityContainer.getEntity(new Integer(0)));
 
         entityContainer.removeAllItems();

@@ -320,10 +320,11 @@ public class EntityQuery<E> implements Query, Serializable {
 
         if (filter instanceof Like) {
             final Like like = (Like) filter;
-            if(like.isCaseSensitive()) {
-            	return cb.like((Expression) getPropertyPath(root, like.getPropertyId()), like.getValue());
+            if (like.isCaseSensitive()) {
+                return cb.like((Expression) getPropertyPath(root, like.getPropertyId()), like.getValue());
             } else {
-            	return cb.like(cb.lower((Expression) getPropertyPath(root, like.getPropertyId())), like.getValue().toLowerCase());
+                return cb.like(cb.lower((Expression) getPropertyPath(root, like.getPropertyId())),
+                        like.getValue().toLowerCase());
             }
         }
 
@@ -463,7 +464,8 @@ public class EntityQuery<E> implements Query, Serializable {
     @SuppressWarnings({"rawtypes", "unchecked" })
     protected final Item toItem(final Object entity) {
         if (queryDefinition.isCompositeItems()) {
-            final BeanItem<?> beanItem = new BeanItem<Object>(entity);
+            final NestingBeanItem<?> beanItem = new NestingBeanItem<Object>(entity,
+                    queryDefinition.getMaxNestedPropertyDepth(), queryDefinition.getPropertyIds());
 
             final CompositeItem compositeItem = new CompositeItem();
             compositeItem.addItem("bean", beanItem);
@@ -479,7 +481,8 @@ public class EntityQuery<E> implements Query, Serializable {
 
             return compositeItem;
         } else {
-            return new BeanItem<Object>(entity);
+            return new NestingBeanItem<Object>(entity,
+                    queryDefinition.getMaxNestedPropertyDepth(), queryDefinition.getPropertyIds());
         }
     }
 

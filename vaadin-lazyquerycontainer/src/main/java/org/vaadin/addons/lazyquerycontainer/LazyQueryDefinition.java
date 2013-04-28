@@ -97,6 +97,10 @@ public class LazyQueryDefinition implements QueryDefinition, Serializable {
      * The query max size.
      */
     private int maxQuerySize = -1;
+    /**
+     * The max depth of nested properties.
+     */
+    private int maxNestedPropertyDepth = 0;
 
     /**
      * Constructor which sets the batch size.
@@ -116,7 +120,7 @@ public class LazyQueryDefinition implements QueryDefinition, Serializable {
      * @return the propertyIds
      */
     @Override
-    public final Collection<?> getPropertyIds() {
+    public final Collection<Object> getPropertyIds() {
         return Collections.unmodifiableCollection(propertyIds);
     }
 
@@ -126,7 +130,7 @@ public class LazyQueryDefinition implements QueryDefinition, Serializable {
      * @return the sortablePropertyIds
      */
     @Override
-    public final Collection<?> getSortablePropertyIds() {
+    public final Collection<Object> getSortablePropertyIds() {
         final List<Object> sortablePropertyIds = new ArrayList<Object>();
         for (final Object propertyId : propertyIds) {
             if (isPropertySortable(propertyId)) {
@@ -436,5 +440,25 @@ public class LazyQueryDefinition implements QueryDefinition, Serializable {
     @Override
     public final void setMaxQuerySize(final int maxQuerySize) {
         this.maxQuerySize = maxQuerySize;
+    }
+
+    /**
+     * Sets the maxNestedPropertyDepth
+     *
+     * @return maxNestedPropertyDepth
+     */
+    @Override
+    public final int getMaxNestedPropertyDepth() {
+        return maxNestedPropertyDepth;
+    }
+
+    /**
+     * Gets the maxNestedPropertyDepth
+     *
+     * @param maxNestedPropertyDepth maxNestedPropertyDepth
+     */
+    @Override
+    public final void setMaxNestedPropertyDepth(final int maxNestedPropertyDepth) {
+        this.maxNestedPropertyDepth = maxNestedPropertyDepth;
     }
 }
