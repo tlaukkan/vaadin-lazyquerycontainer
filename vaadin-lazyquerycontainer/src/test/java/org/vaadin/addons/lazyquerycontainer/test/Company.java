@@ -15,19 +15,17 @@
  */
 package org.vaadin.addons.lazyquerycontainer.test;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import java.io.Serializable;
 
 /**
- * Task entity for JPA testing.
+ * Company entity for JPA testing.
  */
 @Entity
 
-public final class Task implements Serializable {
+public final class Company implements Serializable {
     /**
      * Java serialization version UID.
      */
@@ -37,37 +35,24 @@ public final class Task implements Serializable {
      */
     @Id
     @GeneratedValue
-    private long taskId;
+    private long companyId;
     /**
      * Name of the task.
      */
     private String name;
-    /**
-     * Reporter of the task.
-     */
-    private String reporter;
-    /**
-     * Assignee of the task.
-     */
-    private String assignee;
-    /**
-     * Task author.
-     */
-    @ManyToOne(cascade =  CascadeType.PERSIST)
-    private Author author;
 
     /**
-     * @return the taskId
+     * @return the companyId
      */
-    public long getTaskId() {
-        return taskId;
+    public long getCompanyId() {
+        return companyId;
     }
 
     /**
-     * @param taskId the taskId to set
+     * @param companyId the companyId to set
      */
-    public void setTaskId(final long taskId) {
-        this.taskId = taskId;
+    public void setCompanyId(final long companyId) {
+        this.companyId = companyId;
     }
 
     /**
@@ -85,57 +70,15 @@ public final class Task implements Serializable {
     }
 
     /**
-     * @return the reporter
-     */
-    public String getReporter() {
-        return reporter;
-    }
-
-    /**
-     * @param reporter the reporter to set
-     */
-    public void setReporter(final String reporter) {
-        this.reporter = reporter;
-    }
-
-    /**
-     * @return the assignee
-     */
-    public String getAssignee() {
-        return assignee;
-    }
-
-    /**
-     * @param assignee the assignee to set
-     */
-    public void setAssignee(final String assignee) {
-        this.assignee = assignee;
-    }
-
-    /**
      * @return the serialversionuid
      */
     public static long getSerialversionuid() {
         return serialVersionUID;
     }
 
-    /**
-     * @return the author
-     */
-    public Author getAuthor() {
-        return author;
-    }
-
-    /**
-     * @param author the author to set
-     */
-    public void setAuthor(final Author author) {
-        this.author = author;
-    }
-
     @Override
     public String toString() {
-        return "Task name: " + name + " reporter: " + reporter + " assignee: " + assignee;
+        return "Company name: " + name;
     }
 
 }

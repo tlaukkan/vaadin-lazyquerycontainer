@@ -44,14 +44,14 @@ public interface QueryDefinition {
      *
      * @return A list of property IDs queried.
      */
-    Collection<?> getPropertyIds();
+    Collection<Object> getPropertyIds();
 
     /**
      * List of the property IDs which can be sorted.
      *
      * @return A list of the property IDs which can be sorted.
      */
-    Collection<?> getSortablePropertyIds();
+    Collection<Object> getSortablePropertyIds();
 
     /**
      * Gets the property value class of the given property.
@@ -245,13 +245,29 @@ public interface QueryDefinition {
 
     /**
      * Gets the max query size.
+     *
      * @return the max query size
      */
     int getMaxQuerySize();
 
     /**
      * Sets the max query size.
+     *
      * @param maxQuerySize the max query size
      */
     void setMaxQuerySize(final int maxQuerySize);
+
+    /**
+     * Sets the maxNestedPropertyDepth
+     *
+     * @return maxNestedPropertyDepth
+     */
+    int getMaxNestedPropertyDepth();
+
+    /**
+     * Gets the maxNestedPropertyDepth
+     *
+     * @param maxNestedPropertyDepth maxNestedPropertyDepth
+     */
+    void setMaxNestedPropertyDepth(int maxNestedPropertyDepth);
 }
