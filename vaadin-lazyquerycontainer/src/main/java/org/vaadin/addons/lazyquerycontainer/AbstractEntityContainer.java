@@ -85,14 +85,14 @@ public abstract class AbstractEntityContainer<T> extends LazyQueryContainer {
     
     /**
      * Add an nested property to this container<br>
-     * Nested properties rely on the composite items structure, and uses the Java Beans API and conventions to access/invoke methods.<br>
+     * It uses the Java Beans API and conventions to access/invoke methods.<br>
      * All access to properties will be done via default Getters and Setters, and not directly field acess. Be sure that your entity is<br>
      * Java Beans conform.
      * They will work only if you enable composite itens on this container
      * @param nestedProperty - Nested properties on Java Beans notation (ie: entity.anotherEntity.propertyName)
      */
     public void addNestedProperty(final String nestedProperty) {
-    	if(getQueryDefinitionFromQueryView().isCompositeItems() && nestedProperty != null && !nestedProperty.trim().isEmpty()) {
+    	if(nestedProperty != null && !nestedProperty.trim().isEmpty()) {
     		Class<?> entityClass = getQueryDefinitionFromQueryView().getEntityClass();
     		Class<?> propertyClass = EntityNestedProperty.getTypeFromPropertyPath(nestedProperty, entityClass);
     		
