@@ -16,7 +16,6 @@
 package org.vaadin.addons.lazyquerycontainer.test;
 
 import com.vaadin.data.Item;
-import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.filter.And;
 import com.vaadin.data.util.filter.Compare;
 import junit.framework.Assert;
@@ -91,7 +90,6 @@ public class EntityContainerAttachedEntitiesTest {
                 ENTITY_CONTAINER_BATCH_SIZE, null, true, false, true);
         entityContainer.getQueryView().getQueryDefinition().setDefaultSortState(
                 new String[]{"name"}, new boolean[]{true});
-        entityContainer.getQueryView().getQueryDefinition().setMaxNestedPropertyDepth(3);
 
         final Company company = new Company();
         company.setName("test-company");
@@ -167,8 +165,8 @@ public class EntityContainerAttachedEntitiesTest {
                 betaItemBeforeRefresh.getItemProperty("description"));
 
         entityContainer.addContainerProperty("description", String.class, "");
-        entityContainer.addContainerProperty("author.name", String.class, "");
-        entityContainer.addContainerProperty("author.company.name", String.class, "");
+        entityContainer.addNestedProperty("author.name");
+        entityContainer.addNestedProperty("author.company.name");
 
         entityContainer.refresh();
 
