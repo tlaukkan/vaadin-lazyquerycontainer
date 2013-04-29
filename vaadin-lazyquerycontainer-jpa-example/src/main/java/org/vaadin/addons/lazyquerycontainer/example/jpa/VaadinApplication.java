@@ -152,14 +152,13 @@ public class VaadinApplication extends UI implements ClickListener {
         entityContainer = new LazyEntityContainer<Task>(entityManager, Task.class, 100, "taskId", true, true, true);
         entityContainer.getQueryView().getQueryDefinition().setDefaultSortState(
                 new Object[]{"name"}, new boolean[]{true});
-        entityContainer.getQueryView().getQueryDefinition().setMaxNestedPropertyDepth(3);
 
         entityContainer.addContainerProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS, QueryItemStatus.class,
                 QueryItemStatus.None, true, false);
         entityContainer.addContainerProperty("taskId", Long.class, 0L, true, true);
         entityContainer.addContainerProperty("name", String.class, "", true, true);
-        entityContainer.addContainerProperty("author.name", String.class, "", true, true);
-        entityContainer.addContainerProperty("author.company.name", String.class, "", true, true);
+        entityContainer.addNestedProperty("author.name");
+        entityContainer.addNestedProperty("author.company.name");        
         entityContainer.addContainerProperty("reporter", String.class, "", true, true);
         entityContainer.addContainerProperty("assignee", String.class, "", true, true);
         entityContainer.addContainerProperty("alpha", String.class, "", false, true);

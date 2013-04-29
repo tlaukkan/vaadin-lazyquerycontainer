@@ -257,17 +257,4 @@ public interface QueryDefinition {
      */
     void setMaxQuerySize(final int maxQuerySize);
 
-    /**
-     * Sets the maxNestedPropertyDepth
-     *
-     * @return maxNestedPropertyDepth
-     */
-    int getMaxNestedPropertyDepth();
-
-    /**
-     * Gets the maxNestedPropertyDepth
-     *
-     * @param maxNestedPropertyDepth maxNestedPropertyDepth
-     */
-    void setMaxNestedPropertyDepth(int maxNestedPropertyDepth);
 }

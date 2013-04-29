@@ -41,6 +41,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -463,26 +464,27 @@ public class EntityQuery<E> implements Query, Serializable {
      */
     @SuppressWarnings({"rawtypes", "unchecked" })
     protected final Item toItem(final Object entity) {
+    	final NestingBeanItem<?> beanItem = new NestingBeanItem<Object>(entity, queryDefinition.getPropertyIds());
+    	
+    	for(String nestedProperty : queryDefinition.getNestedProperties()) {
+    		beanItem.addNestedProperty(nestedProperty);
+    	}
+    	
         if (queryDefinition.isCompositeItems()) {
-            final NestingBeanItem<?> beanItem = new NestingBeanItem<Object>(entity,
-                    queryDefinition.getMaxNestedPropertyDepth(), queryDefinition.getPropertyIds());
-
             final CompositeItem compositeItem = new CompositeItem();
             compositeItem.addItem("bean", beanItem);
-
+   
             for (final Object propertyId : queryDefinition.getPropertyIds()) {
                 if (compositeItem.getItemProperty(propertyId) == null) {
-                    compositeItem.addItemProperty(
+                	compositeItem.addItemProperty(
                             propertyId,
                             new ObjectProperty(queryDefinition.getPropertyDefaultValue(propertyId), queryDefinition
                                     .getPropertyType(propertyId), queryDefinition.isPropertyReadOnly(propertyId)));
                 }
             }
-
             return compositeItem;
         } else {
-            return new NestingBeanItem<Object>(entity,
-                    queryDefinition.getMaxNestedPropertyDepth(), queryDefinition.getPropertyIds());
+            return beanItem;
         }
     }
 

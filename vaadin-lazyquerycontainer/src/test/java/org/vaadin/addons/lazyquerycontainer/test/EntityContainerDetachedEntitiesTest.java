@@ -88,7 +88,6 @@ public class EntityContainerDetachedEntitiesTest {
                 ENTITY_CONTAINER_BATCH_SIZE, null, true, true, true);
         entityContainer.getQueryView().getQueryDefinition().setDefaultSortState(
                 new String[]{"name"}, new boolean[]{true});
-        entityContainer.getQueryView().getQueryDefinition().setMaxNestedPropertyDepth(3);
 
         final Company company = new Company();
         company.setName("test-company");
@@ -173,8 +172,8 @@ public class EntityContainerDetachedEntitiesTest {
                 betaItemBeforeRefresh.getItemProperty("description"));
 
         entityContainer.addContainerProperty("description", String.class, "");
-        entityContainer.addContainerProperty("author.name", String.class, "");
-        entityContainer.addContainerProperty("author.company.name", String.class, "");
+        entityContainer.addNestedProperty("author.name");
+        entityContainer.addNestedProperty("author.company.name");
 
         entityContainer.refresh();
 
