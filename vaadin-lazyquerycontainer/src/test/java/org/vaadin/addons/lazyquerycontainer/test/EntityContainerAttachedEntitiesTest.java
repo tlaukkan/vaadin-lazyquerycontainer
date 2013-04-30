@@ -182,6 +182,15 @@ public class EntityContainerAttachedEntitiesTest {
         Assert.assertEquals("Verify new property has correct value.",
                 "test-company", betaItem.getItemProperty("author.company.name").getValue());
 
+        taskBeta.setAuthor(null);
+        entityManager.persist(taskBeta);
+        entityContainer.refresh();
+
+        Assert.assertEquals("Verify new property has correct value.",
+                null, betaItem.getItemProperty("author.name").getValue());
+        Assert.assertEquals("Verify new property has correct value.",
+                null, betaItem.getItemProperty("author.company.name").getValue());
+
         Assert.assertEquals("Verify item is CompositeItem", CompositeItem.class, betaItem.getClass());
 
         entityContainer.getQueryView().getQueryDefinition().setCompositeItems(false);

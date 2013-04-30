@@ -188,6 +188,16 @@ public class EntityContainerDetachedEntitiesTest {
         Assert.assertEquals("Verify new property has correct value.",
                 "test-company", betaItem.getItemProperty("author.company.name").getValue());
 
+        taskBeta.setAuthor(null);
+        entityManager.persist(taskBeta);
+        entityContainer.refresh();
+
+        final Item betaItemAfterAuthorClear = entityContainer.getItem(entityContainer.getIdByIndex(0));
+        Assert.assertEquals("Verify new property has correct value.",
+                null, betaItemAfterAuthorClear.getItemProperty("author.name").getValue());
+        Assert.assertEquals("Verify new property has correct value.",
+                null, betaItemAfterAuthorClear.getItemProperty("author.company.name").getValue());
+
         entityContainer.removeAllItems();
         Assert.assertEquals("Verify container is empty after remove all.", 0, entityContainer.size());
     }

@@ -16,11 +16,9 @@
  */
 package org.vaadin.addons.lazyquerycontainer;
 
-import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.MethodPropertyDescriptor;
 import com.vaadin.data.util.NestedMethodProperty;
-import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.data.util.VaadinPropertyDescriptor;
 
 import java.beans.BeanInfo;
@@ -46,7 +44,7 @@ import java.util.Set;
  * @author Tommi S.E. Laukkanen
  */
 @SuppressWarnings("serial")
-public class NestingBeanItem<BT> extends BeanItem<BT> {
+public final class NestingBeanItem<BT> extends BeanItem<BT> {
 
     /**
      * The max nested property depth.
@@ -101,7 +99,7 @@ public class NestingBeanItem<BT> extends BeanItem<BT> {
      *            sub-properties to expand, all sub-properties are expanded if
      *            not specified
      */
-    public void expandProperty(String propertyId, String... subPropertyIds) {
+    public void expandProperty(final String propertyId, final String... subPropertyIds) {
         Set<String> subPropertySet = new HashSet<String>(
                 Arrays.asList(subPropertyIds));
 
@@ -120,6 +118,19 @@ public class NestingBeanItem<BT> extends BeanItem<BT> {
     }
 
     /**
+     * Adds a nested property to the item.
+     *
+     * @param nestedPropertyId
+     *            property id to add. This property must not exist in the item
+     *            already and must of of form "field1.field2" where field2 is a
+     *            field in the object referenced to by field1
+     */
+    public void addNestedProperty(final String nestedPropertyId) {
+        addItemProperty(nestedPropertyId, new NestedMethodProperty<Object>(
+                getBean(), nestedPropertyId));
+    }
+
+    /**
      * <p>
      * Perform introspection on a Java Bean class to find its properties.
      * </p>
@@ -132,6 +143,7 @@ public class NestingBeanItem<BT> extends BeanItem<BT> {
      *
      * @param beanClass
      *            the Java Bean class to get properties for.
+     * @param <BT> the bean type
      * @return an ordered map from property names to property descriptors
      */
     static <BT> LinkedHashMap<String, VaadinPropertyDescriptor<BT>> getPropertyDescriptors(
@@ -172,8 +184,8 @@ public class NestingBeanItem<BT> extends BeanItem<BT> {
      * For interfaces, the iteration is depth first and the properties of
      * superinterfaces are returned before those of their subinterfaces.
      *
-     * @param beanClass
-     * @return
+     * @param beanClass the bean class
+     * @return list of property descriptors
      * @throws IntrospectionException
      */
     private static List<PropertyDescriptor> getBeanPropertyDescriptor(
