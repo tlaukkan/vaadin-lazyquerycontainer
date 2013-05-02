@@ -292,7 +292,7 @@ public class EntityQuery<E> implements Query, Serializable {
         if (filter instanceof Between) {
             final Between between = (Between) filter;
             final Expression property = (Expression) getPropertyPath(root, between.getPropertyId());
-            return cb.between(property, (Comparable) between.getEndValue(), (Comparable) between.getEndValue());
+            return cb.between(property, (Comparable) between.getStartValue(), (Comparable) between.getEndValue());
         }
 
         if (filter instanceof Compare) {
