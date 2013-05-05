@@ -240,4 +240,13 @@ public class LazyQueryContainerTest extends TestCase implements ItemSetChangeLis
         assertFalse(container.getItem(removeIndex).getItemProperty("Editable").isReadOnly());
     }
 
+    public void testPrevItemId() {
+    	Object first = container.getIdByIndex(0);
+    	assertNull(container.prevItemId(first));
+    }
+
+    public void testNextItemId() {
+    	Object last = container.getIdByIndex(container.size() - 1);
+    	assertNull(container.nextItemId(last));
+    }
 }
