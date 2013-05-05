@@ -285,18 +285,32 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
 
     /**
      * @param itemId the item index
-     * @return itemId + 1
+     * @return itemId + 1, or <code>null</code> if no such item
      */
     public final Object nextItemId(final Object itemId) {
-        return queryView.getItemIdList().get(queryView.getItemIdList().indexOf(itemId) + 1);
+    	List<?> itemIdList = queryView.getItemIdList();
+    	int currentIndex = itemIdList.indexOf(itemId);
+    	if (currentIndex == -1 || currentIndex == itemIdList.size() - 1) {
+    		return null;
+    	}
+    	else {
+    		return itemIdList.get(currentIndex + 1);
+    	}
     }
 
     /**
      * @param itemId the item index
-     * @return itemId - 1
+     * @return itemId - 1, or <code>null</code> if no such item
      */
     public final Object prevItemId(final Object itemId) {
-        return queryView.getItemIdList().get(queryView.getItemIdList().indexOf(itemId) - 1);
+    	List<?> itemIdList = queryView.getItemIdList();
+    	int currentIndex = itemIdList.indexOf(itemId);
+    	if (currentIndex == -1 || currentIndex == 0) {
+    		return null;
+    	}
+    	else {
+    		return itemIdList.get(currentIndex - 1);
+    	}
     }
 
     /**
