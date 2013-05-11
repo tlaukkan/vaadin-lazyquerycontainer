@@ -41,7 +41,7 @@ import com.vaadin.data.util.MethodProperty.MethodException;
  *
  * @since 6.6
  */
-public final class NestedMethodProperty<T> extends AbstractProperty<T> {
+public final class LazyNestedMethodProperty<T> extends AbstractProperty<T> {
 
     /** The property name. */
     private String propertyName;
@@ -97,7 +97,7 @@ public final class NestedMethodProperty<T> extends AbstractProperty<T> {
      * @param propertyName
      *            dot separated nested property name
      */
-    public NestedMethodProperty(final Object instance, final String propertyName) {
+    public LazyNestedMethodProperty(final Object instance, final String propertyName) {
         this.instance = instance;
         initialize(instance.getClass(), propertyName);
     }
@@ -112,7 +112,7 @@ public final class NestedMethodProperty<T> extends AbstractProperty<T> {
      * @param propertyName
      *            the property name
      */
-    NestedMethodProperty(final Class<?> instanceClass, final String propertyName) {
+    LazyNestedMethodProperty(final Class<?> instanceClass, final String propertyName) {
         instance = null;
         initialize(instanceClass, propertyName);
     }
