@@ -164,6 +164,12 @@ public class LazyQueryContainerPropertyIdsTest extends TestCase implements ItemS
         assertEquals(originalViewSize + 2, container.size());
         assertEquals(QueryItemStatus.Added,
                 container.getItem(addedId).getItemProperty(LazyQueryView.PROPERTY_ID_ITEM_STATUS).getValue());
+
+        Collection allItemIds = container.getItemIds();
+        for (Object itemId : allItemIds) {
+            assertEquals(itemId, container.getItem(itemId).getItemProperty("Index").getValue());
+        }
+
         assertTrue(container.isModified());
         container.commit();
         assertFalse(container.isModified());

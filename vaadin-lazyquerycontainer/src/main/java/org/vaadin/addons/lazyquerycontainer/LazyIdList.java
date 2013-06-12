@@ -88,7 +88,13 @@ public final class LazyIdList<T> extends AbstractList<T> {
             throw new IndexOutOfBoundsException();
         }
         final T itemId = (T) lazyQueryView.getItem(index).getItemProperty(idPropertyId).getValue();
-        idIndexMap.put(itemId, index);
+        // Do not put added item ids to id index map and make sure that
+        // existing item indexes start from 0 i.e. ignore added items as they
+        // are compensated for in indexOf method.
+        final int addedItemSize = lazyQueryView.getAddedItems().size();
+        if (index >= addedItemSize) {
+            idIndexMap.put(itemId, index - addedItemSize);
+        }
         return itemId;
     }
 
