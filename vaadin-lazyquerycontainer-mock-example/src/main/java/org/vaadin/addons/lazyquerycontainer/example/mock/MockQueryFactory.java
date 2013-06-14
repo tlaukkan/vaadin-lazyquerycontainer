@@ -52,6 +52,7 @@ public class MockQueryFactory implements QueryFactory {
     }
 
     public Query constructQuery(QueryDefinition definition) {
+        this.definition = definition;
         // Creating items on demand when constructQuery is first time called.
         if (items == null) {
             items = new ArrayList<Item>();
