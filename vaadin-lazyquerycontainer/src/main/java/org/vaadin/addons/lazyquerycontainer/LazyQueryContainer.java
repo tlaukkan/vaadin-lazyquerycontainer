@@ -15,6 +15,10 @@
  */
 package org.vaadin.addons.lazyquerycontainer;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import com.vaadin.data.Buffered;
 import com.vaadin.data.Container;
 import com.vaadin.data.Container.Indexed;
@@ -24,10 +28,6 @@ import com.vaadin.data.Container.Sortable;
 import com.vaadin.data.ContainerHelpers;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * LazyQueryContainer provides lazy loading of items from business services. See
@@ -492,16 +492,20 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
     @Override
     public final void addContainerFilter(final Filter filter) {
         getQueryView().addFilter(filter);
+        refresh();
     }
+
 
     @Override
     public final void removeContainerFilter(final Filter filter) {
         getQueryView().removeFilter(filter);
+        refresh();
     }
 
     @Override
     public final void removeAllContainerFilters() {
         getQueryView().removeFilters();
+        refresh();
     }
 
     /**
