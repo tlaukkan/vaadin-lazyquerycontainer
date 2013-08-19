@@ -492,32 +492,20 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
     @Override
     public final void addContainerFilter(final Filter filter) {
         getQueryView().addFilter(filter);
-        fireItemSetChange(new QueryItemSetChangeEvent(this));
+        refresh();
     }
 
-
-    protected void fireItemSetChange(QueryItemSetChangeEvent queryItemSetChangeEvent)
-    {
-        if (itemSetChangeListeners != null)
-        {
-            final Object[] l = itemSetChangeListeners.toArray();
-            for (int i = 0; i < l.length; i++)
-            {
-                ((Container.ItemSetChangeListener)l[i]).containerItemSetChange(queryItemSetChangeEvent);
-            }
-        }
-    }
 
     @Override
     public final void removeContainerFilter(final Filter filter) {
         getQueryView().removeFilter(filter);
-        fireItemSetChange(new QueryItemSetChangeEvent(this));
+        refresh();
     }
 
     @Override
     public final void removeAllContainerFilters() {
         getQueryView().removeFilters();
-        fireItemSetChange(new QueryItemSetChangeEvent(this));
+        refresh();
     }
 
     /**
