@@ -17,7 +17,6 @@
 package org.vaadin.addons.lazyquerycontainer;
 
 import com.vaadin.data.util.BeanItem;
-import com.vaadin.data.util.LazyNestedMethodProperty;
 import com.vaadin.data.util.MethodPropertyDescriptor;
 import com.vaadin.data.util.VaadinPropertyDescriptor;
 
@@ -34,6 +33,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.vaadin.addons.lazyquerycontainer.util.LazyNestedMethodProperty;
 
 /**
  * Specialized version of BeanItem to allow for automated expansion of nested properties.

@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.vaadin.data.util;
+package org.vaadin.addons.lazyquerycontainer.util;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -24,6 +24,8 @@ import java.util.Collections;
 import java.util.List;
 
 import com.vaadin.data.Property;
+import com.vaadin.data.util.AbstractProperty;
+import com.vaadin.data.util.MethodProperty;
 import com.vaadin.data.util.MethodProperty.MethodException;
 
 /**
@@ -43,7 +45,9 @@ import com.vaadin.data.util.MethodProperty.MethodException;
  */
 public final class LazyNestedMethodProperty<T> extends AbstractProperty<T> {
 
-    /** The property name. */
+	private static final long serialVersionUID = 1L;
+
+	/** The property name. */
     private String propertyName;
 
     /** The getter methods. */
@@ -126,7 +130,7 @@ public final class LazyNestedMethodProperty<T> extends AbstractProperty<T> {
      * @param propertyName
      *            dot separated nested property name
      */
-    private void initialize(final Class<?> beanClass, final String propertyName) {
+	private void initialize(final Class<?> beanClass, final String propertyName) {
 
         final List<Method> getMethods = new ArrayList<Method>();
 
@@ -146,8 +150,7 @@ public final class LazyNestedMethodProperty<T> extends AbstractProperty<T> {
                 lastSimplePropertyName = simplePropertyName;
                 lastClass = propertyClass;
                 try {
-                    Method getter = MethodProperty.initGetterMethod(
-                            simplePropertyName, propertyClass);
+                    Method getter = extractMethod(simplePropertyName, propertyClass);
                     propertyClass = getter.getReturnType();
                     getMethods.add(getter);
                 } catch (final java.lang.NoSuchMethodException e) {
@@ -181,13 +184,38 @@ public final class LazyNestedMethodProperty<T> extends AbstractProperty<T> {
         } catch (final NoSuchMethodException skipped) {
         }
 
-        this.type = (Class<? extends T>) MethodProperty
-                .convertPrimitiveType(type);
+        this.type = (Class<? extends T>) convertToPrimitiveType(type);
         this.propertyName = propertyName;
         this.getMethods = getMethods;
         this.setMethod = setMethod;
     }
+    
+    @SuppressWarnings("unchecked")
+	private Class<? extends T> convertToPrimitiveType(Class<?> type) {
+    	try {
+    		Method convertMethod = MethodProperty.class.getDeclaredMethod("convertPrimitiveType", Class.class);
+    		convertMethod.setAccessible(true);
+    		Class<? extends T> invoke = (Class<? extends T>) convertMethod.invoke(null, type);
+			return invoke;
+    	} catch (Exception ex) {
+    		throw new IllegalStateException("Vaadin internal Method Property API is incompatible");
+    	}
+    }
 
+    private Method extractMethod(String simplePropertyName, Class<?> propertyClass) throws NoSuchMethodException {
+    	try {
+    		Method methodProperty = MethodProperty.class.getDeclaredMethod("initGetterMethod", String.class, Class.class);
+    		methodProperty.setAccessible(true);
+    		return (Method) methodProperty.invoke(null, simplePropertyName, propertyClass);    		
+    	} catch (InvocationTargetException ex) {
+    		ex.printStackTrace();
+    		throw new IllegalStateException("Vaadin internal Method Property API is incompatible");
+    	} catch (IllegalAccessException e) {
+    		e.printStackTrace();
+    		throw new IllegalStateException("Vaadin internal Method Property API is incompatible");
+		}
+    }
+    
     @Override
     public Class<? extends T> getType() {
         return type;
@@ -204,7 +232,8 @@ public final class LazyNestedMethodProperty<T> extends AbstractProperty<T> {
      *
      * @return the value of the Property
      */
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public T getValue() {
         try {
             Object object = instance;

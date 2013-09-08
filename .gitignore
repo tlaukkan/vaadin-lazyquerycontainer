@@ -2,3 +2,5 @@ build
 .classpath
 .project
 .settings
+vaadin-lazyquerycontainer-jpa-example/bin/
+vaadin-lazyquerycontainer/bin/

@@ -11,6 +11,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <vaadin.version>7.0.5</vaadin.version>
+        <bundlor.manifest.output.dir>target/classes</bundlor.manifest.output.dir>
     </properties>
 
     <repositories>
@@ -29,6 +30,14 @@
             <url>http://www.eclipse.org/downloads/download.php?r=1&amp;nf=1&amp;file=/rt/eclipselink/maven.repo</url>
         </repository>
     </repositories>
+    
+    <pluginRepositories>
+		<pluginRepository>
+			<id>com.springsource.repository.bundles.release</id>
+			<name>SpringSource Enterprise Bundle Repository</name>
+			<url>http://repository.springsource.com/maven/bundles/release</url>
+		</pluginRepository>
+	</pluginRepositories>
 
     <build>
         <plugins>
@@ -64,15 +73,61 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
                     <archive>
-                        <manifestEntries>
-                            <Implementation-Title>Lazy Query Container</Implementation-Title>
-                            <Implementation-Version>${project.version}</Implementation-Version>
-                            <Vaadin-Package-Version>1</Vaadin-Package-Version>
-                        </manifestEntries>
+                        <manifestFile>${bundlor.manifest.output.dir}/META-INF/MANIFEST.MF</manifestFile>
                     </archive>
                 </configuration>
             </plugin>
+            <plugin>
+				<groupId>com.springsource.bundlor</groupId>
+				<artifactId>com.springsource.bundlor.maven</artifactId>
+				<version>1.0.0.RELEASE</version>
+				<executions>
+					<execution>
+						<id>bundlor</id>
+						<goals>
+							<goal>bundlor</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
         </plugins>
+        
+        <pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											com.springsource.bundlor
+										</groupId>
+										<artifactId>
+											com.springsource.bundlor.maven
+										</artifactId>
+										<versionRange>
+											[1.0.0.RELEASE,)
+										</versionRange>
+										<goals>
+											<goal>bundlor</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
     </build>
 
     <reporting>
