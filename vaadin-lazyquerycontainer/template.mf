@@ -1,0 +1,15 @@
+Implementation-Title: Lazy Query Container
+Implementation-Version: ${project.version}
+Vaadin-Package-Version: 1
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: org.vaadin.addons.lazyquerycontainer
+Bundle-Name: Lazy Query Container
+Bundle-Vendor: Vaadin Community
+Excluded-Imports: 
+ com.google.gwt*,
+ com.vaadin.client.*
+Excluded-Exports: 
+ src.test.java.org.vaadin.addons.lazyquerycontainer.test.*
+Import-Template:
+ com.vaadin.*;version="[7.0.0, 8.0.0)",
+ javax.persistence.*;version="[1.1.0,2.1.0)"
