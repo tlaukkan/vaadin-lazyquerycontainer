@@ -27,6 +27,7 @@ import com.vaadin.data.util.filter.Like;
 import com.vaadin.data.util.filter.Or;
 import com.vaadin.data.util.filter.Not;
 import com.vaadin.data.util.filter.SimpleStringFilter;
+import org.apache.log4j.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -56,6 +57,8 @@ public class EntityQuery<E> implements Query, Serializable {
      * Java serialization version UID.
      */
     private static final long serialVersionUID = 1L;
+    /** The logger. */
+    private static final Logger LOGGER = Logger.getLogger(EntityQuery.class);
     /**
      * The JPA EntityManager.
      */
@@ -123,6 +126,11 @@ public class EntityQuery<E> implements Query, Serializable {
     public final int size() {
 
         if (querySize == -1) {
+            if (queryDefinition.getBatchSize() == 0) {
+                LOGGER.debug(entityClass.getName() + " size skipped due to 0 bath size.");
+                return 0;
+            }
+
             final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
             final CriteriaQuery<Long> cq = cb.createQuery(Long.class);
             final Root<E> root = cq.from(entityClass);
@@ -136,6 +144,8 @@ public class EntityQuery<E> implements Query, Serializable {
             final javax.persistence.Query query = entityManager.createQuery(cq);
 
             querySize = ((Number) query.getSingleResult()).intValue();
+
+            LOGGER.debug(entityClass.getName() + " container size: " + querySize);
         }
         return querySize;
     }
