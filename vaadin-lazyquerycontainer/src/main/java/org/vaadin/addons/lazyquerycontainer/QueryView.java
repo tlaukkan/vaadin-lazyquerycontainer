@@ -18,6 +18,7 @@ package org.vaadin.addons.lazyquerycontainer;
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -151,4 +152,9 @@ public interface QueryView {
      * Clears filters from container.
      */
     void removeFilters();
+
+    /**
+     * Gets filters.
+     */
+    Collection<Container.Filter> getFilters();
 }

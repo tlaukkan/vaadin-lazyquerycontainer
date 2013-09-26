@@ -504,6 +504,11 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
         getQueryView().removeFilters();
     }
 
+    @Override
+    public Collection<Filter> getContainerFilters() {
+        return getQueryView().getFilters();
+    }
+
     /**
      * Adds default filter to underlying QueryDefinition.
      * @param filter the default filter

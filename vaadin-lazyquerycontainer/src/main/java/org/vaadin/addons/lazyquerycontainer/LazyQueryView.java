@@ -22,12 +22,7 @@ import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.data.Property.ValueChangeNotifier;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Lazy loading implementation of QueryView. This implementation supports lazy
@@ -635,5 +630,10 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
     public void removeFilters() {
         queryDefinition.removeFilters();
         refresh();
+    }
+
+    @Override
+    public Collection<Container.Filter> getFilters() {
+        return queryDefinition.getFilters();
     }
 }
