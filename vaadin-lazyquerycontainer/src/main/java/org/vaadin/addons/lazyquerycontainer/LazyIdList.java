@@ -17,6 +17,8 @@ package org.vaadin.addons.lazyquerycontainer;
 
 import com.vaadin.data.Item;
 
+import java.io.Serializable;
+
 import java.util.AbstractList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +31,7 @@ import java.util.Map;
  *
  * @author Tommi Laukkanen
  */
-public final class LazyIdList<T> extends AbstractList<T> {
+public final class LazyIdList<T> extends AbstractList<T> implements Serializable {
     /**
      * Java serialization version UID.
      */
