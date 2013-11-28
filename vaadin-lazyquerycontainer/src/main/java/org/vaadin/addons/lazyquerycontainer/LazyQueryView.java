@@ -102,7 +102,11 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
      */
     private boolean[] ascendingStates;
     /**
-     * List of item IDs.
+     * Factory for generating new itemIdLists when view is resettet.
+     */
+    private ItemIdListFactory itemIdListFactory = new DefaultItemIdListFactory();    
+    /**
+     * The current list of item IDs.
      */
     private List<?> itemIdList;
     /**
@@ -604,11 +608,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
      */
     public List<?> getItemIdList() {
         if (itemIdList == null) {
-            if (queryDefinition.getIdPropertyId() != null) {
-                itemIdList = new LazyIdList<Object>(this, queryDefinition.getIdPropertyId());
-            } else {
-                itemIdList = new NaturalNumberIdsList(size());
-            }
+        	this.itemIdList = this.itemIdListFactory.produce(queryDefinition, this);
         }
 
         return itemIdList;
@@ -636,4 +636,12 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
     public Collection<Container.Filter> getFilters() {
         return queryDefinition.getFilters();
     }
+
+	public ItemIdListFactory getItemIdListFactory() {
+		return itemIdListFactory;
+	}
+
+	public void setItemIdListFactory(ItemIdListFactory itemIdListFactory) {
+		this.itemIdListFactory = itemIdListFactory;
+	}    
 }
