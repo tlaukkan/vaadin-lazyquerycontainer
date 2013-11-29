@@ -102,7 +102,11 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
      */
     private boolean[] ascendingStates;
     /**
-     * List of item IDs.
+     * Factory for generating new itemIdLists when view is resettet.
+     */
+    private ItemIdListFactory itemIdListFactory = new DefaultItemIdListFactory();    
+    /**
+     * The current list of item IDs.
      */
     private List<?> itemIdList;
     /**
@@ -140,18 +144,34 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
      * @param queryFactory    The QueryFactory to be used.
      */
     public LazyQueryView(final QueryDefinition queryDefinition, final QueryFactory queryFactory) {
-        initialize(queryDefinition, queryFactory);
+        this(queryDefinition, queryFactory, null);
     }
-
+    
     /**
+	 * Constructs LazyQueryView with given QueryDefinition and QueryFactory. The
+     * role of this constructor is to enable use of custom QueryDefinition
+     * implementations. This constructor also allows customization of
+     * the ItemIdListFactory
+     * 
+     * @param queryDefinition
+     * @param queryFactory
+     * @param itemIdListFactory
+     */
+    public LazyQueryView(final QueryDefinition queryDefinition, final QueryFactory queryFactory, final ItemIdListFactory itemIdListFactory) {
+		this.initialize(queryDefinition, queryFactory, itemIdListFactory);		
+	}
+
+	/**
      * Initializes the LazyQueryView.
      *
      * @param queryDefinition The QueryDefinition to be used.
      * @param queryFactory    The QueryFactory to be used.
+     * @param itemIdListFactory The IdListFactory to be used. If null, a new {@link DefaultItemIdListFactory} is instantiated
      */
-    private void initialize(final QueryDefinition queryDefinition, final QueryFactory queryFactory) {
+    private void initialize(final QueryDefinition queryDefinition, final QueryFactory queryFactory, final ItemIdListFactory itemIdListFactory) {
         this.queryDefinition = queryDefinition;
         this.queryFactory = queryFactory;
+        this.itemIdListFactory = itemIdListFactory == null ? new DefaultItemIdListFactory() : itemIdListFactory;
         this.sortPropertyIds = new Object[0];
         this.ascendingStates = new boolean[0];
     }
@@ -604,11 +624,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
      */
     public List<?> getItemIdList() {
         if (itemIdList == null) {
-            if (queryDefinition.getIdPropertyId() != null) {
-                itemIdList = new LazyIdList<Object>(this, queryDefinition.getIdPropertyId());
-            } else {
-                itemIdList = new NaturalNumberIdsList(size());
-            }
+        	this.itemIdList = this.itemIdListFactory.produce(queryDefinition, this);
         }
 
         return itemIdList;
@@ -635,5 +651,5 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
     @Override
     public Collection<Container.Filter> getFilters() {
         return queryDefinition.getFilters();
-    }
+    }    
 }
