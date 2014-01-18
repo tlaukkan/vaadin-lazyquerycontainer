@@ -3,7 +3,8 @@ build
 .project
 .settings
 *.iml
-target/
+target
 .idea
 release.properties
 *.releaseBackup
+.directory
