@@ -10,8 +10,7 @@
         <url>https://github.com/tlaukkan/vaadin-lazyquerycontainer.git</url>
         <connection>scm:git:git://github.com:tlaukkan/vaadin-lazyquerycontainer.git</connection>
         <developerConnection>scm:git:git@github.com:tlaukkan/vaadin-lazyquerycontainer.git</developerConnection>
-      <tag>HEAD</tag>
-  </scm>
+    </scm>
 
     <build>
         <plugins>
