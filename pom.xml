@@ -12,6 +12,21 @@
         <developerConnection>scm:git:git@github.com:tlaukkan/vaadin-lazyquerycontainer.git</developerConnection>
     </scm>
 
+    <!-- Deploy releases and snapshots to the CloudBees maven repositories -->
+    <distributionManagement>
+        <downloadUrl>http://repository-tlaukkan.forge.cloudbees.com/snapshot/</downloadUrl>
+        <repository>
+            <id>tlaukkan-cloudbees-release</id>
+            <name>tlaukkan-cloudbees-release</name>
+            <url>dav:https://repository-tlaukkan.forge.cloudbees.com/release/</url>
+        </repository>
+        <snapshotRepository>
+            <id>tlaukkan-cloudbees-snapshot</id>
+            <name>tlaukkan-cloudbees-snapshot</name>
+            <url>dav:https://repository-tlaukkan.forge.cloudbees.com/snapshot/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <build>
         <plugins>
             <plugin>
