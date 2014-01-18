@@ -3,7 +3,7 @@
 
     <groupId>org.vaadin.addons.lazyquerycontainer</groupId>
     <artifactId>vaadin-lazyquerycontainer-root</artifactId>
-    <version>2.1.5-SNAPSHOT</version>
+    <version>2.1.5</version>
     <packaging>pom</packaging>
 
     <scm>
