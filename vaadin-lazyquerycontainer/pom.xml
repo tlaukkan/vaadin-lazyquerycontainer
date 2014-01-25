@@ -12,11 +12,6 @@
     <artifactId>vaadin-lazyquerycontainer</artifactId>
     <packaging>jar</packaging>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <vaadin.version>7.1.6</vaadin.version>
-    </properties>
-
     <repositories>
         <repository>
             <id>vaadin-snapshots</id>
