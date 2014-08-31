@@ -30,7 +30,6 @@ import java.util.*;
  * properties which will be filled with debug information when they exist in
  * query definition. The debug property IDs are defined as string constants with
  * the following naming convention: DEBUG_PROPERTY_XXXX.
- * <p/>
  * LazyQueryView implements mainly batch loading, caching and debug
  * functionalities. When data is sorted old query is discarded and new
  * constructed with QueryFactory and new sort state.

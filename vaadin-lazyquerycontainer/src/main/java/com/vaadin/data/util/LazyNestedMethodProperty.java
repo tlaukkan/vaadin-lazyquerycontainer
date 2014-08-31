@@ -245,7 +245,7 @@ public final class LazyNestedMethodProperty<T> extends AbstractProperty<T> {
      * Internal method to actually call the setter method of the wrapped
      * property.
      *
-     * @param value
+     * @param value the value
      */
     protected void invokeSetMethod(final T value) {
         try {

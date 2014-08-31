@@ -155,6 +155,7 @@ public interface QueryView {
 
     /**
      * Gets filters.
+     * @return collection of filters.
      */
     Collection<Container.Filter> getFilters();
 }
