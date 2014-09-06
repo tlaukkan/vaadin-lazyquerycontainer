@@ -58,8 +58,8 @@ public class LazyQueryContainerPropertyIdsTest extends TestCase implements ItemS
         factory.setQueryDefinition(definition);
         QueryView view = new LazyQueryView(definition, factory);
         container = new LazyQueryContainer(view);
-        container.addListener((ItemSetChangeListener) this);
-        container.addListener((PropertySetChangeListener) this);
+        container.addItemSetChangeListener(this);
+        container.addPropertySetChangeListener(this);
     }
 
     protected void tearDown() throws Exception {

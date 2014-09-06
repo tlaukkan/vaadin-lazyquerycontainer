@@ -189,7 +189,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
         for (final Property property : propertyItemMapCache.keySet()) {
             if (property instanceof ValueChangeNotifier) {
                 final ValueChangeNotifier notifier = (ValueChangeNotifier) property;
-                notifier.removeListener(this);
+                notifier.removeValueChangeListener(this);
             }
         }
 
@@ -332,7 +332,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
                 final Property property = item.getItemProperty(propertyId);
                 if (property instanceof ValueChangeNotifier) {
                     final ValueChangeNotifier notifier = (ValueChangeNotifier) property;
-                    notifier.addListener(this);
+                    notifier.addValueChangeListener(this);
                     propertyItemMapCache.put(property, item);
                 }
             }
@@ -358,7 +358,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener {
                     final Property property = firstItem.getItemProperty(propertyId);
                     if (property instanceof ValueChangeNotifier) {
                         final ValueChangeNotifier notifier = (ValueChangeNotifier) property;
-                        notifier.removeListener(this);
+                        notifier.removeValueChangeListener(this);
                         propertyItemMapCache.remove(property);
                     }
                 }
