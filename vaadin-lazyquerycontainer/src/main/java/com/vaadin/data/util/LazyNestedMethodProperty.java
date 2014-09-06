@@ -16,15 +16,15 @@
  */
 package com.vaadin.data.util;
 
+import com.vaadin.data.Property;
+import com.vaadin.data.util.MethodProperty.MethodException;
+
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import com.vaadin.data.Property;
-import com.vaadin.data.util.MethodProperty.MethodException;
 
 /**
  * Nested accessor based property for a bean.

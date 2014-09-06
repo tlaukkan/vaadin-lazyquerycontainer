@@ -19,12 +19,7 @@ import com.vaadin.data.Container;
 
 import java.io.Serializable;
 import java.security.InvalidParameterException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Default implementation of Query Definition. Contains the property, filtering and sorting information

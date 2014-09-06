@@ -4,11 +4,7 @@ import com.vaadin.data.Item;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.vaadin.addons.lazyquerycontainer.AbstractBeanQuery;
-import org.vaadin.addons.lazyquerycontainer.BeanQueryFactory;
-import org.vaadin.addons.lazyquerycontainer.LazyQueryDefinition;
-import org.vaadin.addons.lazyquerycontainer.LazyQueryView;
-import org.vaadin.addons.lazyquerycontainer.QueryItemStatus;
+import org.vaadin.addons.lazyquerycontainer.*;
 
 import java.util.HashMap;
 import java.util.Map;

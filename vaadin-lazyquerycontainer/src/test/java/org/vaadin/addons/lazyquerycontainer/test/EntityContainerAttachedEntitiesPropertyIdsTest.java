@@ -16,18 +16,13 @@
 package org.vaadin.addons.lazyquerycontainer.test;
 
 import com.vaadin.data.Item;
-import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.filter.And;
 import com.vaadin.data.util.filter.Compare;
 import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.vaadin.addons.lazyquerycontainer.CompositeItem;
-import org.vaadin.addons.lazyquerycontainer.LazyEntityContainer;
-import org.vaadin.addons.lazyquerycontainer.LazyQueryView;
-import org.vaadin.addons.lazyquerycontainer.NestingBeanItem;
-import org.vaadin.addons.lazyquerycontainer.QueryItemStatus;
+import org.vaadin.addons.lazyquerycontainer.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
