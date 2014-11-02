@@ -26,12 +26,14 @@ import com.vaadin.ui.Image;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.ColumnGenerator;
 
+import java.io.Serializable;
+
 /**
  * Helper class for Vaadin tables to generate status column.
  *
  * @author Tommi S.E. Laukkanen
  */
-public final class QueryItemStatusColumnGenerator implements ColumnGenerator, ValueChangeListener {
+public final class QueryItemStatusColumnGenerator implements ColumnGenerator, ValueChangeListener, Serializable {
     /**
      * Serial version UID of this class.
      */

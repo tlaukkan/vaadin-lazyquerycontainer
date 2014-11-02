@@ -19,6 +19,7 @@ import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.PropertysetItem;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -28,7 +29,7 @@ import java.util.*;
  *
  * @author Tommi Laukkanen
  */
-public final class CompositeItem implements Item {
+public final class CompositeItem implements Item, Serializable {
     /**
      * Serial version UID for this class.
      */

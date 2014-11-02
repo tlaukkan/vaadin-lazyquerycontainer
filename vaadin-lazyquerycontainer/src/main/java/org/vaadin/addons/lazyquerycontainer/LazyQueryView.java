@@ -22,6 +22,7 @@ import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.data.Property.ValueChangeNotifier;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -36,7 +37,7 @@ import java.util.*;
  *
  * @author Tommi S.E. Laukkanen
  */
-public final class LazyQueryView implements QueryView, ValueChangeListener {
+public final class LazyQueryView implements QueryView, ValueChangeListener, Serializable {
     /**
      * Java serialization UID.
      */

@@ -21,6 +21,7 @@ import com.vaadin.data.Container.ItemSetChangeNotifier;
 import com.vaadin.data.Container.PropertySetChangeNotifier;
 import com.vaadin.data.Container.Sortable;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -34,7 +35,7 @@ import java.util.List;
  * @author Tommi S.E. Laukkanen
  */
 public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotifier, PropertySetChangeNotifier,
-        Buffered, Container.Filterable {
+        Buffered, Container.Filterable, Serializable {
     /**
      * Java serialization UID.
      */

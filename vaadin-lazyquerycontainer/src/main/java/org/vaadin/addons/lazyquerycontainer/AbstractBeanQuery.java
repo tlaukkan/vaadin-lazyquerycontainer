@@ -22,6 +22,7 @@ import com.vaadin.data.util.ObjectProperty;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,7 @@ import java.util.Map;
  * @param <T> Bean class.
  * @author Tommi S.E. Laukkanen
  */
-public abstract class AbstractBeanQuery<T> implements Query {
+public abstract class AbstractBeanQuery<T> implements Query, Serializable {
     /**
      * QueryDefinition contains definition of the query properties.
      */
