@@ -199,7 +199,9 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
         if (itemId == null) {
             return null;
         } else {
-            return queryView.getItem(queryView.getItemIdList().indexOf(itemId));
+            int index = queryView.getItemIdList().indexOf(itemId);
+            if (index == -1) return null;
+            return queryView.getItem(index);
         }
     }
 
