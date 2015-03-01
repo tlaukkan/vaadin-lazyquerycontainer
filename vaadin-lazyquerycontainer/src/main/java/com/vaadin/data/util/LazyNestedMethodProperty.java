@@ -42,7 +42,7 @@ import java.util.List;
  *
  * @since 6.6
  */
-public final class LazyNestedMethodProperty<T> extends AbstractProperty<T> {
+public class LazyNestedMethodProperty<T> extends AbstractProperty<T> {
 
     /** The property name. */
     private String propertyName;

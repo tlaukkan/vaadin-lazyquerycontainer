@@ -37,7 +37,7 @@ import java.util.*;
  * @author Tommi S.E. Laukkanen
  */
 @SuppressWarnings("serial")
-public final class NestingBeanItem<BT> extends BeanItem<BT> {
+public class NestingBeanItem<BT> extends BeanItem<BT> {
 
     /**
      * The max nested property depth.
