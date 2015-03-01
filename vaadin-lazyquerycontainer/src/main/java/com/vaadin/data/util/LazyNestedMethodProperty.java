@@ -18,6 +18,7 @@ package com.vaadin.data.util;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.util.MethodProperty.MethodException;
+import com.vaadin.util.ReflectTools;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -181,7 +182,7 @@ public final class LazyNestedMethodProperty<T> extends AbstractProperty<T> {
         } catch (final NoSuchMethodException skipped) {
         }
 
-        this.type = (Class<? extends T>) MethodProperty
+        this.type = (Class<? extends T>) ReflectTools
                 .convertPrimitiveType(type);
         this.propertyName = propertyName;
         this.getMethods = getMethods;
