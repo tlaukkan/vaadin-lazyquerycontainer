@@ -98,6 +98,7 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
      */
     public final void sort(final Object[] sortPropertyIds, final boolean[] ascendingStates) {
         queryView.sort(sortPropertyIds, ascendingStates);
+        notifyItemSetChanged();
     }
 
     /**
@@ -491,16 +492,19 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
     @Override
     public final void addContainerFilter(final Filter filter) {
         getQueryView().addFilter(filter);
+        notifyItemSetChanged();
     }
 
     @Override
     public final void removeContainerFilter(final Filter filter) {
         getQueryView().removeFilter(filter);
+        notifyItemSetChanged();
     }
 
     @Override
     public final void removeAllContainerFilters() {
         getQueryView().removeFilters();
+        notifyItemSetChanged();
     }
 
     @Override
@@ -514,6 +518,7 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
      */
     public final void addDefaultFilter(final Filter filter) {
         getQueryView().getQueryDefinition().addDefaultFilter(filter);
+        notifyItemSetChanged();
     }
 
     /**
@@ -522,6 +527,7 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
      */
     public final void removeDefaultFilter(final Filter filter) {
         getQueryView().getQueryDefinition().removeDefaultFilter(filter);
+        notifyItemSetChanged();
     }
 
     /**
@@ -529,6 +535,7 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
      */
     public final void removeDefaultFilters() {
         getQueryView().getQueryDefinition().removeDefaultFilters();
+        notifyItemSetChanged();
     }
 
     /**
