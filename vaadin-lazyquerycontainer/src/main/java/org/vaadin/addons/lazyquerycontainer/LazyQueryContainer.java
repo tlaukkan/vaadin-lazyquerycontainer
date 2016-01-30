@@ -214,7 +214,9 @@ public class LazyQueryContainer implements Indexed, Sortable, ItemSetChangeNotif
      * @return the property corresponding to given IDs.
      */
     public final Property getContainerProperty(final Object itemId, final Object propertyId) {
-        return getItem(itemId).getItemProperty(propertyId);
+        final Item item = getItem(itemId);
+        if (item == null) return null;
+        return item.getItemProperty(propertyId);
     }
 
     /**
