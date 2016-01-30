@@ -94,6 +94,7 @@ public class EntityContainerDetachedEntitiesPropertyIdsTest {
         company.setName("test-company");
         final Author author = new Author();
         author.setName("test-author");
+        author.setValid(true);
         author.setCompany(company);
 
         final Task taskAlpha = entityContainer.addEntity();
