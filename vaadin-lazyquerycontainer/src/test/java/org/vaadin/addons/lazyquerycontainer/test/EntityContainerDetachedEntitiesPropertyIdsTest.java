@@ -174,6 +174,7 @@ public class EntityContainerDetachedEntitiesPropertyIdsTest {
 
         entityContainer.addContainerProperty("description", String.class, "");
         entityContainer.addContainerProperty("author.name", String.class, "");
+        entityContainer.addContainerProperty("author.valid", Boolean.class, false);
         entityContainer.addContainerProperty("author.company.name", String.class, "");
 
         entityContainer.refresh();
@@ -195,6 +196,8 @@ public class EntityContainerDetachedEntitiesPropertyIdsTest {
         final Item betaItemAfterAuthorClear = entityContainer.getItem(entityContainer.getIdByIndex(0));
         Assert.assertEquals("Verify new property has correct value.",
                 null, betaItemAfterAuthorClear.getItemProperty("author.name").getValue());
+        Assert.assertTrue("Verify valid property is true ",
+                ((Boolean) betaItem.getItemProperty("author.valid").getValue()).booleanValue());
         Assert.assertEquals("Verify new property has correct value.",
                 null, betaItemAfterAuthorClear.getItemProperty("author.company.name").getValue());
 

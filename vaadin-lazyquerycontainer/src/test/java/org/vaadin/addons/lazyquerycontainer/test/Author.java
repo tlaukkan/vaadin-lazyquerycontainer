@@ -43,6 +43,10 @@ public final class Author implements Serializable {
      */
     @ManyToOne(cascade =  CascadeType.PERSIST)
     private Company company;
+    /**
+     * Flag reflecting whether author is valid.
+     */
+    private boolean valid;
 
     /**
      * @return the authorId
@@ -91,6 +95,20 @@ public final class Author implements Serializable {
      */
     public void setCompany(final Company company) {
         this.company = company;
+    }
+
+    /**
+     * @return the valid
+     */
+    public boolean isValid() {
+        return valid;
+    }
+
+    /**
+     * @param valid the valid to set
+     */
+    public void setValid(boolean valid) {
+        this.valid = valid;
     }
 
     @Override
