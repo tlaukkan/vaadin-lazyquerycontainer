@@ -3,14 +3,14 @@
 
     <groupId>org.vaadin.addons.lazyquerycontainer</groupId>
     <artifactId>vaadin-lazyquerycontainer-root</artifactId>
-    <version>7.6.1.3</version>
+    <version>7.6.1.4-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <scm>
         <url>https://github.com/tlaukkan/vaadin-lazyquerycontainer.git</url>
         <connection>scm:git:git://github.com:tlaukkan/vaadin-lazyquerycontainer.git</connection>
         <developerConnection>scm:git:git@github.com:tlaukkan/vaadin-lazyquerycontainer.git</developerConnection>
-        <tag>vaadin-lazyquerycontainer-root-7.6.1.3</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <!-- Deploy releases and snapshots to the CloudBees maven repositories -->
