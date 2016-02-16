@@ -317,13 +317,15 @@ public class EntityQuery<E> implements Query, Serializable {
             }
         }
 
-        if (filter instanceof SimpleStringFilter) {
+       if (filter instanceof SimpleStringFilter) {
             final SimpleStringFilter simpleStringFilter = (SimpleStringFilter) filter;
-            final Expression<String> property = (Expression) getPropertyPath(
-                    root, simpleStringFilter.getPropertyId());
-            return cb.like(property, "%"
-                    + simpleStringFilter.getFilterString() + "%");
-        }
+            final Expression<String> property = (Expression) getPropertyPath(root, simpleStringFilter.getPropertyId());
+            if (simpleStringFilter.isIgnoreCase()) {
+                return cb.like(cb.lower(property), "%" + simpleStringFilter.getFilterString() + "%");
+            } else {
+                return cb.like(property, "%" + simpleStringFilter.getFilterString() + "%");
+            }
+        } 
 
         throw new UnsupportedOperationException("Vaadin filter: " + filter.getClass().getName() + " is not supported.");
     }
