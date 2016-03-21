@@ -321,9 +321,11 @@ public class EntityQuery<E> implements Query, Serializable {
             final SimpleStringFilter simpleStringFilter = (SimpleStringFilter) filter;
             final Expression<String> property = (Expression) getPropertyPath(root, simpleStringFilter.getPropertyId());
             if (simpleStringFilter.isIgnoreCase()) {
-                return cb.like(cb.lower(property), "%" + simpleStringFilter.getFilterString() + "%");
+                return cb.like(cb.lower(property), (simpleStringFilter.isOnlyMatchPrefix() ? "" : "%")
+                        + simpleStringFilter.getFilterString() + "%");
             } else {
-                return cb.like(property, "%" + simpleStringFilter.getFilterString() + "%");
+                return cb.like(property, (simpleStringFilter.isOnlyMatchPrefix() ? "" : "%")
+                        + simpleStringFilter.getFilterString() + "%");
             }
         } 
 
