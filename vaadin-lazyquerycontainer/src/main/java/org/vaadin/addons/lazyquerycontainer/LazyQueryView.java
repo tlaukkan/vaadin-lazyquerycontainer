@@ -91,7 +91,7 @@ public final class LazyQueryView implements QueryView, ValueChangeListener, Seri
     /**
      * Size of the query.
      */
-    private int querySize = -1;
+    private int querySize = 0;
     /**
      * Property IDs participating in sort.
      */
