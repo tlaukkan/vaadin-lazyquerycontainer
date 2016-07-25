@@ -115,7 +115,7 @@ public abstract class AbstractBeanQuery<T> implements Query, Serializable {
             BeanInfo info = Introspector.getBeanInfo(bean.getClass());
             for (PropertyDescriptor pd : info.getPropertyDescriptors()) {
                 for (Object propertyId : queryDefinition.getPropertyIds()) {
-                    if (pd.getName().equals(propertyId)) {
+                    if (pd.getName().equals(propertyId) && pd.getWriteMethod() != null) {
                         pd.getWriteMethod().invoke(bean,
                                 queryDefinition.getPropertyDefaultValue(propertyId));
                     }
