@@ -16,6 +16,7 @@
 package org.vaadin.addons.lazyquerycontainer;
 
 import com.vaadin.data.Item;
+import com.vaadin.data.util.BeanItem;
 
 import java.io.Serializable;
 import java.util.AbstractList;
@@ -88,7 +89,7 @@ public final class LazyIdList<T> extends AbstractList<T> implements Serializable
         if (index < 0 || index >= lazyQueryView.size()) {
             throw new IndexOutOfBoundsException();
         }
-        final T itemId = (T) lazyQueryView.getItem(index).getItemProperty(idPropertyId).getValue();
+        final T itemId = getItemId(lazyQueryView.getItem(index));
         // Do not put added item ids to id index map and make sure that
         // existing item indexes start from 0 i.e. ignore added items as they
         // are compensated for in indexOf method.
@@ -98,6 +99,17 @@ public final class LazyIdList<T> extends AbstractList<T> implements Serializable
         }
         return itemId;
     }
+
+	private T getItemId(Item item) {
+		final T itemId;
+        if(item instanceof BeanItem 
+        		&& LazyQueryDefinition.ID_PROPERTY_ID_BEAN_SELF.equals(idPropertyId)) {
+        	 itemId = (T) ((BeanItem)item).getBean(); 	
+        }else {
+        	itemId = (T) item.getItemProperty(idPropertyId).getValue();
+        }
+		return itemId;
+	}
 
     /**
      * {@inheritDoc}
@@ -116,7 +128,7 @@ public final class LazyIdList<T> extends AbstractList<T> implements Serializable
         // Brute force added items first. There should only be a few.
         final List<Item> addedItems = lazyQueryView.getAddedItems();
         for (int i = 0; i < addedItems.size(); i++) {
-            if (o.equals(addedItems.get(i).getItemProperty(idPropertyId).getValue())) {
+            if (o.equals(getItemId(addedItems.get(i)))) {
                 return i;
             }
         }
@@ -126,7 +138,7 @@ public final class LazyIdList<T> extends AbstractList<T> implements Serializable
         }
         // Switching to brute forcing.
         for (int i = addedItems.size(); i < lazyQueryView.size(); i++) {
-            if (o.equals(lazyQueryView.getItem(i).getItemProperty(idPropertyId).getValue())) {
+            if (o.equals(getItemId(lazyQueryView.getItem(i)))) {
                 return i;
             }
         }
