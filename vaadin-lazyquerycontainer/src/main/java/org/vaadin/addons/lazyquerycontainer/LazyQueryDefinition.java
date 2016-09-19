@@ -33,6 +33,10 @@ public class LazyQueryDefinition implements QueryDefinition, Serializable {
      */
     private static final long serialVersionUID = 1L;
     /**
+     * The ID of the ID property if the items of the container are BeanItems
+     */
+    public static final String ID_PROPERTY_ID_BEAN_SELF = "org.vaadin.addons.lazyquerycontainer.LazyQueryDefinition.ID_PROPERTY_ID_BEAN_SELF";
+    /**
      * Lust of property IDs included in this QueryDefinition.
      */
     private final List<Object> propertyIds = new ArrayList<Object>();
