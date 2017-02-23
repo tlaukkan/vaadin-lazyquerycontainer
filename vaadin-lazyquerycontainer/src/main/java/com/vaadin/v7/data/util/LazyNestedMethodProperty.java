@@ -14,10 +14,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.vaadin.data.util;
+package com.vaadin.v7.data.util;
 
-import com.vaadin.data.Property;
-import com.vaadin.data.util.MethodProperty.MethodException;
+import com.vaadin.v7.data.Property;
+import com.vaadin.v7.data.util.MethodProperty.MethodException;
 import com.vaadin.util.ReflectTools;
 
 import java.io.IOException;

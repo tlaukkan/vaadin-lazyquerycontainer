@@ -15,11 +15,11 @@
  */
 package org.vaadin.addons.lazyquerycontainer;
 
-import com.vaadin.data.*;
-import com.vaadin.data.Container.Indexed;
-import com.vaadin.data.Container.ItemSetChangeNotifier;
-import com.vaadin.data.Container.PropertySetChangeNotifier;
-import com.vaadin.data.Container.Sortable;
+import com.vaadin.v7.data.*;
+import com.vaadin.v7.data.Container.Indexed;
+import com.vaadin.v7.data.Container.ItemSetChangeNotifier;
+import com.vaadin.v7.data.Container.PropertySetChangeNotifier;
+import com.vaadin.v7.data.Container.Sortable;
 
 import java.io.Serializable;
 import java.util.ArrayList;

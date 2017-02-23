@@ -15,9 +15,9 @@
  */
 package org.vaadin.addons.lazyquerycontainer;
 
-import com.vaadin.data.Item;
-import com.vaadin.data.Property;
-import com.vaadin.data.util.PropertysetItem;
+import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.Property;
+import com.vaadin.v7.data.util.PropertysetItem;
 
 import java.io.Serializable;
 import java.util.*;

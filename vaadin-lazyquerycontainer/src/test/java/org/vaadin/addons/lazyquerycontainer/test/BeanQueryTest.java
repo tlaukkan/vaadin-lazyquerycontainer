@@ -1,6 +1,6 @@
 package org.vaadin.addons.lazyquerycontainer.test;
 
-import com.vaadin.data.Item;
+import com.vaadin.v7.data.Item;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
