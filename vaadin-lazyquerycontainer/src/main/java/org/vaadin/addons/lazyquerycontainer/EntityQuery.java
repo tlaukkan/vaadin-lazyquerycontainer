@@ -15,11 +15,11 @@
  */
 package org.vaadin.addons.lazyquerycontainer;
 
-import com.vaadin.data.Container;
-import com.vaadin.data.Item;
-import com.vaadin.data.util.BeanItem;
-import com.vaadin.data.util.ObjectProperty;
-import com.vaadin.data.util.filter.*;
+import com.vaadin.v7.data.Container;
+import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.util.BeanItem;
+import com.vaadin.v7.data.util.ObjectProperty;
+import com.vaadin.v7.data.util.filter.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.*;

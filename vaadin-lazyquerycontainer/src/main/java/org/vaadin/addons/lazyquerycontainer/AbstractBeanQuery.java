@@ -15,9 +15,9 @@
  */
 package org.vaadin.addons.lazyquerycontainer;
 
-import com.vaadin.data.Item;
-import com.vaadin.data.util.BeanItem;
-import com.vaadin.data.util.ObjectProperty;
+import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.util.BeanItem;
+import com.vaadin.v7.data.util.ObjectProperty;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;

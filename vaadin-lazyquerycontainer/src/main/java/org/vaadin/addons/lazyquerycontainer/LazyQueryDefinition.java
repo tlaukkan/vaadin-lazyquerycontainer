@@ -15,7 +15,7 @@
  */
 package org.vaadin.addons.lazyquerycontainer;
 
-import com.vaadin.data.Container;
+import com.vaadin.v7.data.Container;
 
 import java.io.Serializable;
 import java.security.InvalidParameterException;

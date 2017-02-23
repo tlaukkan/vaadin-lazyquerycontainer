@@ -19,10 +19,15 @@ import com.vaadin.annotations.Title;
 import com.vaadin.server.ClassResource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.shared.ui.MultiSelectMode;
-import com.vaadin.ui.*;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.themes.Runo;
+import com.vaadin.ui.Panel;
+import com.vaadin.ui.UI;
+import com.vaadin.v7.ui.HorizontalLayout;
+import com.vaadin.v7.ui.Table;
+import com.vaadin.v7.ui.VerticalLayout;
+import com.vaadin.v7.ui.themes.Runo;
 import org.vaadin.addons.lazyquerycontainer.*;
 
 import java.util.ArrayList;

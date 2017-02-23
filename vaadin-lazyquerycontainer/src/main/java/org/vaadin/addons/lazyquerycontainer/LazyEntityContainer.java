@@ -15,7 +15,7 @@
  */
 package org.vaadin.addons.lazyquerycontainer;
 
-import com.vaadin.data.util.BeanItem;
+import com.vaadin.v7.data.util.BeanItem;
 
 import javax.persistence.EntityManager;
 /**
