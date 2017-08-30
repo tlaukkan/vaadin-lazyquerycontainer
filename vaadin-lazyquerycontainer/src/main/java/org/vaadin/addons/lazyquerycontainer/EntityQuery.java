@@ -15,20 +15,34 @@
  */
 package org.vaadin.addons.lazyquerycontainer;
 
-import com.vaadin.data.Container;
-import com.vaadin.data.Item;
-import com.vaadin.data.util.BeanItem;
-import com.vaadin.data.util.ObjectProperty;
-import com.vaadin.data.util.filter.*;
-
-import javax.persistence.EntityManager;
-import javax.persistence.criteria.*;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import com.vaadin.v7.data.Container;
+import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.util.BeanItem;
+import com.vaadin.v7.data.util.ObjectProperty;
+import com.vaadin.v7.data.util.filter.And;
+import com.vaadin.v7.data.util.filter.Between;
+import com.vaadin.v7.data.util.filter.Compare;
+import com.vaadin.v7.data.util.filter.IsNull;
+import com.vaadin.v7.data.util.filter.Like;
+import com.vaadin.v7.data.util.filter.Not;
+import com.vaadin.v7.data.util.filter.Or;
+import com.vaadin.v7.data.util.filter.SimpleStringFilter;
 
 /**
  * Entity query implementation which dynamically injects missing query

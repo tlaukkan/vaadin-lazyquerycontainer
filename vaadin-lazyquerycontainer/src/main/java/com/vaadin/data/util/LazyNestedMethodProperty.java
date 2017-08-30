@@ -16,16 +16,19 @@
  */
 package com.vaadin.data.util;
 
-import com.vaadin.data.Property;
-import com.vaadin.data.util.MethodProperty.MethodException;
-import com.vaadin.util.ReflectTools;
-
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import com.vaadin.shared.util.SharedUtil;
+import com.vaadin.util.ReflectTools;
+import com.vaadin.v7.data.Property;
+import com.vaadin.v7.data.util.AbstractProperty;
+import com.vaadin.v7.data.util.MethodProperty;
+import com.vaadin.v7.data.util.MethodProperty.MethodException;
 
 /**
  * Nested accessor based property for a bean.
@@ -147,13 +150,12 @@ public class LazyNestedMethodProperty<T> extends AbstractProperty<T> {
                 lastSimplePropertyName = simplePropertyName;
                 lastClass = propertyClass;
                 try {
-                    Method getter = MethodProperty.initGetterMethod(
-                            simplePropertyName, propertyClass);
+                    Method getter = getMethod(simplePropertyName, propertyClass);
                     propertyClass = getter.getReturnType();
                     getMethods.add(getter);
                 } catch (final java.lang.NoSuchMethodException e) {
                     throw new IllegalArgumentException("Bean property '"
-                            + simplePropertyName + "' not found", e);
+                            + simplePropertyName + "' not found for class " + propertyClass.getName(), e);
                 }
             } else {
                 throw new IllegalArgumentException(
@@ -189,7 +191,31 @@ public class LazyNestedMethodProperty<T> extends AbstractProperty<T> {
         this.setMethod = setMethod;
     }
 
-    @Override
+    /**
+     * Copied from {@link MethodProperty#initGetterMethod} since it isn't accessible anymore
+     * @param simplePropertyName
+     * @param beanClass
+     * @return
+     * @throws NoSuchMethodException
+     * @throws SecurityException
+     */
+    public static Method getMethod(String simplePropertyName, Class<?> beanClass) throws NoSuchMethodException {
+    	simplePropertyName = SharedUtil.capitalize(simplePropertyName);
+
+		Method getMethod = null;
+		try {
+			getMethod = beanClass.getMethod("get" + simplePropertyName, new Class[0]);
+		} catch (NoSuchMethodException ignored) {
+			try {
+				getMethod = beanClass.getMethod("is" + simplePropertyName, new Class[0]);
+			} catch (NoSuchMethodException ignoredAsWell) {
+				getMethod = beanClass.getMethod("are" + simplePropertyName, new Class[0]);
+			}
+		}
+		return getMethod;
+	}
+
+	@Override
     public Class<? extends T> getType() {
         return type;
     }
