@@ -4,12 +4,12 @@
 
     <groupId>org.vaadin.addons.lazyquerycontainer</groupId>
     <artifactId>vaadin-lazyquerycontainer</artifactId>
-    <version>7.6.1.4-SNAPSHOT</version>
+    <version>8.0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <vaadin.version>7.6.1</vaadin.version>
+        <vaadin.version>8.0.0</vaadin.version>
     </properties>
 
     <repositories>
@@ -111,17 +111,17 @@
     <dependencies>
         <dependency>
             <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-server</artifactId>
+            <artifactId>vaadin-compatibility-server</artifactId>
             <version>${vaadin.version}</version>
         </dependency>
         <dependency>
             <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-client-compiled</artifactId>
+            <artifactId>vaadin-compatibility-client-compiled</artifactId>
             <version>${vaadin.version}</version>
         </dependency>
         <dependency>
             <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-client</artifactId>
+            <artifactId>vaadin-compatibility-client</artifactId>
             <version>${vaadin.version}</version>
             <scope>provided</scope>
         </dependency>

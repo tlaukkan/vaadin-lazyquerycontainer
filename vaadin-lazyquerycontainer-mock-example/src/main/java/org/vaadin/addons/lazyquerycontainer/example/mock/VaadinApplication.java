@@ -15,18 +15,28 @@
  */
 package org.vaadin.addons.lazyquerycontainer.example.mock;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
+import org.vaadin.addons.lazyquerycontainer.LazyQueryContainer;
+import org.vaadin.addons.lazyquerycontainer.LazyQueryDefinition;
+import org.vaadin.addons.lazyquerycontainer.LazyQueryView;
+import org.vaadin.addons.lazyquerycontainer.QueryItemStatus;
+import org.vaadin.addons.lazyquerycontainer.QueryItemStatusColumnGenerator;
+
 import com.vaadin.annotations.Title;
 import com.vaadin.server.ClassResource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.shared.ui.MultiSelectMode;
-import com.vaadin.ui.*;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.themes.Runo;
-import org.vaadin.addons.lazyquerycontainer.*;
-
-import java.util.ArrayList;
-import java.util.Collection;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Panel;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.v7.ui.Table;
+import com.vaadin.v7.ui.themes.Runo;
 
 /**
  * Example application demonstrating the Lazy Query Container features.

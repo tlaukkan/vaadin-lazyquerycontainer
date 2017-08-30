@@ -15,16 +15,20 @@
  */
 package org.vaadin.addons.lazyquerycontainer;
 
-import com.vaadin.data.*;
-import com.vaadin.data.Container.Indexed;
-import com.vaadin.data.Container.ItemSetChangeNotifier;
-import com.vaadin.data.Container.PropertySetChangeNotifier;
-import com.vaadin.data.Container.Sortable;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import com.vaadin.v7.data.Buffered;
+import com.vaadin.v7.data.Container;
+import com.vaadin.v7.data.Container.Indexed;
+import com.vaadin.v7.data.Container.ItemSetChangeNotifier;
+import com.vaadin.v7.data.Container.PropertySetChangeNotifier;
+import com.vaadin.v7.data.Container.Sortable;
+import com.vaadin.v7.data.ContainerHelpers;
+import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.Property;
 
 /**
  * LazyQueryContainer provides lazy loading of items from business services. See

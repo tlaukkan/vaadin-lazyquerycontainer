@@ -15,9 +15,9 @@
  */
 package org.vaadin.addons.lazyquerycontainer.test;
 
-import com.vaadin.data.Item;
-import com.vaadin.data.util.filter.And;
-import com.vaadin.data.util.filter.Compare;
+import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.util.filter.And;
+import com.vaadin.v7.data.util.filter.Compare;
 import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;

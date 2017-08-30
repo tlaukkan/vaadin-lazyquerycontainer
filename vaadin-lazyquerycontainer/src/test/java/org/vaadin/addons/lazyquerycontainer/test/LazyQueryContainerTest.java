@@ -15,12 +15,12 @@
  */
 package org.vaadin.addons.lazyquerycontainer.test;
 
-import com.vaadin.data.Container.ItemSetChangeEvent;
-import com.vaadin.data.Container.ItemSetChangeListener;
-import com.vaadin.data.Container.PropertySetChangeEvent;
-import com.vaadin.data.Container.PropertySetChangeListener;
-import com.vaadin.data.Item;
-import com.vaadin.data.Property;
+import com.vaadin.v7.data.Container.ItemSetChangeEvent;
+import com.vaadin.v7.data.Container.ItemSetChangeListener;
+import com.vaadin.v7.data.Container.PropertySetChangeEvent;
+import com.vaadin.v7.data.Container.PropertySetChangeListener;
+import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.Property;
 import junit.framework.TestCase;
 import org.vaadin.addons.lazyquerycontainer.*;
 

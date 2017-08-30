@@ -15,9 +15,9 @@
  */
 package org.vaadin.addons.lazyquerycontainer.test;
 
-import com.vaadin.data.Property;
-import com.vaadin.data.util.ObjectProperty;
-import com.vaadin.data.util.PropertysetItem;
+import com.vaadin.v7.data.Property;
+import com.vaadin.v7.data.util.ObjectProperty;
+import com.vaadin.v7.data.util.PropertysetItem;
 import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;
