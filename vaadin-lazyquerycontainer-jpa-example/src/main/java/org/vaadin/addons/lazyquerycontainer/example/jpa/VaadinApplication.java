@@ -1,23 +1,31 @@
 package org.vaadin.addons.lazyquerycontainer.example.jpa;
 
-import com.vaadin.annotations.Title;
-import com.vaadin.data.util.filter.Compare;
-import com.vaadin.server.VaadinRequest;
-import com.vaadin.shared.ui.MultiSelectMode;
-import com.vaadin.ui.*;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.themes.Runo;
+import java.util.ArrayList;
+import java.util.Collection;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+
 import org.vaadin.addons.lazyquerycontainer.LazyEntityContainer;
 import org.vaadin.addons.lazyquerycontainer.LazyQueryView;
 import org.vaadin.addons.lazyquerycontainer.QueryItemStatus;
 import org.vaadin.addons.lazyquerycontainer.QueryItemStatusColumnGenerator;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import java.util.ArrayList;
-import java.util.Collection;
+import com.vaadin.annotations.Title;
+import com.vaadin.server.VaadinRequest;
+import com.vaadin.shared.ui.MultiSelectMode;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Panel;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.v7.data.util.filter.Compare;
+import com.vaadin.v7.ui.Table;
+import com.vaadin.v7.ui.themes.Runo;
 
 /**
  * Example application demonstrating the Lazy Query Container features.
